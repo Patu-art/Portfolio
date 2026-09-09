@@ -210,14 +210,24 @@
   transform-origin:left
 }
 .site-loader {
-  position:fixed;
-  inset:0;
-  background:var(--ink);
-  z-index:4000;
-  display:grid;
-  place-content:center;
-  gap:20px
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  z-index: 4000;
+  display: grid;
+  place-content: center;
+  gap: 20px;
+  animation: siteLoaderFailsafe .45s ease 2.2s forwards;
 }
+
+@keyframes siteLoaderFailsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
 .site-loader__mark {
   width:68px;
   height:68px;
