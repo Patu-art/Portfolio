@@ -24,15 +24,7 @@
   transform:translateY(24px)
 }
 .cursor {
-  position:fixed;
-  left:0;
-  top:0;
-  width:56px;
-  height:56px;
-  z-index:3000;
-  pointer-events:none;
-  transform:translate(-50%,-50%);
-  opacity:0
+  display:none !important;
 }
 .cursor img {
   position:absolute;
