@@ -1,0 +1,8 @@
+{
+  "name": "Prathamesh Dhumal Portfolio",
+  "short_name": "PD Portfolio",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#14171C",
+  "theme_color": "#C9A227"
+}
