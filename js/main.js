@@ -1,6 +1,11 @@
-window.App=window.App|| {
-}
-;
+window.App = window.App || {};
+
+// Emergency loader protection.
+// This runs immediately, before component loading or JS imports.
+setTimeout(() => {
+  document.querySelector('.site-loader')?.remove();
+}, 2400);
+
 document.documentElement.classList.add('js-ready');
 (async()=> {
   const load=async(name)=> {
