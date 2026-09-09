@@ -186,18 +186,48 @@ setupProcessState();
 setupScrollProgress();
 animateProjectMedia(document);
 
-addEventListener('load', () => {
+function dismissSiteLoader() {
   const loader = document.querySelector('.site-loader');
-  if (!loader) return;
+
+  if (!loader || loader.dataset.dismissing === 'true') return;
+
+  loader.dataset.dismissing = 'true';
+
+  const removeLoader = () => loader.remove();
+
   if (reduceMotion || !Element.prototype.animate) {
-    loader.remove();
+    removeLoader();
     return;
   }
-  const animation = loader.animate([{ opacity: 1 }, { opacity: 0 }], {
-    duration: 380,
-    delay: 120,
-    easing: 'ease-out',
-    fill: 'forwards'
+
+  const animation = loader.animate(
+    [
+      { opacity: 1 },
+      { opacity: 0 }
+    ],
+    {
+      duration: 380,
+      delay: 120,
+      easing: 'ease-out',
+      fill: 'forwards'
+    }
+  );
+
+  animation.addEventListener('finish', removeLoader, {
+    once: true
   });
-  animation.addEventListener('finish', () => loader.remove(), { once: true });
-});
+
+  // Backup in case the animation finish event fails
+  setTimeout(removeLoader, 900);
+}
+
+if (document.readyState === 'complete') {
+  dismissSiteLoader();
+} else {
+  addEventListener('load', dismissSiteLoader, {
+    once: true
+  });
+}
+
+// Final emergency backup
+setTimeout(dismissSiteLoader, 1800);
