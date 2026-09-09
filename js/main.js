@@ -19,11 +19,11 @@ document.documentElement.classList.add('js-ready');
     }
   }
   ;
+ document.querySelector('.cursor')?.remove(); 
   await Promise.all([load('header'),load('footer')]);
   document.querySelectorAll('[data-year]').forEach(el=>el.textContent=new Date().getFullYear());
   await import('./navbar.js');
   await import('./smooth-scroll.js');
-  await import('./cursor.js');
   await import('./animations.js');
   await import('./comparison.js');
   await import('./counters.js');
