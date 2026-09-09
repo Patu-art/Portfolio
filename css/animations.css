@@ -29,8 +29,7 @@
 .cursor img {
   position:absolute;
   inset:0;
-  width:100%;
-  height:100%;
+  cursor-size: 24px;
   transition:opacity .18s,transform .18s
 }
 .cursor__default {
