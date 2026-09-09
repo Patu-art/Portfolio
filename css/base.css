@@ -11,8 +11,23 @@ body {
   color:var(--text);
   font-family:var(--body);
   -webkit-font-smoothing:antialiased;
-  overflow-x:hidden
+  overflow-x:hidden;
+
+  cursor: url("../assets/cursor/Steampunk Clockwork Cursor--cursor--SweezyCursors.cur"), auto;
 }
+
+a,
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+select,
+label,
+.magnetic,
+.comparison-handle {
+  cursor: url("../assets/cursor/Steampunk Clockwork Cursor--pointer--SweezyCursors.cur"), pointer;
+}
+
 body.menu-open {
   overflow:hidden
 }
