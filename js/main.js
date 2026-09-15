@@ -1,11 +1,4 @@
 window.App = window.App || {};
-
-// Emergency loader protection.
-// This runs immediately, before component loading or JS imports.
-setTimeout(() => {
-  document.querySelector('.site-loader')?.remove();
-}, 2400);
-
 document.documentElement.classList.add('js-ready');
 
 if (!document.querySelector('link[href="css/upgrade.css"]')) {
@@ -15,36 +8,61 @@ if (!document.querySelector('link[href="css/upgrade.css"]')) {
   document.head.append(upgradeStyles);
 }
 
-(async()=> {
-  const load=async(name)=> {
-    const el=document.querySelector(`[data-component="${name}"]`);
-    if(!el)return;
-    try {
-      const r=await fetch(`components/${name}.html`);
-      el.innerHTML=await r.text()
-    } catch(e) {
-      console.error(`Failed to load ${name}`,e)
-    }
+if (!document.querySelector('link[href="css/portfolio-v2.css"]')) {
+  const portfolioV2 = document.createElement('link');
+  portfolioV2.rel = 'stylesheet';
+  portfolioV2.href = 'css/portfolio-v2.css';
+  document.head.append(portfolioV2);
+}
+
+(async () => {
+  const load = async (name) => {
+    const host = document.querySelector(`[data-component="${name}"]`);
+    if (!host) return;
+
+    const response = await fetch(`components/${name}.html`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`${name} component failed: ${response.status}`);
+    host.innerHTML = await response.text();
   };
 
-  document.querySelector('.cursor')?.remove();
-  await Promise.all([load('header'),load('footer')]);
-  document.querySelectorAll('[data-year]').forEach(el=>el.textContent=new Date().getFullYear());
+  try {
+    document.querySelector('.cursor')?.remove();
+    await Promise.all([load('header'), load('footer')]);
 
-  await import('./navbar.js');
-  await import('./smooth-scroll.js');
-  await import('./animations.js');
-  await import('./comparison.js');
-  await import('./counters.js');
-  await import('./projects.js');
-  await import('./project-carousel.js');
-  await import('./validation.js');
-  await import('./contact.js');
-  await import('./portfolio-upgrade.js');
+    document.querySelectorAll('[data-year]').forEach((el) => {
+      el.textContent = new Date().getFullYear();
+    });
 
-  const path=location.pathname.split('/').pop()||'index.html';
-  document.querySelectorAll('.desktop-nav a,.mobile-menu nav a').forEach(a=> {
-    if(a.getAttribute('href')===path)a.setAttribute('aria-current','page')
-  });
-  window.dispatchEvent(new Event('app:ready'));
+    const modules = [
+      './navbar.js',
+      './smooth-scroll.js',
+      './animations.js',
+      './comparison.js',
+      './counters.js',
+      './projects.js',
+      './project-carousel.js',
+      './validation.js',
+      './contact.js',
+      './portfolio-upgrade.js'
+    ];
+
+    const results = await Promise.allSettled(modules.map((src) => import(src)));
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
+        console.error(`Optional module failed: ${modules[index]}`, result.reason);
+      }
+    });
+
+    const path = location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.desktop-nav a,.mobile-menu nav a').forEach((link) => {
+      if (link.getAttribute('href') === path) link.setAttribute('aria-current', 'page');
+    });
+
+    window.dispatchEvent(new Event('app:ready'));
+  } catch (error) {
+    console.error('Portfolio startup failed.', error);
+  } finally {
+    document.querySelector('.site-loader')?.remove();
+    document.documentElement.classList.add('app-loaded');
+  }
 })();
