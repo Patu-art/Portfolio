@@ -59,6 +59,7 @@ export function createProjectCard(project, index = 0, options = {}) {
   const article = document.createElement('article');
   article.className = `project-card${options.carousel ? ' project-card--carousel' : ''}`;
   article.dataset.reveal = 'scale';
+  article.dataset.project = project.slug || '';
 
   const media = document.createElement('div');
   media.className = 'project-card__media';
