@@ -17,14 +17,23 @@ ensureStylesheet('css/soft-blue-theme.css');
 (async () => {
   const load = async (name) => {
     const host = document.querySelector(`[data-component="${name}"]`);
-    if (!host) return;
-    const response = await fetch(`components/${name}.html`, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`${name} component failed: ${response.status}`);
-    host.innerHTML = await response.text();
+    if (!host) return true;
+
+    try {
+      const response = await fetch(`components/${name}.html`, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`${name} component failed: ${response.status}`);
+      host.innerHTML = await response.text();
+      return true;
+    } catch (error) {
+      console.error(`Could not load ${name}.`, error);
+      host.dataset.componentFailed = 'true';
+      return false;
+    }
   };
 
   try {
-    await Promise.all([load('header'), load('footer')]);
+    await Promise.allSettled([load('header'), load('footer')]);
+
     document.querySelectorAll('[data-year]').forEach((el) => {
       el.textContent = new Date().getFullYear();
     });
@@ -34,6 +43,7 @@ ensureStylesheet('css/soft-blue-theme.css');
       './counters.js', './projects.js', './project-carousel.js', './validation.js',
       './contact.js', './portfolio-upgrade.js'
     ];
+
     const results = await Promise.allSettled(modules.map((src) => import(src)));
     results.forEach((result, index) => {
       if (result.status === 'rejected') console.error(`Optional module failed: ${modules[index]}`, result.reason);
@@ -43,6 +53,7 @@ ensureStylesheet('css/soft-blue-theme.css');
     document.querySelectorAll('.desktop-nav a,.mobile-menu nav a').forEach((link) => {
       if (link.getAttribute('href') === path) link.setAttribute('aria-current', 'page');
     });
+
     window.dispatchEvent(new Event('app:ready'));
   } catch (error) {
     console.error('Portfolio startup failed.', error);
