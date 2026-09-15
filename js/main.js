@@ -7,6 +7,14 @@ setTimeout(() => {
 }, 2400);
 
 document.documentElement.classList.add('js-ready');
+
+if (!document.querySelector('link[href="css/upgrade.css"]')) {
+  const upgradeStyles = document.createElement('link');
+  upgradeStyles.rel = 'stylesheet';
+  upgradeStyles.href = 'css/upgrade.css';
+  document.head.append(upgradeStyles);
+}
+
 (async()=> {
   const load=async(name)=> {
     const el=document.querySelector(`[data-component="${name}"]`);
@@ -17,11 +25,12 @@ document.documentElement.classList.add('js-ready');
     } catch(e) {
       console.error(`Failed to load ${name}`,e)
     }
-  }
-  ;
- document.querySelector('.cursor')?.remove(); 
+  };
+
+  document.querySelector('.cursor')?.remove();
   await Promise.all([load('header'),load('footer')]);
   document.querySelectorAll('[data-year]').forEach(el=>el.textContent=new Date().getFullYear());
+
   await import('./navbar.js');
   await import('./smooth-scroll.js');
   await import('./animations.js');
@@ -31,11 +40,11 @@ document.documentElement.classList.add('js-ready');
   await import('./project-carousel.js');
   await import('./validation.js');
   await import('./contact.js');
+  await import('./portfolio-upgrade.js');
+
   const path=location.pathname.split('/').pop()||'index.html';
   document.querySelectorAll('.desktop-nav a,.mobile-menu nav a').forEach(a=> {
     if(a.getAttribute('href')===path)a.setAttribute('aria-current','page')
-  }
-  );
+  });
   window.dispatchEvent(new Event('app:ready'));
-}
-)();
+})();
