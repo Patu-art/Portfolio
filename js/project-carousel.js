@@ -1,8 +1,10 @@
 import { createProjectCard, getProjects } from './project-data.js';
 
 function buildCarousel(container, projects) {
-  const requestedLimit = Number(container.dataset.limit || projects.length);
-  const visibleProjects = projects.slice(0, Number.isFinite(requestedLimit) ? requestedLimit : projects.length);
+  const configuredLimit = Number(container.dataset.limit || projects.length);
+  const homepageMinimum = container.closest('.projects-featured') ? 4 : 0;
+  const requestedLimit = Math.max(Number.isFinite(configuredLimit) ? configuredLimit : projects.length, homepageMinimum);
+  const visibleProjects = projects.slice(0, requestedLimit);
 
   container.replaceChildren();
   container.setAttribute('role', 'region');
