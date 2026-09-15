@@ -31,6 +31,7 @@ function makeSiteproSection() {
       </div>
     </div>`;
   anchor.insertAdjacentElement('afterend', section);
+  window.App?.animateReveal?.(section);
 }
 
 function refreshTruthCopy() {
@@ -62,7 +63,10 @@ function refreshTruthCopy() {
 function refreshHomepageProof() {
   if (document.body.dataset.page !== 'prathamesh-dhumal') return;
   const count = document.querySelector('.hero-home__proof [data-count]');
-  if (count) count.dataset.count = '3';
+  if (count) {
+    count.dataset.count = '3';
+    count.textContent = '3';
+  }
 }
 
 function addSiteproNav() {
