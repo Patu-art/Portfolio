@@ -1,0 +1,218 @@
+/* SITEPRO portfolio upgrade — progressive enhancement only */
+
+/* Project cards inherit a small amount of each project's visual identity on interaction. */
+.project-card[data-project] {
+  --project-accent: var(--brass);
+  --project-ink: var(--ink);
+  position: relative;
+  isolation: isolate;
+}
+
+.project-card[data-project]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid transparent;
+  transition: border-color .35s var(--ease), box-shadow .35s var(--ease), opacity .35s var(--ease);
+  opacity: .7;
+}
+
+.project-card[data-project="gulf-mcr"] { --project-accent: #d7a84b; }
+.project-card[data-project="tasteology"] { --project-accent: #b9ca7b; }
+.project-card[data-project="artista-perfetto"] { --project-accent: #ff5a36; }
+.project-card[data-project="something-more-productive"] { --project-accent: #c5a14a; }
+.project-card[data-project="nec-avengers"] { --project-accent: #7594af; }
+
+@media (hover:hover) and (pointer:fine) {
+  .project-card[data-project]:hover::after {
+    border-color: color-mix(in srgb, var(--project-accent) 70%, transparent);
+    box-shadow: inset 0 -4px 0 var(--project-accent), 0 24px 60px rgba(0,0,0,.22);
+  }
+  .project-card[data-project]:hover .project-card__index,
+  .project-card[data-project]:hover .project-card__links a {
+    color: var(--project-accent);
+  }
+  .project-card[data-project]:hover .project-card__media img {
+    transform: scale(1.025);
+  }
+}
+
+.project-card__media img {
+  transition: transform .6s var(--ease), filter .35s var(--ease);
+}
+
+.project-status--progress {
+  color: #18140b;
+  background: #d9b34f;
+  border-color: #d9b34f;
+}
+
+/* Homepage SITEPRO product block injected by portfolio-upgrade.js */
+.sitepro-showcase {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--paper-text);
+  border-block: 1px solid var(--paper-line);
+}
+.sitepro-showcase::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(62,92,118,.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(62,92,118,.09) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(to right, #000, transparent 78%);
+}
+.sitepro-showcase__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0,1.05fr) minmax(340px,.95fr);
+  gap: clamp(44px,7vw,110px);
+  align-items: center;
+}
+.sitepro-showcase__copy h2 {
+  max-width: 9ch;
+  margin: 12px 0 22px;
+  font: 700 clamp(54px,8vw,118px)/.86 var(--display);
+  letter-spacing: -.055em;
+}
+.sitepro-showcase__copy h2 em { color: var(--brass); font-style: italic; }
+.sitepro-showcase__copy > p:not(.eyebrow) {
+  max-width: 58ch;
+  color: var(--paper-muted);
+  font-size: clamp(16px,1.4vw,20px);
+}
+.sitepro-showcase__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 24px;
+  padding: 9px 12px;
+  border: 1px solid var(--paper-line);
+  font: 600 11px/1 var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.sitepro-showcase__status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 0 5px rgba(201,162,39,.14);
+}
+.sitepro-showcase__actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; }
+.sitepro-showcase__diagram {
+  position: relative;
+  min-height: 520px;
+  padding: clamp(24px,3vw,42px);
+  border: 1px solid var(--paper-line);
+  background: rgba(242,239,231,.78);
+  box-shadow: 0 30px 80px rgba(21,25,31,.12);
+}
+.sitepro-showcase__diagram::after {
+  content:"SITEPRO / SYSTEM MAP";
+  position:absolute;
+  right:18px;
+  top:16px;
+  color:var(--paper-muted);
+  font:500 10px/1 var(--mono);
+  letter-spacing:.12em;
+}
+.sitepro-flow { display:grid; gap:10px; margin-top:28px; }
+.sitepro-flow__step {
+  display:grid;
+  grid-template-columns:44px 1fr auto;
+  gap:14px;
+  align-items:center;
+  padding:15px 0;
+  border-bottom:1px solid var(--paper-line);
+}
+.sitepro-flow__step b {
+  color:var(--blue);
+  font:600 11px/1 var(--mono);
+}
+.sitepro-flow__step strong { font-size:15px; }
+.sitepro-flow__step span { color:var(--paper-muted); font:500 10px/1 var(--mono); }
+.sitepro-tools {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:26px;
+}
+.sitepro-tools span {
+  padding:8px 10px;
+  border:1px solid var(--paper-line);
+  background:rgba(255,255,255,.35);
+  font:600 10px/1 var(--mono);
+}
+
+/* Dedicated SITEPRO page */
+.sitepro-hero {
+  position:relative;
+  min-height:min(900px,92vh);
+  display:grid;
+  align-items:end;
+  padding:calc(var(--header-h) + 70px) 0 70px;
+  overflow:hidden;
+}
+.sitepro-hero::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 76% 38%, rgba(201,162,39,.14), transparent 28%),
+    linear-gradient(rgba(117,148,175,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(117,148,175,.07) 1px, transparent 1px);
+  background-size:auto, 38px 38px, 38px 38px;
+}
+.sitepro-hero__grid { position:relative; display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:end; }
+.sitepro-hero h1 { margin:14px 0 20px; max-width:9ch; font:700 clamp(68px,10vw,150px)/.82 var(--display); letter-spacing:-.065em; }
+.sitepro-hero h1 em { color:var(--brass); }
+.sitepro-hero__lead { max-width:62ch; color:var(--muted); font-size:clamp(17px,1.45vw,21px); }
+.sitepro-hero__note { border-left:1px solid var(--brass); padding-left:20px; color:var(--muted); max-width:42ch; }
+.sitepro-hero__note strong { display:block; color:var(--text); margin-bottom:10px; }
+.sitepro-principles { display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--line); }
+.sitepro-principle { padding:28px; border-right:1px solid var(--line); min-height:210px; }
+.sitepro-principle:last-child { border-right:0; }
+.sitepro-principle span { color:var(--brass); font:600 11px/1 var(--mono); }
+.sitepro-principle h3 { margin:28px 0 12px; font-size:24px; }
+.sitepro-principle p { color:var(--muted); }
+.sitepro-stage-list { display:grid; gap:0; border-top:1px solid var(--line); }
+.sitepro-stage { display:grid; grid-template-columns:100px 1fr minmax(220px,.5fr); gap:32px; padding:30px 0; border-bottom:1px solid var(--line); align-items:start; }
+.sitepro-stage__no { color:var(--brass); font:600 12px/1 var(--mono); }
+.sitepro-stage h3 { margin:0 0 8px; font-size:clamp(25px,3vw,42px); font-family:var(--display); }
+.sitepro-stage p { color:var(--muted); }
+.sitepro-stage__output { color:var(--blue-light); font:500 11px/1.6 var(--mono); text-transform:uppercase; letter-spacing:.06em; }
+.sitepro-stack { display:flex; flex-wrap:wrap; gap:10px; }
+.sitepro-stack span { padding:10px 12px; border:1px solid var(--line); font:500 11px/1 var(--mono); }
+.sitepro-roadmap { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
+.sitepro-roadmap article { background:var(--graphite); padding:26px; min-height:190px; }
+.sitepro-roadmap small { color:var(--brass); font:600 10px/1 var(--mono); }
+.sitepro-roadmap h3 { margin:28px 0 8px; }
+.sitepro-roadmap p { color:var(--muted); font-size:14px; }
+
+@media (max-width:900px) {
+  .sitepro-showcase__grid,.sitepro-hero__grid { grid-template-columns:1fr; }
+  .sitepro-showcase__diagram { min-height:auto; }
+  .sitepro-principles { grid-template-columns:1fr; }
+  .sitepro-principle { border-right:0; border-bottom:1px solid var(--line); }
+  .sitepro-principle:last-child { border-bottom:0; }
+  .sitepro-stage { grid-template-columns:70px 1fr; }
+  .sitepro-stage__output { grid-column:2; }
+  .sitepro-roadmap { grid-template-columns:1fr 1fr; }
+}
+@media (max-width:620px) {
+  .sitepro-showcase__copy h2 { font-size:56px; }
+  .sitepro-showcase__diagram { padding:22px 18px; }
+  .sitepro-flow__step { grid-template-columns:34px 1fr; }
+  .sitepro-flow__step span { display:none; }
+  .sitepro-hero { min-height:auto; padding-top:calc(var(--header-h) + 42px); }
+  .sitepro-hero h1 { font-size:72px; }
+  .sitepro-stage { grid-template-columns:1fr; gap:10px; }
+  .sitepro-stage__output { grid-column:1; }
+  .sitepro-roadmap { grid-template-columns:1fr; }
+}
