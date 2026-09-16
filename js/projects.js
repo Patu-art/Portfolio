@@ -17,6 +17,26 @@ function makeTags(items = []) {
   return list;
 }
 
+function makeDetailMedia(project) {
+  if (project.image) {
+    const image = document.createElement('img');
+    image.src = project.image;
+    image.alt = `${project.title} preview`;
+    image.width = 1200;
+    image.height = 760;
+    return image;
+  }
+
+  const placeholder = document.createElement('div');
+  placeholder.className = 'project-media-placeholder project-media-placeholder--detail';
+  placeholder.setAttribute('role', 'img');
+  placeholder.setAttribute('aria-label', `${project.title} preview image will be added soon`);
+  appendText(placeholder, 'span', project.day || 'PROJECT');
+  appendText(placeholder, 'strong', project.title);
+  appendText(placeholder, 'small', 'PREVIEW IMAGE / ADDING SOON');
+  return placeholder;
+}
+
 async function renderProjectDetail() {
   if (!detail) return;
   const projects = await getProjects();
@@ -66,12 +86,7 @@ async function renderProjectDetail() {
 
   const mediaSection = document.createElement('section');
   mediaSection.className = 'case-media shell';
-  const image = document.createElement('img');
-  image.src = project.image;
-  image.alt = `${project.title} preview`;
-  image.width = 1200;
-  image.height = 760;
-  mediaSection.append(image);
+  mediaSection.append(makeDetailMedia(project));
 
   const storySection = document.createElement('section');
   storySection.className = 'section';
