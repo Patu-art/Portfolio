@@ -12,6 +12,7 @@ function ensureStylesheet(href) {
 ensureStylesheet('css/upgrade.css');
 ensureStylesheet('css/portfolio-v2.css');
 ensureStylesheet('css/soft-blue-theme.css');
+ensureStylesheet('css/journey-v3.css');
 
 (async () => {
   const load = async (name) => {
@@ -40,7 +41,7 @@ ensureStylesheet('css/soft-blue-theme.css');
     const modules = [
       './navbar.js', './smooth-scroll.js', './animations.js', './comparison.js',
       './counters.js', './projects.js', './project-carousel.js', './validation.js',
-      './contact.js', './portfolio-upgrade.js'
+      './contact.js', './portfolio-upgrade.js', './journey-v3.js'
     ];
 
     const results = await Promise.allSettled(modules.map((src) => import(src)));
