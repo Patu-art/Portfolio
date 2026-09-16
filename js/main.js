@@ -11,7 +11,6 @@ function ensureStylesheet(href) {
 
 ensureStylesheet('css/upgrade.css');
 ensureStylesheet('css/portfolio-v2.css');
-ensureStylesheet('css/sitepro-theme.css');
 ensureStylesheet('css/soft-blue-theme.css');
 
 (async () => {
