@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://mtgsteiypoxudztltzpn.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"/>
 <meta name="referrer" content="strict-origin-when-cross-origin"/>
-<meta name="theme-color" content="#10151d"/>
-<meta name="description" content="SITEPRO is Prathamesh Dhumal's evolving website-development system for research-first, human-first, production-minded web work."/>
-<meta property="og:title" content="SITEPRO — Website Development System"/>
-<meta property="og:description" content="An evolving research, design, build and QA system for creating better business websites."/>
+<meta name="theme-color" content="#F3F5F9"/>
+<meta name="description" content="A portfolio preview of SITEPRO, Prathamesh Dhumal's separately developed website research, build and QA product."/>
+<meta property="og:title" content="SITEPRO Preview — Prathamesh Dhumal"/>
+<meta property="og:description" content="A portfolio preview of the separate SITEPRO product and the challenge work informing it."/>
 <meta property="og:type" content="website"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -19,8 +19,10 @@
 <link href="css/components.css" rel="stylesheet"/>
 <link href="css/animations.css" rel="stylesheet"/>
 <link href="css/responsive.css" rel="stylesheet"/>
+<link href="css/portfolio-v2.css" rel="stylesheet"/>
+<link href="css/sitepro-theme.css" rel="stylesheet"/>
 <script defer src="js/main.js"></script>
-<title>SITEPRO — Prathamesh Dhumal</title>
+<title>SITEPRO Preview — Prathamesh Dhumal</title>
 </head>
 <body data-page="sitepro">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -33,83 +35,83 @@
 <section class="sitepro-hero">
   <div class="shell sitepro-hero__grid">
     <div data-reveal="left">
-      <p class="eyebrow">SITEPRO / WEBSITE DEVELOPMENT SYSTEM</p>
-      <h1>Research.<br>Build.<br><em>Verify.</em></h1>
-      <p class="sitepro-hero__lead">SITEPRO is the working system behind how I want to build websites: understand the real business first, make deliberate design decisions, code the real browser experience, test it properly and avoid pretending unfinished work is production-ready.</p>
-      <div class="hero-home__actions">
-        <a class="button button--brass magnetic" href="#system">Inspect the system ↘</a>
-        <a class="button button--ghost magnetic" href="projects.html">See it in projects ↗</a>
+      <p class="eyebrow">SITEPRO / PORTFOLIO PREVIEW</p>
+      <h1>A system becoming<br>a <em>real product.</em></h1>
+      <p class="sitepro-hero__lead">SITEPRO is being developed as a separate project from this portfolio. This page is the bridge: it explains the problem I am trying to solve, the thinking behind the product, and the real website builds that are helping me test those ideas.</p>
+      <div class="v2-hero__actions">
+        <a class="button button--brass magnetic" href="#preview">See the preview ↘</a>
+        <a class="button button--ghost magnetic" href="challenge.html">See the testbed ↗</a>
       </div>
     </div>
     <aside class="sitepro-hero__note" data-reveal="right">
-      <strong>STATUS / ACTIVE CONCEPT</strong>
-      SITEPRO is not being presented as a finished commercial plugin. It is an evolving standard and product idea that I am actively testing through real challenge builds such as Artista Perfetto and Something More Productive.
+      <strong>STATUS / SEPARATE PRODUCT IN DEVELOPMENT</strong>
+      The full SITEPRO app, backend and plugin/product work are not duplicated inside this portfolio. When the standalone product has its own public build, its live link and product screenshots will be added here.
     </aside>
   </div>
 </section>
 
-<section class="section paper" id="system">
+<section class="v2-section v2-section--paper" id="preview">
   <div class="shell">
-    <div class="section-head">
-      <div data-reveal="left"><p class="eyebrow">CORE PRINCIPLES</p><h2>Not more effects.<br><em>Better decisions.</em></h2></div>
-      <p data-reveal="right">The point is not to force one visual style onto every business. SITEPRO should adapt to the brand, audience, region, purpose and technical reality of the project.</p>
+    <div class="v2-section__head">
+      <div data-reveal><p class="eyebrow">WHAT SITEPRO IS TRYING TO FIX</p><h2>Website quality should come from <em>decisions, not decoration.</em></h2></div>
+      <p class="v2-section__intro" data-reveal="right">I kept seeing the same failure mode in my own work: adding more effects can make a page look busier without making it more useful. SITEPRO is my attempt to turn the better questions into a repeatable workflow and, separately, a usable product.</p>
     </div>
     <div class="sitepro-principles" data-stagger>
-      <article class="sitepro-principle"><span>01 / CONTEXT</span><h3>Research before styling.</h3><p>Understand the business, customer, region, competitors, content and practical goals before deciding what the site should look like.</p></article>
-      <article class="sitepro-principle"><span>02 / USEFULNESS</span><h3>Design has a job.</h3><p>Every major section, interaction and visual treatment should help communication, trust, navigation, conversion or understanding.</p></article>
-      <article class="sitepro-principle"><span>03 / REALITY</span><h3>The browser is the final mockup.</h3><p>If an idea cannot survive responsive implementation, performance, accessibility and real content, it should not control the design.</p></article>
+      <article class="sitepro-principle"><span>01 / CONTEXT</span><h3>Understand the business first.</h3><p>Brand, audience, region, content, competition and the actual job of the website should shape the design direction.</p></article>
+      <article class="sitepro-principle"><span>02 / DECISIONS</span><h3>Make the reasoning visible.</h3><p>Structure, typography, imagery, motion and calls to action should be explainable instead of added because a trend looks impressive.</p></article>
+      <article class="sitepro-principle"><span>03 / VERIFICATION</span><h3>The browser is the test.</h3><p>A concept has to survive mobile layout, real content, interaction, accessibility checks and deployment—not only a static mockup.</p></article>
     </div>
   </div>
 </section>
 
-<section class="section">
+<section class="v2-section">
   <div class="shell">
-    <div class="section-head">
-      <div data-reveal><p class="eyebrow">WORKFLOW</p><h2>Six stages.<br><em>One accountable process.</em></h2></div>
-      <p data-reveal>Each stage produces something concrete. That prevents the project from becoming a pile of attractive but disconnected ideas.</p>
+    <div class="v2-section__head">
+      <div data-reveal><p class="eyebrow">CURRENT PRODUCT IDEA</p><h2>Research → direction → structure → build → <em>QA + learn.</em></h2></div>
+      <p class="v2-section__intro" data-reveal="right">The exact standalone product interface is being built separately, so this portfolio does not pretend that unfinished product screens are already available.</p>
     </div>
-    <div class="sitepro-stage-list">
-      <article class="sitepro-stage" data-reveal><div class="sitepro-stage__no">01</div><div><h3>Research</h3><p>Collect real business facts, positioning, customer needs, local context, public media, competitors and existing pain points.</p></div><div class="sitepro-stage__output">OUTPUT / RESEARCH NOTES<br>FACT MAP<br>CONTENT PRIORITIES</div></article>
-      <article class="sitepro-stage" data-reveal><div class="sitepro-stage__no">02</div><div><h3>Direction</h3><p>Choose a visual system because it fits the business—not because a trend is fashionable. Define type, color, spacing, image behavior and motion rules.</p></div><div class="sitepro-stage__output">OUTPUT / VISUAL SYSTEM<br>UX PRIORITIES<br>MOBILE PLAN</div></article>
-      <article class="sitepro-stage" data-reveal><div class="sitepro-stage__no">03</div><div><h3>Structure</h3><p>Build the information architecture and customer journey. Decide what deserves prominence and remove sections that do not earn their space.</p></div><div class="sitepro-stage__output">OUTPUT / PAGE FLOW<br>SECTION ROLES<br>CTA LOGIC</div></article>
-      <article class="sitepro-stage" data-reveal><div class="sitepro-stage__no">04</div><div><h3>Build</h3><p>Translate the direction into real HTML, CSS and JavaScript. Keep behavior understandable, maintainable and responsive.</p></div><div class="sitepro-stage__output">OUTPUT / REAL CODE<br>LOCAL ASSETS<br>INTERACTIONS</div></article>
-      <article class="sitepro-stage" data-reveal><div class="sitepro-stage__no">05</div><div><h3>QA</h3><p>Check content truth, mobile composition, navigation, keyboard use, reduced motion, broken links, performance and visual consistency.</p></div><div class="sitepro-stage__output">OUTPUT / FIX LIST<br>RESPONSIVE PASS<br>ACCESSIBILITY PASS</div></article>
-      <article class="sitepro-stage" data-reveal><div class="sitepro-stage__no">06</div><div><h3>Ship + learn</h3><p>Deploy, collect reactions, observe what failed, improve the system and carry the lesson into the next challenge build.</p></div><div class="sitepro-stage__output">OUTPUT / DEPLOYMENT<br>OUTREACH<br>ITERATION NOTES</div></article>
-    </div>
+    <article class="v2-system-card" data-reveal>
+      <div class="v2-system-card__mark"><strong>SP</strong></div>
+      <div class="v2-system-card__content">
+        <p class="eyebrow">PRODUCT PREVIEW / NOT THE PRODUCT ITSELF</p>
+        <h3>One place for the reasoning that normally gets lost between research and deployment.</h3>
+        <p>The direction is to make research, design decisions, implementation checks and reusable standards work together instead of living as disconnected notes, prompts and tools.</p>
+        <div class="v2-system-flow"><span>RESEARCH</span><span>DIRECTION</span><span>STRUCTURE</span><span>BUILD</span><span>QA + LEARN</span></div>
+      </div>
+    </article>
   </div>
 </section>
 
-<section class="section paper">
+<section class="v2-section v2-section--paper">
   <div class="shell">
-    <div class="section-head">
-      <div data-reveal><p class="eyebrow">TOOL LAYER</p><h2>Tools support the system.<br><em>They are not the system.</em></h2></div>
-      <p data-reveal>SITEPRO can use different tools when they materially help a task. The workflow should still work even when a specific plugin or service is unavailable.</p>
+    <div class="v2-section__head">
+      <div data-reveal><p class="eyebrow">THE REAL-WORLD TESTBED</p><h2>The 100-Day Challenge keeps the system <em>grounded.</em></h2></div>
+      <p class="v2-section__intro" data-reveal="right">Six challenge builds are now shipped. They are not proof that SITEPRO is finished; they are evidence of the problems and patterns the separate product needs to handle.</p>
     </div>
-    <div class="sitepro-stack" data-stagger>
-      <span>GitHub / source + deployment</span><span>Figma / interface design</span><span>Canva / visual assets</span><span>Vercel / deployment</span><span>Supabase / backend</span><span>Higgsfield / media workflows</span><span>Mobbin / UX references</span><span>Research / business context</span><span>Browser QA / verification</span>
+    <div class="v2-skill-grid" data-stagger>
+      <article class="v2-skill-card"><span>DAY 01–02</span><h3>Identity + interaction</h3><p>Gulf MCR and Tasteology pushed atmosphere, typography, media and responsive behavior.</p></article>
+      <article class="v2-skill-card"><span>DAY 03–04</span><h3>Research + mobile</h3><p>Artista Perfetto and Moor Coffee sharpened the focus on real information, restraint and mobile composition.</p></article>
+      <article class="v2-skill-card"><span>DAY 05</span><h3>Community content</h3><p>Something More Productive added the problem of organizing events, social energy and useful actions.</p></article>
+      <article class="v2-skill-card"><span>DAY 06</span><h3>Context clarity</h3><p>Always The Same reinforced how important it is to explain a brand and its venue context clearly.</p></article>
     </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="shell">
-    <div class="section-head">
-      <div data-reveal><p class="eyebrow">ROADMAP</p><h2>What SITEPRO still<br><em>needs to become.</em></h2></div>
-      <p data-reveal>The stronger version is not “more features.” It is a repeatable process that can produce consistently better work across very different businesses.</p>
-    </div>
-    <div class="sitepro-roadmap" data-stagger>
-      <article><small>NOW</small><h3>Standard</h3><p>Refine the website protocol through real daily challenge projects.</p></article>
-      <article><small>NEXT</small><h3>Reusable audits</h3><p>Turn research, UX, mobile and QA checks into structured repeatable outputs.</p></article>
-      <article><small>LATER</small><h3>Tool orchestration</h3><p>Make external tools work together around the standard instead of as disconnected plugins.</p></article>
-      <article><small>FUTURE</small><h3>Product</h3><p>Only package SITEPRO as a real installable product when the workflow is stable enough to deserve it.</p></article>
+    <div class="v2-hero__actions" style="margin-top:28px" data-reveal>
+      <a class="button button--paper magnetic" href="challenge.html">Open all six days ↗</a>
+      <a class="button button--ghost magnetic" href="projects.html">Project archive ↗</a>
     </div>
   </div>
 </section>
 
-<section class="section paper">
-  <div class="shell comparison-grid">
-    <div data-reveal="left"><p class="eyebrow">PROOF, NOT PROMISES</p><h2>Judge SITEPRO by<br><em>the projects.</em></h2></div>
-    <div data-reveal="right"><p>Day 3 Artista Perfetto is the clearest current example: less invented branding, stronger information order, real media, accessibility fixes and a more disciplined mobile pass.</p><div class="hero-home__actions"><a class="button button--paper magnetic" href="project-details.html?project=artista-perfetto">Open Day 3 case study ↗</a><a class="button button--ghost magnetic" href="projects.html">All projects ↗</a></div></div>
+<section class="v2-section">
+  <div class="shell v2-cta" data-reveal>
+    <div>
+      <p class="eyebrow">WHAT HAPPENS TO THIS PAGE NEXT</p>
+      <h2>The portfolio stays a preview.<br><em>SITEPRO stays its own product.</em></h2>
+      <p>As the separate product develops, this page will receive the useful public pieces: product screenshots, a concise feature overview, technical summary and a link to visit the standalone build. The backend and full application remain outside the portfolio repository.</p>
+    </div>
+    <div class="v2-hero__actions">
+      <a class="button button--paper magnetic" href="index.html#journey">Back to the journey ↗</a>
+      <a class="button button--ghost magnetic" href="contact.html">Contact ↗</a>
+    </div>
   </div>
 </section>
 </main>
