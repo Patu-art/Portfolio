@@ -12,6 +12,7 @@ function ensureStylesheet(href) {
 ensureStylesheet('css/upgrade.css');
 ensureStylesheet('css/portfolio-v2.css');
 ensureStylesheet('css/soft-blue-theme.css');
+ensureStylesheet('css/mobile-nav-v2.css');
 
 (async () => {
   const load = async (name) => {
