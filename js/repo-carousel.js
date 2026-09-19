@@ -186,6 +186,12 @@ if (root) {
         created_at: repo.created_at || old?.created_at || ''
       });
     }
+    // Retain indexed repos if GitHub's public user listing has not indexed them yet.
+    // The scheduled sync removes deleted repos from the saved index on a later run.
+    const seen = new Set(list.map((repo) => repo.name.toLowerCase()));
+    for (const cached of existing) {
+      if (!seen.has(cached.name.toLowerCase())) list.push(cached);
+    }
     return list;
   }
 
