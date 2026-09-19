@@ -120,6 +120,18 @@ async function captureSite(browser, repo, config, previous) {
     await fs.mkdir(PREVIEW_DIR, { recursive: true });
     const bounds = await target.boundingBox();
     if (viewportCapture) {
+      // Do not publish a polished-looking blank or photo-less capture. The hero
+      // must contain a real, decoded image and a visible title inside the fold.
+      const heroImage = target.locator('img').first();
+      const photoReady = await heroImage.evaluate(async img => {
+        await img.decode().catch(() => {});
+        return img.naturalWidth >= 200 && img.naturalHeight >= 200;
+      }).catch(() => false);
+      const headingReady = await target.locator('h1').first().evaluate(heading => {
+        const rect = heading.getBoundingClientRect();
+        return rect.width > 100 && rect.height > 40 && rect.top >= 0 && rect.bottom <= 768;
+      }).catch(() => false);
+      if (!photoReady || !headingReady) throw new Error('Hero image/title not ready inside screenshot viewport');
       // The actual first fold includes the logo, header, hero photograph and headline.
       // A tall hero element screenshot otherwise crops out the brand or shows only text.
       await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
