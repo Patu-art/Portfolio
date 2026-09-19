@@ -48,23 +48,25 @@ ensureStylesheet('css/portfolio-refresh.css');
     // book. Do not download/execute contact, counters, gallery and unrelated
     // widgets on this performance-sensitive page.
     const hasRepositoryBook = Boolean(document.querySelector('[data-repo-carousel]'));
+    const isHome = document.body.dataset.page === 'home';
     const modules = hasRepositoryBook
       ? [
         './navbar.js?v=20260919a',
         './smooth-scroll.js',
         './animations.js',
-        './repo-carousel.js?v=20260919-editorial-v5'
+        './repo-carousel.js?v=20260919-photos-v2'
       ]
-      : [
-        './navbar.js?v=20260919a', './smooth-scroll.js', './animations.js', './comparison.js',
-        './counters.js', './projects.js?v=20260919a', './project-carousel.js?v=20260919a',
-        './project-gallery.js?v=20260919a', './validation.js',
-        './contact.js', './portfolio-upgrade.js'
-      ];
-
-    if (document.body.dataset.page === 'home') {
-      modules.push('./home-challenge.js');
-    }
+      : isHome
+        ? [
+          './navbar.js?v=20260919a', './smooth-scroll.js', './animations.js',
+          './project-carousel.js?v=20260919a', './home-challenge.js?v=20260919-latest'
+        ]
+        : [
+          './navbar.js?v=20260919a', './smooth-scroll.js', './animations.js', './comparison.js',
+          './counters.js', './projects.js?v=20260919a', './project-carousel.js?v=20260919a',
+          './project-gallery.js?v=20260919a', './validation.js',
+          './contact.js', './portfolio-upgrade.js'
+        ];
 
     const results = await Promise.allSettled(modules.map((src) => import(src)));
     results.forEach((result, index) => {
