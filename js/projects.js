@@ -1,4 +1,4 @@
-import { createProjectStatus, getProjects, safeExternalUrl } from './project-data.js';
+import { createProjectStatus, getProjects, safeExternalUrl } from './project-data.js?v=20260919a';
 
 const detail = document.querySelector('[data-project-detail]');
 
