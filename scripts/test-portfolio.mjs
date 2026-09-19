@@ -62,6 +62,9 @@ try {
     await page.locator('.repo-slide.is-current').waitFor({ timeout: 16000 });
     const slides = page.locator('.repo-slide');
     const rail = page.locator('[data-repo-rail] button');
+    assert.equal(await page.locator('.repo-carousel__progress').count(),0,'Duplicate progress bar was not removed');
+    assert.equal(await page.locator('.repo-intro, .v2-cta').count(),0,'Redundant intro or oversized CTA is still present');
+    assert.equal(await page.locator('.repo-slide__facts').count(),0,'Repeated repository metadata must be removed');
     assert.equal(await rail.count(), data.repository_count, width + 'px: chapter index is incomplete');
     assert.equal(await page.locator('.repo-slide.is-current').count(), 1,
       width + 'px: exactly one chapter must be selected');
@@ -85,7 +88,7 @@ try {
     const chapterLabels = await page.locator('.repo-slide__eyebrow').allTextContents();
     assert.equal(chapterLabels.length, data.repository_count, width + 'px: missing chapter labels');
     chapterLabels.forEach((label, index) => {
-      const expected = 'CHAPTER ' + String(index + 1).padStart(2, '0') +
+      const expected = 'PROJECT ' + String(index + 1).padStart(2, '0') +
         ' / ' + String(data.repository_count).padStart(2, '0');
       assert(label.startsWith(expected), width + 'px: incorrect chapter counter: ' + label);
       assert(!label.includes('[object Object]'), 'Array or object was rendered in chapter typography');
@@ -128,6 +131,15 @@ try {
       '01 / ' + String(data.repository_count).padStart(2, '0'),
       width + 'px: previous page did not return');
     assert.equal(errors.length, 0, width + 'px: browser exception(s): ' + errors.join(', '));
+    const active = page.locator('.repo-slide.is-current');
+    const activeCheck = await active.evaluate(slide => {
+      const links = [...slide.querySelectorAll('a[href]')];
+      const viewport = slide.closest('.repo-carousel__viewport').getBoundingClientRect();
+      return {links:links.map(a=>({text:a.innerText,rect:a.getBoundingClientRect().toJSON()})),view:viewport.toJSON()};
+    });
+    assert(activeCheck.links.length > 0,'Project links missing');
+    assert(activeCheck.links.every(link=>link.rect.width>10 && link.rect.top>=activeCheck.view.top-3 && link.rect.bottom<=activeCheck.view.bottom+3),
+      width + 'px: active project action links are clipped by carousel viewport');
     if (width === 1280) {
       await rail.nth(6).click();
       await page.waitForTimeout(450);
