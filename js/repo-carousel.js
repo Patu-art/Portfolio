@@ -136,6 +136,7 @@ if (root) {
       image.fetchPriority = index === 0 ? 'high' : 'low';
       image.addEventListener('error', () => {
         picture.querySelector('.repo-slide__media-label').textContent = 'WEBSITE PREVIEW PENDING';
+        picture.querySelector('.repo-slide__inspect')?.remove();
         image.replaceWith(fallback(repo));
       }, { once: true });
       picture.append(image);
