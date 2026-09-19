@@ -5,7 +5,7 @@
   "repositories": [
     {
       "name": "Day-8",
-      "title": "Day 8",
+      "title": "Lane & Brew",
       "description": "Lane & Brew on Liverpool’s Lark Lane: coffee, brunch, Mediterranean-inspired food and an easy evening together.",
       "description_source": "website",
       "language": "HTML",
@@ -23,7 +23,7 @@
     },
     {
       "name": "Day-9",
-      "title": "Day 09",
+      "title": "Açaí Social Club",
       "description": "Açaí Social Club is getting its first permanent home in Leeds city centre. Follow the journey from pop-up to neighbourhood spot.",
       "description_source": "website",
       "language": "HTML",
@@ -41,7 +41,7 @@
     },
     {
       "name": "Day-7",
-      "title": "Day 07",
+      "title": "Hetherington's",
       "description": "Hetherington's, Pollard Street, New Islington — a relaxed local pub and cafe bar for pints, sport and good company.",
       "description_source": "website",
       "language": "CSS",
