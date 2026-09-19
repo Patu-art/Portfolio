@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import sharp from 'sharp';
 
 const OWNER = 'Patu-art';
 const API = 'https://api.github.com';
@@ -135,6 +136,30 @@ async function captureSite(browser, repo, config, previous) {
   return output;
 }
 
+// Save the original PNG for per-repo HTML and Open Graph, but deliver a small
+// 900px WebP to the interactive carousel. All compression runs on GitHub,
+// not on visitors' devices. Never publish a partially written thumbnail.
+async function makeThumbnail(imagePath, name) {
+  if (!imagePath || !/^assets\/images\/repo-previews\/[A-Za-z0-9_.-]+\.png$/.test(imagePath)) return '';
+  const output = path.join(PREVIEW_DIR, safeName(name) + '.webp');
+  const temporary = path.join(PREVIEW_DIR, safeName(name) + '.pending.webp');
+  try {
+    const inputStat = await fs.stat(imagePath);
+    const previous = await fs.stat(output).catch(() => null);
+    if (!previous || previous.mtimeMs < inputStat.mtimeMs) {
+      await sharp(imagePath).rotate().resize({ width:900, withoutEnlargement:true })
+        .webp({ quality:67, effort:4 }).toFile(temporary);
+      await fs.rename(temporary, output);
+    }
+    return output.split(path.sep).join('/');
+  } catch (error) {
+    console.warn('Thumbnail unavailable for ' + name + ': ' + error.message);
+    return await fs.access(output).then(() => output.split(path.sep).join('/')).catch(() => '');
+  } finally {
+    await fs.rm(temporary, { force:true }).catch(() => {});
+  }
+}
+
 function staticPage(repo) {
   const title = repo.title + ' — Prathamesh Dhumal';
   const description = repo.description.slice(0, 300);
@@ -212,6 +237,7 @@ try {
     const screenshotRepo = repo.name === 'Portfolio' && portfolioContentRevision ?
       { ...repo, pushed_at: portfolioContentRevision } : repo;
     const preview = await captureSite(browser, screenshotRepo, override, old);
+    const thumbnail = await makeThumbnail(preview.image, repo.name);
     const description = (repo.description?.trim() || preview.site_description ||
       old?.site_description || 'Repository by Prathamesh Dhumal. Open GitHub for project details.').slice(0, 300);
     collected.push({
@@ -223,6 +249,7 @@ try {
       url: repo.html_url,
       live: siteUrl(repo, override),
       image: preview.image,
+      thumbnail,
       pushed_at: repo.name === 'Portfolio' ? (old?.pushed_at || repo.pushed_at) : repo.pushed_at,
       created_at: repo.created_at,
       is_fork: false,
