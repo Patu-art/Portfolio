@@ -1,4 +1,4 @@
-import { getProjects, safeExternalUrl } from './project-data.js';
+import { getProjects, safeExternalUrl } from './project-data.js?v=20260919a';
 
 const mount = document.querySelector('[data-work-gallery]');
 if (mount) {
