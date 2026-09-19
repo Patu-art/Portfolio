@@ -1,4 +1,4 @@
-import { createProjectCard, getProjects } from './project-data.js';
+import { createProjectCard, getProjects } from './project-data.js?v=20260919a';
 
 function buildCarousel(container, projects) {
   const configuredLimit = Number(container.dataset.limit || projects.length);
