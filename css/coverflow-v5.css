@@ -33,8 +33,9 @@
 }
 .repo-carousel .repo-slide {
   box-sizing:border-box;
-  flex:0 0 calc(100% - 2 * var(--peek));
-  width:calc(100% - 2 * var(--peek));
+  /* The track content box is already narrowed by its side padding. */
+  flex:0 0 100%;
+  width:100%;
   max-width:none;
   min-width:0;
   height:100%;
