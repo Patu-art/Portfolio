@@ -418,3 +418,96 @@ body[data-page="projects"] .v2-section { padding:clamp(42px,5.5vw,78px) 0 !impor
   .repo-carousel .repo-slide .repo-book__page--image,
   .repo-carousel .repo-slide .repo-book__page--text { animation:none !important; }
 }
+
+
+/* Horizontal chapters V4: one genuine 3D book per horizontal swipe.
+   No continuous parallax, animated backdrop-filter or offscreen GPU layers. */
+.repo-carousel .repo-carousel__viewport {
+  height:var(--book-stage);
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  scroll-snap-type:x mandatory !important;
+  scroll-padding-inline:0;
+  scroll-behavior:smooth;
+  overscroll-behavior-x:contain;
+  touch-action:pan-x pan-y;
+  scrollbar-width:thin;
+}
+.repo-carousel .repo-carousel__track {
+  display:flex !important;
+  flex-flow:row nowrap;
+  align-items:stretch;
+  height:100%;
+  width:max-content;
+  min-width:100%;
+  transform-style:flat;
+}
+.repo-carousel .repo-slide {
+  box-sizing:border-box;
+  flex:0 0 100%;
+  width:var(--carousel-width,100%);
+  max-width:var(--carousel-width,100%);
+  height:100%;
+  min-height:0 !important;
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+  padding:12px clamp(6px,1.4vw,17px) 20px;
+  transform-style:flat;
+  overflow:hidden;
+}
+.repo-carousel .repo-book {
+  min-height:0;
+  max-height:100%;
+  align-self:center;
+  backface-visibility:hidden;
+}
+.repo-carousel .repo-slide__body { min-width:0; }
+.repo-carousel .repo-slide__description { overflow-wrap:anywhere; }
+.repo-carousel .repo-carousel__progress { contain:paint; }
+.repo-carousel .repo-carousel__progress span { transition:width .28s ease; }
+.repo-carousel .repo-slide.is-current .repo-book__page--image,
+.repo-carousel .repo-slide.is-current .repo-book__page--text { backface-visibility:hidden; }
+/* The currently arriving book tilts in 3D once, like a short page turn.
+   Offscreen books are never animated or forced into separate GPU layers. */
+@keyframes book-horizontal-next {
+  from { opacity:.79; transform:perspective(1100px) translate3d(24px,0,-34px) rotateY(-8deg); }
+  to { opacity:1; transform:perspective(1100px) translate3d(0,0,0) rotateY(0); }
+}
+@keyframes book-horizontal-prev {
+  from { opacity:.79; transform:perspective(1100px) translate3d(-24px,0,-34px) rotateY(8deg); }
+  to { opacity:1; transform:perspective(1100px) translate3d(0,0,0) rotateY(0); }
+}
+@media(prefers-reduced-motion:no-preference) {
+  .repo-carousel .repo-slide.turn-forward.is-current .repo-book {
+    animation:book-horizontal-next .32s cubic-bezier(.2,.72,.2,1) both !important;
+  }
+  .repo-carousel .repo-slide.turn-backward.is-current .repo-book {
+    animation:book-horizontal-prev .32s cubic-bezier(.2,.72,.2,1) both !important;
+  }
+  .repo-carousel .repo-slide.turn-forward .repo-book__page--image,
+  .repo-carousel .repo-slide.turn-backward .repo-book__page--image,
+  .repo-carousel .repo-slide.turn-forward .repo-book__page--text,
+  .repo-carousel .repo-slide.turn-backward .repo-book__page--text {
+    animation:none !important;
+  }
+}
+@media(max-width:700px) {
+  :root { --book-stage:clamp(440px,78dvh,720px); }
+  .repo-carousel .repo-slide { padding:8px 5px 14px; }
+  .repo-carousel .repo-slide__media { aspect-ratio:16/8.2; }
+  .repo-carousel .repo-slide__body { padding:clamp(16px,3.6vw,24px); }
+  .repo-carousel .repo-book { max-height:100%; }
+  .repo-carousel .repo-book__spine { top:clamp(125px,40vw,235px); }
+}
+@media(max-width:375px), (max-height:600px) and (max-width:700px) {
+  :root { --book-stage:clamp(430px,88dvh,650px); }
+  .repo-carousel .repo-slide { padding:4px 3px 12px; }
+  .repo-carousel .repo-slide__body { padding:12px; }
+  .repo-carousel .repo-slide__body h3 { font-size:clamp(24px,7.3vw,32px); }
+  .repo-carousel .repo-slide__description { -webkit-line-clamp:2; }
+  .repo-carousel .repo-slide__links { gap:5px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .repo-carousel .repo-carousel__viewport { scroll-behavior:auto !important; }
+  .repo-carousel .repo-slide .repo-book { animation:none !important; transform:none !important; }
+}
