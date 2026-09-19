@@ -85,9 +85,50 @@ try {
       '01 / ' + String(data.repository_count).padStart(2, '0'),
       width + 'px: previous page did not return');
     assert.equal(errors.length, 0, width + 'px: browser exception(s): ' + errors.join(', '));
+    if (width === 1280 && data.repository_count > 2) {
+      await page.waitForTimeout(750);
+      await page.locator('[data-repo-viewport]').hover();
+      await page.mouse.wheel(0, 425);
+      await page.waitForTimeout(140);
+      assert.equal(await page.locator('[data-repo-progress]').innerText(),
+        '02 / ' + String(data.repository_count).padStart(2, '0'),
+        'Wheel input should turn exactly one book page');
+    }
     console.log(width + 'px: glass, perspective, slider controls, image fallbacks and API outage: PASS');
     await page.close();
   }
+  // A slower GitHub response must not reset a reader to the first page.
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  const source = data.repositories.map(repo => ({
+    name:repo.name, private:false, fork:false, archived:false,
+    description:repo.description, language:repo.language,
+    homepage:repo.live, has_pages:Boolean(repo.live), created_at:repo.created_at
+  }));
+  source.push({
+    name:'Day-10-test-only', private:false, fork:false, archived:false,
+    description:'Test repository for delayed API arrival', language:'HTML',
+    homepage:'', has_pages:false, created_at:'2026-09-19T11:30:00Z'
+  });
+  let resolveGitHub;
+  await page.route('https://api.github.com/users/Patu-art/repos**', async route => {
+    await new Promise(resolve => { resolveGitHub = resolve; });
+    await route.fulfill({ status:200, headers:{
+      'access-control-allow-origin':'*', 'content-type':'application/json'
+    }, body:JSON.stringify(source) });
+  });
+  await page.goto('http://127.0.0.1:' + port + '/projects.html', { waitUntil:'domcontentloaded' });
+  await page.locator('.repo-slide.is-current').waitFor({ timeout:16000 });
+  await page.locator('[data-repo-next]').click();
+  const before = await page.locator('.repo-slide.is-current').getAttribute('data-repo');
+  await page.waitForFunction(() => typeof window.__neverUsed === 'undefined');
+  assert.equal(typeof resolveGitHub, 'function', 'Delayed GitHub request should have begun');
+  resolveGitHub();
+  await page.waitForFunction(expected => document.querySelectorAll('.repo-slide').length === expected,
+    data.repository_count + 1, { timeout:9000 });
+  const after = await page.locator('.repo-slide.is-current').getAttribute('data-repo');
+  assert.equal(after, before, 'Live GitHub sync reset the active book page');
+  console.log('Delayed GitHub response: new public repo appears without resetting current chapter: PASS');
+  await page.close();
 } finally {
   await browser.close();
   await new Promise(resolve => server.close(resolve));
