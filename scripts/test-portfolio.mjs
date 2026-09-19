@@ -71,7 +71,7 @@ try {
       rect: element.getBoundingClientRect().toJSON()
     }));
     assert.notEqual(bookStyle.perspective, 'none', '3D perspective missing');
-    assert.notEqual(bookStyle.backdrop, 'none', 'Glass backdrop missing');
+    assert.equal(bookStyle.backdrop, 'none', 'Full-card blur must remain disabled on slower devices');
     assert(bookStyle.rect.width > 220, 'Book became too small');
     assert(bookStyle.rect.left >= -3 && bookStyle.rect.right <= width + 3,
       width + 'px: book overflows viewport');
@@ -89,7 +89,7 @@ try {
       await page.waitForTimeout(750);
       await page.locator('[data-repo-viewport]').hover();
       await page.mouse.wheel(0, 425);
-      await page.waitForTimeout(140);
+      await page.waitForTimeout(950);
       assert.equal(await page.locator('[data-repo-progress]').innerText(),
         '02 / ' + String(data.repository_count).padStart(2, '0'),
         'Wheel input should turn exactly one book page');
@@ -97,37 +97,36 @@ try {
     console.log(width + 'px: glass, perspective, slider controls, image fallbacks and API outage: PASS');
     await page.close();
   }
-  // A slower GitHub response must not reset a reader to the first page.
+  // Saved GitHub data is sufficient for a no-API, low-bandwidth first paint.
+  // A new repository in the next saved index must appear without client-side polling.
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-  const source = data.repositories.map(repo => ({
-    name:repo.name, private:false, fork:false, archived:false,
-    description:repo.description, language:repo.language,
-    homepage:repo.live, has_pages:Boolean(repo.live), created_at:repo.created_at
+  let apiCalls = 0;
+  await page.route('https://api.github.com/**', route => {
+    apiCalls++;
+    return route.abort();
+  });
+  const added = { name:'Day-10-test-only',
+    title:'Day 10 Test Only', description:'Synthetic future public repository.',
+    language:'HTML', url:'https://github.com/Patu-art/Day-10-test-only',
+    live:'', image:'', created_at:'2026-09-19T11:30:00Z' };
+  await page.route('**/data/repos.json', route => route.fulfill({
+    status:200, contentType:'application/json',
+    body:JSON.stringify({ repository_count:data.repository_count + 1,
+      repositories:[...data.repositories,added] })
   }));
-  source.push({
-    name:'Day-10-test-only', private:false, fork:false, archived:false,
-    description:'Test repository for delayed API arrival', language:'HTML',
-    homepage:'', has_pages:false, created_at:'2026-09-19T11:30:00Z'
-  });
-  let resolveGitHub;
-  await page.route('https://api.github.com/users/Patu-art/repos**', async route => {
-    await new Promise(resolve => { resolveGitHub = resolve; });
-    await route.fulfill({ status:200, headers:{
-      'access-control-allow-origin':'*', 'content-type':'application/json'
-    }, body:JSON.stringify(source) });
-  });
   await page.goto('http://127.0.0.1:' + port + '/projects.html', { waitUntil:'domcontentloaded' });
   await page.locator('.repo-slide.is-current').waitFor({ timeout:16000 });
+  assert.equal(await page.locator('.repo-slide').count(), data.repository_count + 1,
+    'New repo absent from latest saved index');
+  assert((await page.locator('.repo-slide img[src]').count()) <= 3,
+    'Too many screenshots downloaded before navigation');
   await page.locator('[data-repo-next]').click();
   const before = await page.locator('.repo-slide.is-current').getAttribute('data-repo');
-  await page.waitForFunction(() => typeof window.__neverUsed === 'undefined');
-  assert.equal(typeof resolveGitHub, 'function', 'Delayed GitHub request should have begun');
-  resolveGitHub();
-  await page.waitForFunction(expected => document.querySelectorAll('.repo-slide').length === expected,
-    data.repository_count + 1, { timeout:9000 });
+  await page.waitForTimeout(1000);
   const after = await page.locator('.repo-slide.is-current').getAttribute('data-repo');
-  assert.equal(after, before, 'Live GitHub sync reset the active book page');
-  console.log('Delayed GitHub response: new public repo appears without resetting current chapter: PASS');
+  assert.equal(after, before, 'Current chapter reset while the user was reading');
+  assert.equal(apiCalls, 0, 'Page must not poll GitHub in the background');
+  console.log('Saved index refresh, no live API polling, ≤3 hydrated images and stable chapter: PASS');
   await page.close();
 } finally {
   await browser.close();
