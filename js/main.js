@@ -62,10 +62,22 @@ ensureStylesheet('css/portfolio-refresh.css');
         './contact.js', './portfolio-upgrade.js'
       ];
 
+    if (document.body.dataset.page === 'home') {
+      modules.push('./home-challenge.js');
+    }
+
     const results = await Promise.allSettled(modules.map((src) => import(src)));
     results.forEach((result, index) => {
       if (result.status === 'rejected') console.error(`Optional module failed: ${modules[index]}`, result.reason);
     });
+
+    // An unavailable animation module must not leave visible content permanently hidden.
+    const revealIndex = modules.findIndex((src) => src === './animations.js');
+    if (revealIndex >= 0 && results[revealIndex]?.status === 'rejected') {
+      document.querySelectorAll('[data-reveal], [data-stagger] > *').forEach((item) => {
+        item.classList.add('is-visible');
+      });
+    }
 
     const path = location.pathname.split('/').pop() || 'index.html';
     document.querySelectorAll('.desktop-nav a,.mobile-menu nav a').forEach((link) => {
