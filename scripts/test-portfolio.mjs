@@ -85,7 +85,7 @@ try {
       return {height:rect.height,top:rect.top,visible:getComputedStyle(el).visibility};
     });
     assert(nav.height >= 50 && nav.top >= -2 && nav.visible === 'visible',
-      width + 'px: primary navigation isn't visible');
+      width + 'px: primary navigation is not visible');
 
     const slides = page.locator('.repo-slide');
     const rail = page.locator('[data-repo-rail] button');
