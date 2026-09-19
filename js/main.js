@@ -39,7 +39,7 @@ ensureStylesheet('css/portfolio-refresh.css');
       el.textContent = new Date().getFullYear();
     });
 
-    if (document.querySelector('[data-repo-carousel]')) ensureStylesheet('css/repo-carousel.css?v=20260919-book-fixed-v3');
+    if (document.querySelector('[data-repo-carousel]')) ensureStylesheet('css/repo-carousel.css?v=20260919-horizontal-book-v4');
 
     // The repository archive needs only navigation, reveal effects and the
     // book. Do not download/execute contact, counters, gallery and unrelated
@@ -50,7 +50,7 @@ ensureStylesheet('css/portfolio-refresh.css');
         './navbar.js?v=20260919a',
         './smooth-scroll.js',
         './animations.js',
-        './repo-carousel.js?v=20260919-book-fixed-v3'
+        './repo-carousel.js?v=20260919-horizontal-book-v4'
       ]
       : [
         './navbar.js?v=20260919a', './smooth-scroll.js', './animations.js', './comparison.js',
