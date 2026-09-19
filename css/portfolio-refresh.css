@@ -21,7 +21,7 @@
   .mobile-menu {
     position:fixed !important; inset:var(--header-h) 0 0 !important;
     height:auto !important; max-height:calc(100dvh - var(--header-h));
-    z-index:1 !important; background:rgba(13,13,13,.31) !important;
+    z-index:1190 !important; background:rgba(13,13,13,.31) !important;
     backdrop-filter:blur(7px); overflow-y:auto !important; overscroll-behavior:contain;
     opacity:0; visibility:hidden; pointer-events:none; transform:none !important;
     transition:opacity .24s ease,visibility .24s ease;
@@ -117,3 +117,8 @@ body[data-page="projects"] .v2-section__head { margin-bottom:clamp(20px,3vw,35px
 @media (max-width:800px) { .work-grid { grid-template-columns:1fr; } .work-card__body { padding:20px; } .work-card__media { aspect-ratio:16/10; } }
 @media (max-width:420px) { .work-filter__tabs { width:100%; } .work-filter__tabs button { flex:1; padding:9px 11px; font-size:10px; } .work-card__media { aspect-ratio:4/3; } .work-card__stamp { left:10px; top:10px; } .work-card__body h3 { font-size:32px; } .work-card__links { gap:4px 14px; } }
 @media (prefers-reduced-motion:reduce) { .mobile-menu,.mobile-menu__inner,.mobile-menu nav a,.nav-toggle,.work-card,.work-card__media img,.work-filter__tabs button { animation:none !important; transition:none !important; } }
+/* Preserve a meaningful preview when a project image has not been supplied. */
+.project-media-placeholder {display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; width:100%; min-height:260px; padding:30px; color:#5b6e74; text-align:center; background:radial-gradient(circle at 80% 14%,rgba(129,159,167,.24),transparent 50%),#e9eef2;}
+.project-media-placeholder strong {color:#0d0d0d; font:600 clamp(26px,3vw,44px)/1.1 'Fraunces',Georgia,serif;}
+.project-media-placeholder span,.project-media-placeholder small {font:600 10px/1.4 'JetBrains Mono',monospace; letter-spacing:.08em;}
+.project-media-placeholder--detail {min-height:380px; border:1px solid var(--refresh-line); border-radius:16px; margin:20px 0;}
