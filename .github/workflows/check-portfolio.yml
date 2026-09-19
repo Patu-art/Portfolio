@@ -9,11 +9,27 @@ on:
       - 'css/coverflow-v5.css'
       - 'scripts/test-portfolio.mjs'
       - '.github/workflows/check-portfolio.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'projects.html'
+      - 'js/main.js'
+      - 'js/home-challenge.js'
+      - 'js/repo-carousel.js'
+      - 'css/animations.css'
+      - 'css/repo-carousel.css'
+      - 'css/coverflow-v5.css'
+      - 'data/projects.json'
+      - 'data/repos.json'
+      - 'data/repo-preview-config.json'
+      - 'scripts/test-portfolio.mjs'
+      - '.github/workflows/check-portfolio.yml'
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: glass-book-qa
+  group: glass-book-qa-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
   browser-qa:
@@ -28,7 +44,7 @@ jobs:
         run: |
           npm install --no-save --no-package-lock playwright sharp
           npx playwright install --with-deps chromium
-      - name: Validate carousel and saved repository data
+      - name: Validate homepage, carousel and saved repository data
         run: |
           node --check js/repo-carousel.js
           node --check scripts/test-portfolio.mjs
