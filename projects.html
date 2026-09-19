@@ -22,7 +22,8 @@
 <link href="css/repo-carousel.css?v=20260919-horizontal-book-v4" rel="stylesheet">
 <link href="css/coverflow-v5.css?v=20260919-editorial-v5" rel="stylesheet">
 <link href="css/projects-final.css?v=20260919-final-v1" rel="stylesheet">
-<script defer src="js/main.js?v=20260919-final-v1"></script>
+<link href="css/projects-hero-fix.css?v=20260919-hero-repair-1" rel="stylesheet">
+<script defer src="js/main.js?v=20260919-hero-repair-1"></script>
 <title>Repository journey — Prathamesh Dhumal</title>
 </head>
 <body data-page="projects">
@@ -31,11 +32,22 @@
 <div aria-hidden="true" class="scroll-progress"><span></span></div>
 <div data-component="header"></div>
 <main id="main">
-<section class="page-hero">
-
-<div class="shell page-hero__grid">
-<div><p class="eyebrow" data-reveal>SELECTED WORK / 100-DAY CHALLENGE & EXPERIMENTS</p><h1 data-reveal="clip">Built to be<br><em>explored.</em></h1></div>
-<div class="page-hero__aside" data-reveal="right"><p>Real websites, the decisions behind them, and the source code. Browse one project at a time.</p><p class="project-count"><strong data-repository-count>PUBLIC PROJECTS</strong> · Updated automatically from GitHub.</p></div>
+<section class="page-hero projects-hero" aria-labelledby="projects-heading">
+<div class="shell projects-hero__grid">
+  <div class="projects-hero__copy">
+    <p class="eyebrow projects-hero__eyebrow">THE PROJECT ARCHIVE <span aria-hidden="true">/ 2026</span></p>
+    <h1 id="projects-heading" class="projects-hero__title">Built to be<br><em>explored.</em></h1>
+    <p class="projects-hero__lead">Real websites for real businesses. Open the live builds, explore the source code, and follow the process behind each project.</p>
+    <div class="projects-hero__foot">
+      <a class="projects-hero__jump" href="#archive">Explore the work <span aria-hidden="true">↘</span></a>
+      <span class="projects-hero__count"><strong data-repository-count>PUBLIC REPOSITORIES</strong> · Automatically updated</span>
+    </div>
+  </div>
+  <a class="projects-hero__visual" href="#archive" aria-label="Explore my projects, starting with Gulf MCR">
+    <img src="assets/images/repo-previews/DAY01.webp" width="900" height="560" alt="Gulf MCR — screenshot of a completed café website" fetchpriority="high" decoding="async">
+    <span class="projects-hero__visual-caption"><span>01 / 100-DAY CHALLENGE</span><strong>Gulf MCR <span aria-hidden="true">↗</span></strong></span>
+    <span class="projects-hero__visual-stamp" aria-hidden="true">WORK<br>IN THE<br>BROWSER.</span>
+  </a>
 </div>
 </section>
 <section class="v2-section v2-section--paper" id="archive">
