@@ -40,8 +40,8 @@ ensureStylesheet('css/portfolio-refresh.css');
     });
 
     const modules = [
-      './navbar.js', './smooth-scroll.js', './animations.js', './comparison.js',
-      './counters.js', './projects.js', './project-carousel.js', './project-gallery.js', './validation.js',
+      './navbar.js?v=20260919a', './smooth-scroll.js', './animations.js', './comparison.js',
+      './counters.js', './projects.js?v=20260919a', './project-carousel.js?v=20260919a', './project-gallery.js?v=20260919a', './validation.js',
       './contact.js', './portfolio-upgrade.js'
     ];
 
