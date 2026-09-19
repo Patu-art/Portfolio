@@ -104,7 +104,7 @@ if (root) {
     const spine = make('div', 'repo-book__spine');
     spine.setAttribute('aria-hidden', 'true');
     const picture = make('div', 'repo-slide__media repo-book__page repo-book__page--image');
-    picture.append(make('span', 'repo-slide__media-label', repo.image ? 'CAPTURED FROM THE LIVE WEBSITE' : 'WEBSITE PREVIEW PENDING'));
+    picture.append(make('span', 'repo-slide__media-label', repo.image ? 'LIVE SITE PREVIEW' : 'PREVIEW PENDING'));
     if (repo.image) {
       const image = make('img');
       image.dataset.src = repo.thumbnail || repo.image;
@@ -123,14 +123,10 @@ if (root) {
 
     const body = make('div', 'repo-slide__body repo-book__page repo-book__page--text');
     body.append(make('p', 'repo-slide__eyebrow',
-      'CHAPTER ' + String(index + 1).padStart(2, '0') + ' / ' +
+      'PROJECT ' + String(index + 1).padStart(2, '0') + ' / ' +
       String(total).padStart(2, '0') + ' · ' + repo.language.toUpperCase()));
     body.append(make('h3', '', repo.title));
     body.append(make('p', 'repo-slide__description', repo.description));
-    const facts = make('div', 'repo-slide__facts');
-    facts.append(make('span', '', 'GITHUB / ' + repo.name),
-      make('span', '', repo.live ? 'PUBLISHED WEBSITE' : 'SOURCE CODE'));
-    body.append(facts);
     const links = make('div', 'repo-slide__links');
     if (repo.live) links.append(action('Explore live site ↗', repo.live, true));
     links.append(action('View GitHub ↗', repo.url, !repo.live));
@@ -185,14 +181,20 @@ if (root) {
     });
     progress.textContent = String(activeIndex + 1).padStart(2, '0') + ' / ' +
       String(slides.length).padStart(2, '0');
-    progressBar.style.width = (100 * (activeIndex + 1) / slides.length) + '%';
+    if (progressBar) progressBar.style.width = (100 * (activeIndex + 1) / slides.length) + '%';
     previousButton.disabled = activeIndex === 0;
     nextButton.disabled = activeIndex === slides.length - 1;
     railButtons.forEach((button, i) => {
       button.setAttribute('aria-current', String(i === activeIndex));
       button.setAttribute('aria-label', (i === activeIndex ? 'Current chapter: ' : 'Go to chapter: ') + slides[i].dataset.repo);
     });
-    if (railButtons[activeIndex]) railButtons[activeIndex].scrollIntoView({ block:'nearest', inline:'nearest' });
+    if (chapterRail && railButtons[activeIndex]) {
+      const selected = railButtons[activeIndex];
+      const leftEdge = selected.offsetLeft - chapterRail.offsetLeft;
+      if (leftEdge < chapterRail.scrollLeft || leftEdge + selected.offsetWidth > chapterRail.scrollLeft + chapterRail.clientWidth) {
+        chapterRail.scrollTo({ left:Math.max(0,leftEdge - chapterRail.clientWidth / 3), behavior:'instant' });
+      }
+    }
   }
 
   function slideLeft(index) {
@@ -273,7 +275,7 @@ if (root) {
           'Repository information is temporarily unavailable. Open GitHub to browse the work.'));
         previousButton.disabled = true;
         nextButton.disabled = true;
-        if (status) status.textContent = 'Repository data unavailable';
+        if (status) { status.hidden = false; status.textContent = 'Projects could not load. Open GitHub to browse the work.'; }
       }
       return;
     }
@@ -293,6 +295,7 @@ if (root) {
         const number = make('span', '', String(i + 1).padStart(2, '0'));
         const label = make('span', 'repo-rail__title', repo.title);
         button.append(number, label);
+        button.title = repo.title;
         button.addEventListener('click', () => goTo(i));
         return button;
       });
@@ -310,7 +313,7 @@ if (root) {
         anchor.getAttribute('href') === focused.href);
       oldLink?.focus({ preventScroll: true });
     }
-    if (status) status.textContent = 'Repository archive ready';
+    if (status) { status.textContent = ''; status.hidden = true; }
   }
 
   async function loadStored() {
@@ -375,7 +378,7 @@ if (root) {
       // The server-side GitHub Actions sync updates this index every six hours.
       // Avoid a second network request and complete DOM re-render on every visit.
       show(stored);
-      if (status) status.textContent = 'Ready · repository data synced automatically';
+      if (status) { status.textContent = ''; status.hidden = true; }
       return;
     }
     return loadLive([]).then(show);
