@@ -37,6 +37,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/sync-portfolio.mjs
       - name: Validate synced repositories and responsive book carousel
+        env:
+          REQUIRE_REFRESHED_PREVIEWS: '1'
         run: |
           node --check js/repo-carousel.js
           node --check scripts/sync-portfolio.mjs
