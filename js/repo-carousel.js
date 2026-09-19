@@ -11,6 +11,8 @@ if (root) {
   const progressBar = root.querySelector('[data-repo-progress-bar]');
   const count = document.querySelector('[data-repository-count]');
   const status = root.querySelector('[data-repo-status]');
+  const chapterRail = root.querySelector('[data-repo-rail]');
+  let railButtons = [];
   let slides = [];
   let activeIndex = 0;
   let activeName = '';
@@ -95,6 +97,8 @@ if (root) {
     slide.id = 'repo-' + repo.name.replace(/[^a-z0-9-]/gi, '-');
     slide.dataset.repo = repo.name;
     slide.setAttribute('aria-label', (index + 1) + ' of ' + total + ': ' + repo.title);
+    slide.setAttribute('role', 'group');
+    slide.setAttribute('aria-roledescription', 'chapter');
 
     const book = make('article', 'repo-slide__card repo-book');
     const spine = make('div', 'repo-book__spine');
@@ -170,13 +174,25 @@ if (root) {
     slides.forEach((slide, i) => {
       slide.classList.toggle('is-current', i === activeIndex);
       slide.classList.toggle('is-past', i < activeIndex);
+      slide.classList.toggle('is-prev', i === activeIndex - 1);
+      slide.classList.toggle('is-next', i === activeIndex + 1);
+      slide.classList.toggle('is-far', Math.abs(i - activeIndex) > 1);
       slide.setAttribute('aria-current', String(i === activeIndex));
+      slide.setAttribute('aria-hidden', String(i !== activeIndex));
+      slide.querySelectorAll('a[href]').forEach(link => {
+        link.tabIndex = i === activeIndex ? 0 : -1;
+      });
     });
     progress.textContent = String(activeIndex + 1).padStart(2, '0') + ' / ' +
       String(slides.length).padStart(2, '0');
     progressBar.style.width = (100 * (activeIndex + 1) / slides.length) + '%';
     previousButton.disabled = activeIndex === 0;
     nextButton.disabled = activeIndex === slides.length - 1;
+    railButtons.forEach((button, i) => {
+      button.setAttribute('aria-current', String(i === activeIndex));
+      button.setAttribute('aria-label', (i === activeIndex ? 'Current chapter: ' : 'Go to chapter: ') + slides[i].dataset.repo);
+    });
+    if (railButtons[activeIndex]) railButtons[activeIndex].scrollIntoView({ block:'nearest', inline:'nearest' });
   }
 
   function slideLeft(index) {
@@ -192,6 +208,13 @@ if (root) {
     scrollLockUntil = performance.now() + (prefersReducedMotion() || !animate ? 80 : 650);
     viewport.scrollTo({ left, behavior: !animate || prefersReducedMotion() ? 'instant' : 'smooth' });
   }
+
+  viewport.addEventListener('click', event => {
+    const slide = event.target.closest('.repo-slide');
+    if (!slide || event.target.closest('a,button') || slide.classList.contains('is-current')) return;
+    const index = slides.indexOf(slide);
+    if (index >= 0) goTo(index);
+  });
 
   previousButton.addEventListener('click', () => goTo(activeIndex - 1));
   nextButton.addEventListener('click', () => goTo(activeIndex + 1));
@@ -263,6 +286,18 @@ if (root) {
     const retainName = activeName;
     slides = clean.map((repo, index) => makeSlide(repo, index, clean.length));
     track.replaceChildren(...slides);
+    if (chapterRail) {
+      railButtons = clean.map((repo, i) => {
+        const button = make('button', 'repo-rail__item');
+        button.type = 'button';
+        const number = make('span', '', String(i + 1).padStart(2, '0'));
+        const label = make('span', 'repo-rail__title', repo.title);
+        button.append(number, label);
+        button.addEventListener('click', () => goTo(i));
+        return button;
+      });
+      chapterRail.replaceChildren(...railButtons);
+    }
     refreshOffsets();
     if (count) count.textContent = clean.length + ' PUBLIC REPOSITORIES';
     const keep = Math.max(0, clean.findIndex(repo => repo.name === retainName));
