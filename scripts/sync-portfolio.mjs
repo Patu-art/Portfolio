@@ -175,6 +175,21 @@ for (const old of previous.repositories || []) {
   }
 }
 console.log('Public repositories verified: ' + liveRepos.map(item => item.name).join(', '));
+// Use the latest non-bot Portfolio commit to avoid an endless screenshot
+// refresh loop caused by this workflow committing its own previews.
+let portfolioContentRevision = '';
+try {
+  const response = await fetch(API + '/repos/' + OWNER + '/Portfolio/commits?per_page=50', {
+    headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'portfolio-repository-sync', ...(token ? { Authorization: 'Bearer ' + token } : {}) }
+  });
+  if (response.ok) {
+    const commits = await response.json();
+    portfolioContentRevision = commits.find(item => item.author?.login !== 'github-actions[bot]' &&
+      item.commit?.author?.name !== 'github-actions[bot]')?.sha || '';
+  }
+} catch (error) {
+  console.warn('Could not determine Portfolio content revision:', error.message);
+}
 const { chromium } = await import('playwright');
 const browser = await chromium.launch({ headless: true });
 const collected = [];
@@ -184,7 +199,9 @@ try {
     const old = previousByName.get(repo.name.toLowerCase());
     const override = config.repositories?.[repo.name] || {};
     if (override.exclude === true) continue;
-    const preview = await captureSite(browser, repo, override, old);
+    const screenshotRepo = repo.name === 'Portfolio' && portfolioContentRevision ?
+      { ...repo, pushed_at: portfolioContentRevision } : repo;
+    const preview = await captureSite(browser, screenshotRepo, override, old);
     const description = (repo.description?.trim() || preview.site_description ||
       old?.site_description || 'Repository by Prathamesh Dhumal. Open GitHub for project details.').slice(0, 300);
     collected.push({
