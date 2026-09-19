@@ -17,7 +17,7 @@ async function readJson(file, fallback) {
 async function listRepositories() {
   const result = [];
   for (let page = 1; page <= 20; page++) {
-    const response = await fetch(API + '/users/' + OWNER + '/repos?type=owner&per_page=100&page=' + page, {
+    const response = await fetch(API + '/users/' + OWNER + '/repos?type=all&per_page=100&page=' + page, {
       headers: {
         Accept: 'application/vnd.github+json',
         'User-Agent': 'portfolio-repository-sync',
@@ -159,6 +159,22 @@ const previous = await readJson(DATA_FILE, { repositories: [] });
 const config = await readJson(CONFIG_FILE, { repositories: {} });
 const previousByName = new Map((previous.repositories || []).map(item => [item.name.toLowerCase(), item]));
 const liveRepos = await listRepositories();
+// GitHub user listings can lag behind individual public repositories. Confirm
+// any previously indexed but absent repository by its exact public API URL.
+const present = new Set(liveRepos.map(item => item.name.toLowerCase()));
+for (const old of previous.repositories || []) {
+  if (present.has(old.name.toLowerCase())) continue;
+  const response = await fetch(API + '/repos/' + OWNER + '/' + encodeURIComponent(old.name), {
+    headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'portfolio-repository-sync', ...(token ? { Authorization: 'Bearer ' + token } : {}) }
+  });
+  if (!response.ok) continue;
+  const item = await response.json();
+  if (!item.private && !item.fork && !item.archived && item.owner?.login?.toLowerCase() === OWNER.toLowerCase()) {
+    liveRepos.push(item);
+    present.add(item.name.toLowerCase());
+  }
+}
+console.log('Public repositories verified: ' + liveRepos.map(item => item.name).join(', '));
 const { chromium } = await import('playwright');
 const browser = await chromium.launch({ headless: true });
 const collected = [];
