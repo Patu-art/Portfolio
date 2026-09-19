@@ -39,7 +39,7 @@ ensureStylesheet('css/portfolio-refresh.css');
       el.textContent = new Date().getFullYear();
     });
 
-    if (document.querySelector('[data-repo-carousel]')) ensureStylesheet('css/repo-carousel.css?v=20260919b');
+    if (document.querySelector('[data-repo-carousel]')) ensureStylesheet('css/repo-carousel.css?v=20260919-book-v1');
 
     const modules = [
       './navbar.js?v=20260919a', './smooth-scroll.js', './animations.js', './comparison.js',
@@ -47,7 +47,7 @@ ensureStylesheet('css/portfolio-refresh.css');
       './contact.js', './portfolio-upgrade.js'
     ];
 
-    if (document.querySelector('[data-repo-carousel]')) modules.push('./repo-carousel.js?v=20260919c');
+    if (document.querySelector('[data-repo-carousel]')) modules.push('./repo-carousel.js?v=20260919-book-v1');
 
     const results = await Promise.allSettled(modules.map((src) => import(src)));
     results.forEach((result, index) => {
