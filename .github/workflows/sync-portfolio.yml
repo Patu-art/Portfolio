@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/sync-portfolio.yml'
       - 'scripts/sync-portfolio.mjs'
+      - 'scripts/test-portfolio.mjs'
       - 'data/repo-preview-config.json'
 permissions:
   contents: write
@@ -15,6 +16,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   sync:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
