@@ -13,6 +13,7 @@ ensureStylesheet('css/upgrade.css');
 ensureStylesheet('css/portfolio-v2.css');
 ensureStylesheet('css/soft-blue-theme.css');
 ensureStylesheet('css/mobile-nav-v2.css');
+ensureStylesheet('css/portfolio-refresh.css');
 
 (async () => {
   const load = async (name) => {
@@ -40,7 +41,7 @@ ensureStylesheet('css/mobile-nav-v2.css');
 
     const modules = [
       './navbar.js', './smooth-scroll.js', './animations.js', './comparison.js',
-      './counters.js', './projects.js', './project-carousel.js', './validation.js',
+      './counters.js', './projects.js', './project-carousel.js', './project-gallery.js', './validation.js',
       './contact.js', './portfolio-upgrade.js'
     ];
 
