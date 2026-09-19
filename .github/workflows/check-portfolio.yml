@@ -25,7 +25,7 @@ jobs:
           node-version: '22'
       - name: Install headless browser
         run: |
-          npm install --no-save --no-package-lock playwright
+          npm install --no-save --no-package-lock playwright sharp
           npx playwright install --with-deps chromium
       - name: Validate carousel and saved repository data
         run: |
