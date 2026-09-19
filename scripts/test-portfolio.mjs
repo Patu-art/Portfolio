@@ -128,16 +128,20 @@ try {
       width + 'px: nested vertical overflow is not allowed');
 
     assert.equal(await slides.count(), data.repository_count, width + 'px: missing repository slides');
+    const chapterNames = await page.locator('.repo-slide').evaluateAll(nodes => nodes.map(node => node.dataset.repo));
     const chapterLabels = await page.locator('.repo-slide__eyebrow').allTextContents();
     assert.equal(chapterLabels.length, data.repository_count, width + 'px: missing chapter labels');
     chapterLabels.forEach((label, index) => {
-      const expected = 'PROJECT ' + String(index + 1).padStart(2, '0') +
-        ' / ' + String(data.repository_count).padStart(2, '0');
+      const match = /^day-?0*(\d+)$/i.exec(chapterNames[index]);
+      const prefix = match ? 'CHAPTER ' + String(Number(match[1])).padStart(2, '0') :
+        'PROJECT ' + String(index + 1).padStart(2, '0');
+      const expected = prefix + ' / ' + String(data.repository_count).padStart(2, '0');
       assert(label.startsWith(expected), width + 'px: incorrect chapter counter: ' + label);
       assert(!label.includes('[object Object]'), 'Array or object was rendered in chapter typography');
     });
     for (const [repoName, brand] of Object.entries({
-      'Day-7': "Hetherington's", 'Day-8':'Lane & Brew', 'Day-9':'Açaí Social Club'
+      'Day-7': "Hetherington's", 'Day-8':'Lane & Brew', 'Day-9':'Açaí Social Club',
+      'Day-10':'Kiku Hifi', 'Day-11':"Sandy's Smokeshed"
     })) {
       const actual = await page.locator('.repo-slide[data-repo="' + repoName + '"] h3').textContent();
       assert.equal(actual, brand, 'Brand name incorrect for ' + repoName);
@@ -173,6 +177,22 @@ try {
     assert.equal(await page.locator('[data-repo-progress]').innerText(),
       '01 / ' + String(data.repository_count).padStart(2, '0'),
       width + 'px: previous page did not return');
+    const inspect = page.locator('.repo-slide.is-current .repo-slide__inspect');
+    assert.equal(await inspect.count(), 1, width + 'px: current chapter has no screenshot inspection button');
+    await inspect.click();
+    const previewDialog = page.locator('[data-preview-dialog]');
+    assert(await previewDialog.evaluate(dialog => dialog.open), width + 'px: screenshot dialog did not open');
+    const fullImage = previewDialog.locator('[data-preview-image]');
+    assert((await fullImage.getAttribute('src')).includes('.png'),
+      width + 'px: screenshot dialog did not load the full captured PNG');
+    await fullImage.evaluate(img => img.decode());
+    assert(await fullImage.evaluate(img => img.naturalWidth >= 900),
+      width + 'px: full preview screenshot is missing or too small');
+    await page.keyboard.press('Escape');
+    assert(!(await previewDialog.evaluate(dialog => dialog.open)),
+      width + 'px: Escape did not close the screenshot dialog');
+    assert(await inspect.evaluate(button => document.activeElement === button),
+      width + 'px: screenshot dialog did not restore focus to its trigger');
     assert.equal(errors.length, 0, width + 'px: browser exception(s): ' + errors.join(', '));
     const active = page.locator('.repo-slide.is-current');
     const activeCheck = await active.evaluate(slide => {
@@ -184,6 +204,12 @@ try {
     assert(activeCheck.links.every(link=>link.rect.width>10 && link.rect.top>=activeCheck.view.top-3 && link.rect.bottom<=activeCheck.view.bottom+3),
       width + 'px: active project action links are clipped by carousel viewport');
     if (width === 1280) {
+      const dayTenIndex = chapterNames.findIndex(name => name.toLowerCase() === 'day-10');
+      assert(dayTenIndex >= 0, 'Day 10 chapter missing');
+      await rail.nth(dayTenIndex).click();
+      await page.waitForTimeout(450);
+      assert((await page.locator('.repo-slide.is-current .repo-slide__focus').textContent()).includes('Coffee by day'),
+        'Day 10 design focus note is missing');
       await rail.nth(6).click();
       await page.waitForTimeout(450);
       assert.equal(await page.locator('.repo-slide.is-current').getAttribute('data-repo'), 'Day-7',
@@ -203,7 +229,7 @@ try {
         '02 / ' + String(data.repository_count).padStart(2, '0'),
         'Wheel input should advance one horizontal book page');
     }
-    console.log(width + 'px: horizontal snap, 3D perspective, left/right controls, image fallbacks: PASS');
+    console.log(width + 'px: book navigation, screenshot zoom, focus restoration and readable links: PASS');
     await page.close();
   }
   // Saved GitHub data is sufficient for a no-API, low-bandwidth first paint.

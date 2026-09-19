@@ -1,0 +1,257 @@
+/* Project-book finishing layer: project media takes priority over decoration.
+   Only used by projects.html; the homepage carousel stays untouched. */
+body[data-page="projects"] .repo-carousel .repo-book {
+  grid-template-columns:minmax(0,1.32fr) minmax(0,.94fr);
+}
+body[data-page="projects"] .repo-carousel .repo-book__page--image {
+  isolation:isolate;
+  background:#dfe8ed;
+}
+body[data-page="projects"] .repo-carousel .repo-slide__media > img {
+  object-position:center top;
+}
+body[data-page="projects"] .repo-carousel .repo-slide__inspect {
+  position:absolute;
+  z-index:5;
+  right:14px;
+  bottom:15px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:10px 15px;
+  border:1px solid rgba(255,255,255,.85);
+  border-radius:999px;
+  background:rgba(243,245,249,.96);
+  color:#17242a;
+  font:600 12px/1.2 "Inter",system-ui,sans-serif;
+  box-shadow:0 8px 20px rgba(12,33,43,.13);
+  cursor:zoom-in;
+}
+body[data-page="projects"] .repo-carousel .repo-slide__inspect:hover {
+  background:#17242a;
+  color:#fff;
+}
+body[data-page="projects"] .repo-carousel .repo-slide__inspect:focus-visible {
+  outline:3px solid #526f79;
+  outline-offset:3px;
+}
+body[data-page="projects"] .repo-carousel .repo-slide__focus {
+  display:grid;
+  gap:5px;
+  max-width:47ch;
+  margin:0;
+  padding:11px 0 0;
+  border-top:1px solid rgba(82,111,121,.18);
+  color:#425e69;
+  font:400 clamp(12px,1vw,14px)/1.5 "Inter",system-ui,sans-serif;
+}
+body[data-page="projects"] .repo-carousel .repo-slide__focus span {
+  color:#526f79;
+  font:600 10px/1.3 "JetBrains Mono",monospace;
+  letter-spacing:.06em;
+}
+body[data-page="projects"] .repo-carousel .repo-slide__body {
+  gap:clamp(9px,1.25vw,16px);
+}
+body[data-page="projects"] .repo-carousel .repo-slide__body h3 {
+  font-size:clamp(31px,4vw,62px);
+}
+body[data-page="projects"] .repo-carousel .repo-slide__description {
+  -webkit-line-clamp:3;
+}
+
+/* Native <dialog> keeps tab focus inside and closes with Escape. */
+body[data-page="projects"] .repo-preview-dialog {
+  box-sizing:border-box;
+  width:min(1120px,calc(100vw - 24px));
+  max-width:1120px;
+  max-height:min(92dvh,920px);
+  margin:auto;
+  padding:0;
+  overflow:auto;
+  border:1px solid rgba(91,110,116,.38);
+  border-radius:18px;
+  background:#f3f5f9;
+  color:#17242a;
+  box-shadow:0 35px 110px rgba(13,24,31,.38);
+}
+body[data-page="projects"] .repo-preview-dialog:not([open]),
+body[data-page="projects"] .repo-preview-dialog [hidden] {display:none !important;}
+body[data-page="projects"] .repo-preview-dialog::backdrop {
+  background:rgba(10,21,28,.76);
+  backdrop-filter:blur(3px);
+}
+body[data-page="projects"] .repo-preview-dialog__header,
+body[data-page="projects"] .repo-preview-dialog__footer {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:15px clamp(16px,3vw,30px);
+}
+body[data-page="projects"] .repo-preview-dialog__header {
+  border-bottom:1px solid rgba(82,111,121,.19);
+}
+body[data-page="projects"] .repo-preview-dialog__header h2 {
+  margin:4px 0 0;
+  font:600 clamp(20px,3vw,32px)/1.15 "Fraunces",Georgia,serif;
+  overflow-wrap:anywhere;
+}
+body[data-page="projects"] .repo-preview-dialog__eyebrow {
+  margin:0;
+  color:#526f79;
+  font:600 10px/1.35 "JetBrains Mono",monospace;
+  letter-spacing:.06em;
+}
+body[data-page="projects"] .repo-preview-dialog__close {
+  flex:none;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:9px 14px;
+  border:1px solid rgba(82,111,121,.32);
+  border-radius:999px;
+  background:#fff;
+  color:#17242a;
+  cursor:pointer;
+  font:600 12px/1.2 "Inter",system-ui,sans-serif;
+}
+body[data-page="projects"] .repo-preview-dialog__close span {font-size:24px;line-height:1;}
+body[data-page="projects"] .repo-preview-dialog__close:hover {background:#dfe9ed;}
+body[data-page="projects"] .repo-preview-dialog__close:focus-visible,
+body[data-page="projects"] .repo-preview-dialog__footer a:focus-visible {
+  outline:3px solid #526f79;
+  outline-offset:3px;
+}
+body[data-page="projects"] .repo-preview-dialog__image-wrap {
+  display:grid;
+  place-items:center;
+  padding:clamp(8px,2vw,20px);
+  min-height:160px;
+  background:#dfe9ed;
+}
+body[data-page="projects"] .repo-preview-dialog__image-wrap img {
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:calc(92dvh - 205px);
+  object-fit:contain;
+  border:1px solid rgba(82,111,121,.19);
+  background:#fff;
+}
+body[data-page="projects"] .repo-preview-dialog__image-wrap p {
+  margin:18px;
+  color:#425e69;
+  font-size:14px;
+}
+body[data-page="projects"] .repo-preview-dialog__footer {
+  border-top:1px solid rgba(82,111,121,.19);
+}
+body[data-page="projects"] .repo-preview-dialog__footer p {
+  margin:0;
+  color:#526f79;
+  font:500 12px/1.5 "Inter",system-ui,sans-serif;
+}
+body[data-page="projects"] .repo-preview-dialog__footer a {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:10px 16px;
+  border-radius:999px;
+  background:#17242a;
+  color:#fff;
+  font:600 12px/1.2 "Inter",system-ui,sans-serif;
+  text-decoration:none;
+}
+@media(max-width:900px) {
+  body[data-page="projects"] .repo-carousel .repo-book {
+    grid-template-columns:minmax(0,1.14fr) minmax(0,.96fr);
+  }
+}
+@media(max-width:700px) {
+  body[data-page="projects"] .repo-carousel .repo-book {
+    display:flex;
+    flex-direction:column;
+    grid-template-columns:none;
+  }
+  body[data-page="projects"] .repo-carousel {
+    --peek:clamp(12px,3.5%,20px);
+  }
+  body[data-page="projects"] .repo-carousel .repo-book__page--image,
+  body[data-page="projects"] .repo-carousel .repo-slide__media > img {
+    height:clamp(190px,28dvh,245px);
+    min-height:0;
+    max-height:245px;
+    aspect-ratio:auto;
+  }
+  body[data-page="projects"] .repo-carousel .repo-slide__media-label {
+    top:8px;
+    left:8px;
+  }
+  body[data-page="projects"] .repo-carousel .repo-slide__inspect {
+    right:9px;
+    bottom:9px;
+    min-height:44px;
+    padding:9px 12px;
+    font-size:11px;
+  }
+  body[data-page="projects"] .repo-carousel .repo-book__spine {
+    top:clamp(190px,28dvh,245px);
+  }
+  body[data-page="projects"] .repo-carousel .repo-slide__body {
+    padding:clamp(13px,3vw,20px);
+    gap:8px;
+  }
+  body[data-page="projects"] .repo-carousel .repo-slide__description {
+    -webkit-line-clamp:3;
+    display:-webkit-box;
+    overflow:hidden;
+  }
+  body[data-page="projects"] .repo-carousel .repo-slide__focus {
+    padding-top:7px;
+    font-size:12px;
+    line-height:1.3;
+  }
+  body[data-page="projects"] .repo-carousel .repo-slide__focus span {font-size:9px;}
+  body[data-page="projects"] .repo-carousel .repo-slide__link {
+    min-height:44px;
+  }
+  body[data-page="projects"] .repo-preview-dialog {
+    width:calc(100vw - 16px);
+    max-height:94dvh;
+    border-radius:12px;
+  }
+  body[data-page="projects"] .repo-preview-dialog__header,
+  body[data-page="projects"] .repo-preview-dialog__footer {
+    padding:12px;
+  }
+  body[data-page="projects"] .repo-preview-dialog__header h2 {font-size:20px;}
+  body[data-page="projects"] .repo-preview-dialog__close {padding:8px 10px;}
+  body[data-page="projects"] .repo-preview-dialog__footer p {max-width:44%;}
+  body[data-page="projects"] .repo-preview-dialog__image-wrap img {
+    max-height:calc(94dvh - 190px);
+  }
+}
+@media(max-width:375px), (max-height:600px) and (max-width:700px) {
+  body[data-page="projects"] .repo-carousel .repo-carousel__viewport {
+    --spotlight-height:clamp(505px,95dvh,640px);
+  }
+  body[data-page="projects"] .repo-carousel .repo-book__page--image,
+  body[data-page="projects"] .repo-carousel .repo-slide__media > img {
+    height:clamp(174px,31dvh,195px);
+    max-height:195px;
+  }
+  body[data-page="projects"] .repo-carousel .repo-book__spine {
+    top:clamp(174px,31dvh,195px);
+  }
+  body[data-page="projects"] .repo-carousel .repo-slide__focus {
+    display:none;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  body[data-page="projects"] .repo-carousel .repo-slide__inspect,
+  body[data-page="projects"] .repo-preview-dialog {scroll-behavior:auto;}
+}
