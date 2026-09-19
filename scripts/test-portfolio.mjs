@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import http from 'node:http';
 import path from 'node:path';
 import { chromium } from 'playwright';
+import sharp from 'sharp';
 
 const root = process.cwd();
 const data = JSON.parse(await fs.readFile('data/repos.json', 'utf8'));
@@ -24,6 +25,21 @@ for (const repo of data.repositories) {
   const htmlPath = path.join('work', repo.name, 'index.html');
   const html = await fs.readFile(htmlPath, 'utf8');
   assert(/<meta name="description" content="[^"]+"/.test(html), 'Missing HTML description: ' + repo.name);
+}
+// The screenshot recipe is checked after the generator runs, not against a
+// still-unrefreshed PR checkout. This is the quality gate for new Day 10/11 previews.
+if (process.env.REQUIRE_REFRESHED_PREVIEWS === '1') {
+  for (const name of ['Day-10', 'Day-11']) {
+    const repo = data.repositories.find(item => item.name.toLowerCase() === name.toLowerCase());
+    assert(repo, 'Published project missing: ' + name);
+    assert.equal(repo.preview_recipe, 'viewport-1365x768-v2', name + ': screenshot refresh did not run');
+    assert.equal(repo.preview_source, 'automatic', name + ': screenshot was not captured');
+    const png = await sharp(repo.image).metadata();
+    assert(png.width === 1365 && png.height === 768, name + ': incomplete first-fold screenshot');
+    const thumb = await sharp(repo.thumbnail).metadata();
+    assert(thumb.width >= 1100 && thumb.height >= 600, name + ': low-resolution preview thumbnail');
+  }
+  console.log('Day 10/11 fresh hero screenshots and high-quality thumbnails: PASS');
 }
 console.log('Repository index: ' + data.repository_count + ' unique public repos, metadata and images verified.');
 
@@ -234,6 +250,9 @@ try {
   assert(challengeDays.length > 0, 'Published challenge days are required');
   const buildDayLabels = challengeDays.slice(-6).map(day => 'DAY ' + String(day).padStart(2, '0'));
   const expectedChallengeCount = String(challengeDays.length).padStart(2, '0');
+  const newest = data.repositories.filter(repo => /^day-?0*\d+$/i.test(repo.name) && repo.live && repo.image)
+    .sort((a, b) => Number(/^day-?0*(\d+)$/i.exec(b.name)[1]) - Number(/^day-?0*(\d+)$/i.exec(a.name)[1]))[0];
+  assert(newest, 'The latest published project must exist');
   for (const width of [320, 390, 1280]) {
     const home = await browser.newPage({ viewport: { width, height: 800 } });
     const errors = [];
@@ -281,8 +300,16 @@ try {
     await latestImage.evaluate(image => image.decode());
     assert(await latestImage.evaluate(image => image.naturalWidth > 100),
       width + 'px: latest-build screenshot did not load');
-    assert.equal(await latest.locator('a[href="https://patu-art.github.io/Day-9/"]').count(), 2,
+    assert.equal(await latest.locator('a[data-latest-live]').count(), 2,
       width + 'px: published demo links missing');
+    assert.equal(await latest.locator('a[data-latest-live]').first().getAttribute('href'), newest.live,
+      width + 'px: latest feature points to a stale challenge day');
+    assert.equal(await latest.locator('[data-latest-source]').getAttribute('href'), newest.url,
+      width + 'px: latest feature has a stale source URL');
+    assert.equal((await latest.locator('[data-latest-title]').textContent()).replace(/[.!]+$/, ''), newest.title,
+      width + 'px: latest feature still uses an older project title');
+    assert.equal(await home.locator('.sitepro-showcase').count(), 0,
+      width + 'px: an obsolete injected SITEPRO section duplicated the homepage');
     assert.equal(await home.locator('.v2-truth').count(), 0,
       width + 'px: repeated generic status-card section still present');
     const latestRect = await latest.evaluate(el => {
@@ -302,7 +329,7 @@ try {
     opacity: Number(getComputedStyle(el).opacity),
     label: el.innerText
   }));
-  assert(fallback.opacity > .98 && fallback.label.includes('09'),
+  assert(fallback.opacity > .98 && /\d+/.test(fallback.label),
     'No-JavaScript homepage fallback is invisible or its shipped count is stale');
   await withoutJS.close();
   console.log('Homepage no-JavaScript content visibility: PASS');

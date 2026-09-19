@@ -87,6 +87,8 @@ if (root) {
       live: safeURL(raw.live, 'live'),
       image: safeImage(raw.image),
       thumbnail: safeImage(raw.thumbnail),
+      preview_revision: String(raw.preview_revision || '').slice(0, 45),
+      preview_recipe: String(raw.preview_recipe || '').replace(/[^a-z0-9-]/gi, '').slice(0, 45),
       created_at: safeDate(raw.created_at),
       pushed_at: safeDate(raw.pushed_at)
     };
@@ -107,7 +109,9 @@ if (root) {
     picture.append(make('span', 'repo-slide__media-label', repo.image ? 'LIVE SITE PREVIEW' : 'PREVIEW PENDING'));
     if (repo.image) {
       const image = make('img');
-      image.dataset.src = repo.thumbnail || repo.image;
+      const previewURL = repo.thumbnail || repo.image;
+      const previewVersion = repo.preview_recipe + '-' + repo.preview_revision;
+      image.dataset.src = previewURL + (repo.preview_recipe ? '?v=' + encodeURIComponent(previewVersion) : '');
       image.alt = repo.title + ' website screenshot';
       image.width = 1365;
       image.height = 850;
@@ -354,6 +358,8 @@ if (root) {
             (repo.has_pages ? 'https://patu-art.github.io/' + encodeURIComponent(repo.name) + '/' : ''),
           image: old?.image || '',
           thumbnail: old?.thumbnail || '',
+          preview_revision: old?.preview_revision || '',
+          preview_recipe: old?.preview_recipe || '',
           created_at: repo.created_at || old?.created_at || ''
         };
       });

@@ -16,6 +16,20 @@
     },
     "new-home-invitation-": {
       "exclude": true
+    },
+    "Day-10": {
+      "title": "Kiku Hifi",
+      "selector": ".hero",
+      "readySelector": ".hero h1",
+      "capture": "viewport",
+      "thumbnailQuality": 82
+    },
+    "Day-11": {
+      "title": "Sandy's Smokeshed",
+      "selector": ".hero",
+      "readySelector": ".hero h1",
+      "capture": "viewport",
+      "thumbnailQuality": 82
     }
   },
   "notes": "Optional overrides for known project brands. For future repositories, the sync uses their GitHub name as the default title and automatically uses the public site's metadata for descriptions and screenshots."
