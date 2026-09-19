@@ -34,6 +34,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/sync-portfolio.mjs
+      - name: Validate synced repositories and responsive book carousel
+        run: |
+          node --check js/repo-carousel.js
+          node --check scripts/sync-portfolio.mjs
+          node scripts/test-portfolio.mjs
       - name: Publish updated repository index and screenshots
         run: |
           git add -A data/repos.json assets/images/repo-previews work
