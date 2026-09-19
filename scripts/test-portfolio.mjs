@@ -62,6 +62,21 @@ try {
     await page.locator('.repo-slide.is-current').waitFor({ timeout: 16000 });
     const slides = page.locator('.repo-slide');
     assert.equal(await slides.count(), data.repository_count, width + 'px: missing repository slides');
+    const chapterLabels = await page.locator('.repo-slide__eyebrow').allTextContents();
+    assert.equal(chapterLabels.length, data.repository_count, width + 'px: missing chapter labels');
+    chapterLabels.forEach((label, index) => {
+      const expected = 'CHAPTER ' + String(index + 1).padStart(2, '0') +
+        ' / ' + String(data.repository_count).padStart(2, '0');
+      assert(label.startsWith(expected), width + 'px: incorrect chapter counter: ' + label);
+      assert(!label.includes('[object Object]'), 'Array or object was rendered in chapter typography');
+    });
+    for (const [repoName, brand] of Object.entries({
+      'Day-7': "Hetherington's", 'Day-8':'Lane & Brew', 'Day-9':'Açaí Social Club'
+    })) {
+      const actual = await page.locator('.repo-slide[data-repo="' + repoName + '"] h3').textContent();
+      assert.equal(actual, brand, 'Brand name incorrect for ' + repoName);
+    }
+
     assert.equal(await page.locator('[data-repo-progress]').innerText(),
       '01 / ' + String(data.repository_count).padStart(2, '0'), 'Initial slide indicator incorrect');
     const book = page.locator('.repo-slide.is-current .repo-book');
