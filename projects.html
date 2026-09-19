@@ -21,7 +21,8 @@
 <link href="css/portfolio-v2.css" rel="stylesheet">
 <link href="css/repo-carousel.css?v=20260919-horizontal-book-v4" rel="stylesheet">
 <link href="css/coverflow-v5.css?v=20260919-editorial-v5" rel="stylesheet">
-<script defer src="js/main.js?v=20260919-editorial-v5"></script>
+<link href="css/projects-final.css?v=20260919-final-v1" rel="stylesheet">
+<script defer src="js/main.js?v=20260919-final-v1"></script>
 <title>Repository journey — Prathamesh Dhumal</title>
 </head>
 <body data-page="projects">
@@ -31,28 +32,27 @@
 <div data-component="header"></div>
 <main id="main">
 <section class="page-hero">
-<div class="page-hero__coord">GITHUB ARCHIVE / AUTO-SYNC</div>
+
 <div class="shell page-hero__grid">
-<div><p class="eyebrow" data-reveal>THE WORK / FROM FIRST BUILD TO NOW</p><h1 data-reveal="clip">A closer look at<br><em>every build.</em></h1></div>
-<div class="page-hero__aside" data-reveal="right"><p>Turn the pages of my public GitHub work. Each chapter includes the repository, its published website where available, and a screenshot of a specific live page section once the website is ready.</p><p><strong data-repository-count>12 PUBLIC REPOSITORIES</strong> · New public repositories appear automatically. The permanent archive and website screenshots refresh on a schedule.</p></div>
+<div><p class="eyebrow" data-reveal>SELECTED WORK / 100-DAY CHALLENGE & EXPERIMENTS</p><h1 data-reveal="clip">Built to be<br><em>explored.</em></h1></div>
+<div class="page-hero__aside" data-reveal="right"><p>Real websites, the decisions behind them, and the source code. Browse one project at a time.</p><p class="project-count"><strong data-repository-count>PUBLIC PROJECTS</strong> · Updated automatically from GitHub.</p></div>
 </div>
 </section>
 <section class="v2-section v2-section--paper" id="archive">
 <div class="shell">
-<div class="repo-intro"><div><p class="eyebrow">THE REPOSITORY JOURNEY</p><h2>Explore the <em>work in depth.</em></h2></div><p>Explore the highlighted project while the previous and next chapters remain in view. Swipe on your phone, choose a chapter below or use the arrow buttons.</p></div>
+
 <div class="repo-carousel" data-repo-carousel>
-<div class="repo-carousel__toolbar"><span class="repo-carousel__label">FIELD NOTES / 3D COVERFLOW →</span><div class="repo-carousel__actions"><button type="button" data-repo-prev aria-label="Previous repository" disabled>←</button><span class="repo-carousel__count" data-repo-progress aria-live="polite">01 / 12</span><button type="button" data-repo-next aria-label="Next repository">→</button></div></div>
-<div class="repo-carousel__progress" aria-hidden="true"><span data-repo-progress-bar></span></div>
+<div class="repo-carousel__toolbar"><span class="repo-carousel__label">PROJECT INDEX <span class="repo-carousel__desktop-hint">· SWIPE OR USE ARROWS</span></span><div class="repo-carousel__actions"><button type="button" data-repo-prev aria-label="Previous repository" disabled>←</button><span class="repo-carousel__count" data-repo-progress aria-live="polite">01 / 12</span><button type="button" data-repo-next aria-label="Next repository">→</button></div></div>
+
 <div class="repo-carousel__viewport" data-repo-viewport role="region" aria-roledescription="carousel" tabindex="0" aria-label="Horizontally scrolling GitHub repositories. Swipe sideways or use left and right arrow keys to navigate.">
 <div class="repo-carousel__track" data-repo-track><p class="repo-empty">Loading public repositories…</p></div>
 </div>
 <nav class="repo-rail" data-repo-rail aria-label="Choose a project chapter"></nav>
-<p class="repo-carousel__status" data-repo-status role="status">Opening the repository index…</p>
-<p class="repo-carousel__hint">Swipe or use ← → to browse · Select any chapter below · No automatic movement.</p>
+<p class="repo-carousel__status" data-repo-status role="status" aria-live="polite" hidden></p>
 </div>
 </div>
 </section>
-<section class="v2-section"><div class="shell v2-cta"><div><p class="eyebrow">ALL THE WORK, WITHOUT MANUAL UPDATES</p><h2>New repositories join the <em>journey.</em></h2><p>Repository titles, GitHub descriptions, code links and available demos are pulled from public GitHub data. Images are captured from published websites when their main sections are ready.</p></div><div class="v2-hero__actions"><a class="button button--paper" href="https://github.com/Patu-art?tab=repositories" target="_blank" rel="noopener noreferrer">See all GitHub repositories ↗</a><a class="button button--ghost" href="challenge.html">100 Days build log ↗</a></div></div></section>
+<div class="shell projects-outro"><a href="challenge.html">100 Days challenge ↗</a><a href="https://github.com/Patu-art?tab=repositories" target="_blank" rel="noopener noreferrer">All repositories on GitHub ↗</a></div>
 </main>
 <div data-component="footer"></div>
 </body>
