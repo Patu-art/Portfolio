@@ -60,6 +60,33 @@ try {
     await page.route('https://api.github.com/**', route => route.abort());
     await page.goto('http://127.0.0.1:' + port + '/projects.html', { waitUntil: 'domcontentloaded' });
     await page.locator('.repo-slide.is-current').waitFor({ timeout: 16000 });
+    await page.locator('[data-header] .desktop-nav').waitFor({ timeout: 9000, state:'attached' });
+    const hero = await page.locator('#projects-heading').evaluate(node => {
+      const r = node.getBoundingClientRect();
+      const style = getComputedStyle(node);
+      return {title:node.innerText,opacity:Number(style.opacity),visibility:style.visibility,
+        display:style.display,clip:style.clipPath,width:r.width,height:r.height,
+        left:r.left,right:r.right,top:r.top};
+    });
+    assert(hero.title.includes('Built to be') && hero.title.includes('explored'),
+      width + 'px: Projects hero title is missing');
+    assert(hero.opacity === 1 && hero.visibility === 'visible' && hero.display !== 'none' &&
+      hero.clip === 'none' && hero.width > 150 && hero.height > 75,
+      width + 'px: hero title is still invisible or fully clipped: ' + JSON.stringify(hero));
+    assert(hero.left >= -3 && hero.right <= width+3,
+      width + 'px: hero title overflows the screen: ' + JSON.stringify(hero));
+    const visual = page.locator('.projects-hero__visual img');
+    await visual.waitFor({state:'visible',timeout:7000});
+    await visual.evaluate(image => image.decode());
+    const visualLoaded = await visual.evaluate(image => image.naturalWidth > 100);
+    assert(visualLoaded,width + 'px: hero website screenshot failed to load');
+    const nav = await page.locator('[data-header]').evaluate(el => {
+      const rect=el.getBoundingClientRect();
+      return {height:rect.height,top:rect.top,visible:getComputedStyle(el).visibility};
+    });
+    assert(nav.height >= 50 && nav.top >= -2 && nav.visible === 'visible',
+      width + 'px: primary navigation isn't visible');
+
     const slides = page.locator('.repo-slide');
     const rail = page.locator('[data-repo-rail] button');
     assert.equal(await page.locator('.repo-carousel__progress').count(),0,'Duplicate progress bar was not removed');
