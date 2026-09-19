@@ -1,0 +1,47 @@
+name: Sync portfolio repositories and screenshots
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/sync-portfolio.yml'
+      - 'scripts/sync-portfolio.mjs'
+      - 'data/repo-preview-config.json'
+permissions:
+  contents: write
+concurrency:
+  group: portfolio-repository-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout portfolio
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install screenshot browser
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Sync public repositories and published websites
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/sync-portfolio.mjs
+      - name: Publish updated repository index and screenshots
+        run: |
+          git add -A data/repos.json assets/images/repo-previews work
+          if git diff --cached --quiet; then
+            echo 'No changes to publish'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Automatically refresh portfolio repositories and previews'
+          git push
