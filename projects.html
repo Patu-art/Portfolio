@@ -1,115 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://mtgsteiypoxudztltzpn.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"/>
-  <meta name="referrer" content="strict-origin-when-cross-origin"/>
-  <meta name="theme-color" content="#F3F5F9"/>
-  <meta name="description" content="Selected frontend projects and 100-Day Challenge builds by Prathamesh Dhumal."/>
-  <meta property="og:title" content="Projects — Prathamesh Dhumal"/>
-  <meta property="og:description" content="Shipped frontend builds, active challenge work and honest experiments."/>
-  <meta property="og:type" content="website"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <link href="css/variables.css" rel="stylesheet"/>
-  <link href="css/base.css" rel="stylesheet"/>
-  <link href="css/layout.css" rel="stylesheet"/>
-  <link href="css/components.css" rel="stylesheet"/>
-  <link href="css/animations.css" rel="stylesheet"/>
-  <link href="css/responsive.css" rel="stylesheet"/>
-  <link href="css/portfolio-v2.css" rel="stylesheet"/>
-  <script defer src="js/main.js?v=20260919a"></script>
-  <title>Projects — Prathamesh Dhumal</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://api.github.com https://mtgsteiypoxudztltzpn.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="theme-color" content="#F3F5F9">
+<meta name="description" content="Explore the public GitHub repositories of Prathamesh Dhumal, including the 100 Days website challenge, live frontend builds, source code and automatically captured website previews.">
+<meta property="og:title" content="GitHub work archive — Prathamesh Dhumal">
+<meta property="og:description" content="A scrollable journey through real public repositories, their published websites and source code.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="css/variables.css" rel="stylesheet">
+<link href="css/base.css" rel="stylesheet">
+<link href="css/layout.css" rel="stylesheet">
+<link href="css/components.css" rel="stylesheet">
+<link href="css/animations.css" rel="stylesheet">
+<link href="css/responsive.css" rel="stylesheet">
+<link href="css/portfolio-v2.css" rel="stylesheet">
+<link href="css/repo-carousel.css?v=20260919b" rel="stylesheet">
+<script defer src="js/main.js?v=20260919b"></script>
+<title>Repository journey — Prathamesh Dhumal</title>
 </head>
 <body data-page="projects">
-  <a class="skip-link" href="#main">Skip to content</a>
-  <div aria-hidden="true" class="site-loader"><div class="site-loader__mark">PD</div><div class="site-loader__line"><span></span></div></div>
-  <div aria-hidden="true" class="scroll-progress"><span></span></div>
-  <div aria-hidden="true" class="blueprint-grid"></div>
-  <div data-component="header"></div>
-
-  <main id="main">
-    <section class="page-hero">
-      <div class="page-hero__coord">PROJECT ARCHIVE / 2026</div>
-      <div class="shell page-hero__grid">
-        <div>
-          <p class="eyebrow" data-reveal>WORK / LEARNING IN PUBLIC</p>
-          <h1 data-reveal="clip">Built to be opened,<br><em>not just displayed.</em></h1>
-        </div>
-        <div class="page-hero__aside" data-reveal="right">
-          <p>These projects track my progression through real browser work: researching businesses, interpreting brands, building responsive interfaces, debugging interactions and shipping public deployments.</p>
-          <p><strong>Current record:</strong> 6 shipped challenge builds plus clearly labelled personal experiments.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="v2-section">
-      <div class="shell">
-        <div class="v2-proof" data-stagger>
-          <div><strong>06</strong><span>CHALLENGE BUILDS SHIPPED</span></div>
-          <div><strong>06</strong><span>DAYS IN THE CURRENT JOURNEY</span></div>
-          <div><strong>100</strong><span>DAY TARGET</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="v2-section v2-section--paper">
-      <div class="shell">
-        <div class="v2-section__head">
-          <div data-reveal>
-            <p class="eyebrow">SELECTED BUILDS</p>
-            <h2>Different businesses.<br><em>Different design decisions.</em></h2>
-          </div>
-          <p class="v2-section__intro" data-reveal="right">The point of the challenge is not to repeat one template 100 times. Each build should respond to the business, audience, available media and problems found during research.</p>
-        </div>
-
-        <div class="project-truth-strip" data-reveal>
-          <strong>STATUS KEY</strong>
-          <span>DAY 01–06 / SHIPPED</span>
-          <span>SELECTED SCREENSHOTS / COMING SOON</span>
-          <span>PERSONAL LAB / EXPERIMENT</span>
-        </div>
-
-        <div class="work-filter"><div class="work-filter__tabs" data-work-filters role="group" aria-label="Filter projects"><button type="button" data-filter="all" aria-pressed="true">All projects</button><button type="button" data-filter="challenge" aria-pressed="false">100 Days</button><button type="button" data-filter="personal" aria-pressed="false">Experiments</button></div><span class="work-filter__count" data-work-count aria-live="polite">Loading projects…</span></div><div class="work-grid" data-work-gallery aria-label="Project gallery"></div><p class="work-gallery-note">Six challenge builds are linked. Screenshots for some projects will be added as they become available; the live builds and case studies remain accessible.</p>
-      </div>
-    </section>
-
-    <section class="v2-section">
-      <div class="shell">
-        <div class="v2-section__head">
-          <div data-reveal>
-            <p class="eyebrow">THE PROGRESSION</p>
-            <h2>What changed from<br><em>Day 01 to Day 06.</em></h2>
-          </div>
-          <p class="v2-section__intro" data-reveal="right">The useful part is not the project count. It is whether the decisions become more disciplined from one build to the next.</p>
-        </div>
-        <div class="v2-skill-grid" data-stagger>
-          <article class="v2-skill-card"><span>DAY 01 / GULF MCR</span><h3>Brand atmosphere</h3><p>Focused on translating a Middle Eastern cafe identity into a responsive visual experience instead of using a generic restaurant layout.</p></article>
-          <article class="v2-skill-card"><span>DAY 02 / TASTEOLOGY</span><h3>Editorial interaction</h3><p>Pushed typography, food storytelling and carousel behavior while learning where visual ambition starts hurting mobile usability.</p></article>
-          <article class="v2-skill-card"><span>DAY 03 / ARTISTA PERFETTO</span><h3>Research discipline</h3><p>Used real business media, reduced decorative excess and strengthened information order, keyboard behavior and mobile QA.</p></article>
-          <article class="v2-skill-card"><span>DAY 04 / MOOR COFFEE</span><h3>Mobile composition</h3><p>Kept the cafe personality while treating the phone layout as its own composition rather than a compressed desktop page.</p></article>
-          <article class="v2-skill-card"><span>DAY 05 / SOMETHING MORE PRODUCTIVE</span><h3>Community hierarchy</h3><p>Organized events, social energy, local character and practical actions into a clearer content structure.</p></article>
-          <article class="v2-skill-card"><span>DAY 06 / ALWAYS THE SAME</span><h3>Context and clarity</h3><p>Made the daytime specialty-coffee identity, venue context, offering and visit information understandable without losing personality.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="v2-section v2-section--paper">
-      <div class="shell v2-cta" data-reveal>
-        <div>
-          <p class="eyebrow">100-DAY BUILD LOG</p>
-          <h2>See the challenge as a process,<br><em>not a completion counter.</em></h2>
-          <p>Six days are shipped. Day 07 gets a place only when Day 07 actually exists.</p>
-        </div>
-        <div class="v2-hero__actions">
-          <a class="button button--paper magnetic" href="challenge.html">Open 100 Days ↗</a>
-          <a class="button button--ghost magnetic" href="sitepro.html">SITEPRO preview ↗</a>
-        </div>
-      </div>
-    </section>
-  </main>
-  <div data-component="footer"></div>
+<a class="skip-link" href="#main">Skip to content</a>
+<div aria-hidden="true" class="site-loader"><div class="site-loader__mark">PD</div><div class="site-loader__line"><span></span></div></div>
+<div aria-hidden="true" class="scroll-progress"><span></span></div>
+<div data-component="header"></div>
+<main id="main">
+<section class="page-hero">
+<div class="page-hero__coord">GITHUB ARCHIVE / AUTO-SYNC</div>
+<div class="shell page-hero__grid">
+<div><p class="eyebrow" data-reveal>THE WORK / FROM FIRST BUILD TO NOW</p><h1 data-reveal="clip">One repository.<br><em>One chapter at a time.</em></h1></div>
+<div class="page-hero__aside" data-reveal="right"><p>Scroll down through my public GitHub work. Each chapter includes the repository, its published website where available, and a screenshot of a specific live page section once the website is ready.</p><p><strong data-repository-count>12 PUBLIC REPOSITORIES</strong> · New public repositories appear automatically. The permanent archive and website screenshots refresh on a schedule.</p></div>
+</div>
+</section>
+<section class="v2-section v2-section--paper" id="archive">
+<div class="shell">
+<div class="repo-intro"><div><p class="eyebrow">THE REPOSITORY JOURNEY</p><h2>Scroll to the <em>next build.</em></h2></div><p>Scroll or swipe inside the archive to move down one repository at a time. The page continues normally when you reach the end.</p></div>
+<div class="repo-carousel" data-repo-carousel>
+<div class="repo-carousel__toolbar"><span class="repo-carousel__label">LIVE WORK INDEX · SCROLL DOWN ↓</span><div class="repo-carousel__actions"><button type="button" data-repo-prev aria-label="Previous repository" disabled>↑</button><span class="repo-carousel__count" data-repo-progress aria-live="polite">01 / 12</span><button type="button" data-repo-next aria-label="Next repository">↓</button></div></div>
+<div class="repo-carousel__progress" aria-hidden="true"><span data-repo-progress-bar></span></div>
+<div class="repo-carousel__viewport" data-repo-viewport role="region" tabindex="0" aria-label="Vertically scrolling GitHub repositories. Use arrow keys, mouse wheel or swipe to navigate.">
+<div class="repo-carousel__track" data-repo-track><p class="repo-empty">Loading public repositories…</p></div>
+</div>
+<p class="repo-carousel__hint">Mouse wheel / swipe vertically / ↑ ↓ keyboard keys · Website screenshots appear when their published pages are ready.</p>
+</div>
+</div>
+</section>
+<section class="v2-section"><div class="shell v2-cta"><div><p class="eyebrow">ALL THE WORK, WITHOUT MANUAL UPDATES</p><h2>New repositories join the <em>journey.</em></h2><p>Repository titles, GitHub descriptions, code links and available demos are pulled from public GitHub data. Images are captured from published websites when their main sections are ready.</p></div><div class="v2-hero__actions"><a class="button button--paper" href="https://github.com/Patu-art?tab=repositories" target="_blank" rel="noopener noreferrer">See all GitHub repositories ↗</a><a class="button button--ghost" href="challenge.html">100 Days build log ↗</a></div></div></section>
+</main>
+<div data-component="footer"></div>
 </body>
 </html>
