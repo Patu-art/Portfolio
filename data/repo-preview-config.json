@@ -2,11 +2,18 @@
   "defaultSelector": "main > section:first-of-type",
   "repositories": {
     "Day-9": {
-      "selector": "main > section:first-of-type"
+      "selector": "main > section:first-of-type",
+      "title": "Açaí Social Club"
     },
     "Portfolio": {
       "selector": ".v2-hero"
+    },
+    "Day-7": {
+      "title": "Hetherington's"
+    },
+    "Day-8": {
+      "title": "Lane & Brew"
     }
   },
-  "notes": "For a new repository, no configuration is needed. Only add a selector when its published homepage needs a different screenshot area; add [data-portfolio-preview] to the desired section for automatic selection."
+  "notes": "Optional overrides for known project brands. For future repositories, the sync uses their GitHub name as the default title and automatically uses the public site's metadata for descriptions and screenshots."
 }
