@@ -1,0 +1,234 @@
+/* EDITORIAL COVERFLOW V5
+   The actual repository remains a readable two-page glass book. Adjacent chapters
+   are visible and tilted, so users can see there is more work to explore. No WebGL,
+   backdrop-filter animation, autoplay, full-screen pinning or background polling. */
+.repo-carousel {
+  --peek:clamp(45px,10%,140px);
+  --chapter-gap:clamp(10px,1.8vw,24px);
+  --spotlight-height:clamp(530px,calc(100dvh - var(--header-h,78px) - 92px),725px);
+  position:relative;
+  background:radial-gradient(ellipse at 50% 42%,rgba(129,159,167,.22),transparent 74%);
+}
+.repo-carousel .repo-carousel__viewport {
+  height:var(--spotlight-height);
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  scroll-snap-type:x mandatory !important;
+  scroll-padding-inline:var(--peek);
+  scroll-behavior:smooth;
+  overscroll-behavior-x:contain;
+  perspective:1400px;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.repo-carousel .repo-carousel__viewport::-webkit-scrollbar { display:none; }
+.repo-carousel .repo-carousel__track {
+  display:flex !important;
+  align-items:stretch;
+  box-sizing:border-box;
+  height:100%;
+  width:100%;
+  padding-inline:var(--peek);
+  gap:var(--chapter-gap);
+}
+.repo-carousel .repo-slide {
+  box-sizing:border-box;
+  flex:0 0 calc(100% - 2 * var(--peek));
+  width:calc(100% - 2 * var(--peek));
+  max-width:none;
+  min-width:0;
+  height:100%;
+  min-height:0 !important;
+  padding:17px 0 29px;
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+  overflow:visible;
+  transform-style:flat;
+  cursor:default;
+}
+.repo-carousel .repo-slide:not(.is-current) {
+  cursor:pointer;
+}
+.repo-carousel .repo-slide .repo-book {
+  width:100%;
+  min-height:0;
+  max-height:100%;
+  border:1px solid rgba(255,255,255,.85);
+  border-radius:19px;
+  overflow:hidden;
+  background:linear-gradient(132deg,rgba(255,255,255,.94),rgba(225,237,243,.93));
+  box-shadow:0 20px 55px rgba(29,59,70,.12),0 1px 1px rgba(255,255,255,.78) inset;
+  transform:perspective(1400px) translateZ(-22px) rotateY(0deg) scale(.98);
+  transform-origin:center center;
+  backface-visibility:hidden;
+  transition:transform .4s cubic-bezier(.22,.75,.2,1),box-shadow .35s,opacity .35s;
+}
+.repo-carousel .repo-slide.is-current .repo-book {
+  opacity:1;
+  transform:perspective(1400px) translateZ(0) rotateY(0) scale(1);
+  box-shadow:0 24px 57px rgba(29,59,70,.17),0 1px 1px rgba(255,255,255,.9) inset;
+}
+.repo-carousel .repo-slide.is-prev .repo-book {
+  transform:perspective(1400px) translate3d(14px,0,-110px) rotateY(19deg) scale(.95);
+  transform-origin:right center;
+  opacity:.83;
+}
+.repo-carousel .repo-slide.is-next .repo-book {
+  transform:perspective(1400px) translate3d(-14px,0,-110px) rotateY(-19deg) scale(.95);
+  transform-origin:left center;
+  opacity:.83;
+}
+.repo-carousel .repo-slide.is-far .repo-book {
+  opacity:.73;
+  transform:perspective(1400px) translateZ(-130px) scale(.91);
+}
+.repo-carousel .repo-slide .repo-book__spine {
+  opacity:.6;
+}
+.repo-carousel .repo-slide .repo-book__page--image,
+.repo-carousel .repo-slide .repo-book__page--text {
+  animation:none !important;
+  filter:none;
+}
+.repo-carousel .repo-slide .repo-book,
+.repo-carousel .repo-slide .repo-book__page--image,
+.repo-carousel .repo-slide .repo-book__page--text {
+  will-change:auto;
+}
+.repo-carousel .repo-slide .repo-slide__media-label {
+  border-radius:3px;
+  text-transform:uppercase;
+  letter-spacing:.045em;
+  font-size:8px;
+  background:rgba(249,251,253,.94);
+}
+.repo-carousel .repo-slide .repo-slide__body h3 {
+  text-wrap:balance;
+  font-size:clamp(32px,4vw,67px);
+}
+.repo-carousel .repo-slide .repo-slide__description {
+  -webkit-line-clamp:4;
+}
+.repo-carousel .repo-carousel__toolbar { padding-block:11px 17px; }
+.repo-carousel .repo-carousel__actions button {
+  width:46px; height:46px;
+}
+.repo-carousel .repo-carousel__progress {
+  max-width:190px;
+  margin-inline:auto;
+  margin-bottom:8px;
+  height:3px;
+}
+.repo-carousel .repo-rail {
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-top:12px;
+  padding:6px 0 9px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:thin;
+  scrollbar-color:#b5c8d0 transparent;
+}
+.repo-carousel .repo-rail button {
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  min-height:43px;
+  border:1px solid rgba(82,111,121,.21);
+  border-radius:999px;
+  padding:10px 13px;
+  color:#526f79;
+  background:rgba(255,255,255,.72);
+  cursor:pointer;
+  font:600 10px/1.25 "JetBrains Mono",monospace;
+  transition:background .16s,color .16s,border-color .16s;
+}
+.repo-carousel .repo-rail button .repo-rail__title {
+  font:600 11px/1.25 "Inter",sans-serif;
+  max-width:150px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.repo-carousel .repo-rail button[aria-current="true"] {
+  background:#17242a;
+  border-color:#17242a;
+  color:#fff;
+}
+.repo-carousel .repo-rail button:hover:not([aria-current="true"]) {
+  background:#e3eef2;
+  border-color:#819fa7;
+}
+.repo-carousel .repo-rail button:focus-visible,
+.repo-carousel .repo-slide:not(.is-current):focus-visible {
+  outline:3px solid #819fa7;
+  outline-offset:3px;
+}
+.repo-carousel .repo-carousel__hint { text-align:center; }
+/* The core gallery is usable without a powerful GPU; reduce side rotation on
+   tablets and make the central book full-width where reading needs priority. */
+@media(max-width:900px) {
+  .repo-carousel { --peek:clamp(27px,6.5%,65px); --chapter-gap:12px; }
+  .repo-carousel .repo-slide.is-prev .repo-book {
+    transform:perspective(1100px) translateZ(-50px) rotateY(10deg) scale(.97);
+  }
+  .repo-carousel .repo-slide.is-next .repo-book {
+    transform:perspective(1100px) translateZ(-50px) rotateY(-10deg) scale(.97);
+  }
+}
+@media(max-width:700px) {
+  .repo-carousel {
+    --peek:clamp(15px,4.5%,25px);
+    --chapter-gap:8px;
+    --spotlight-height:clamp(440px,78dvh,710px);
+  }
+  .repo-carousel .repo-slide { padding:7px 0 17px; }
+  .repo-carousel .repo-slide .repo-book {
+    border-radius:14px;
+    max-height:100%;
+    transform:none;
+    transition:box-shadow .2s,opacity .2s;
+  }
+  .repo-carousel .repo-slide.is-current .repo-book,
+  .repo-carousel .repo-slide.is-prev .repo-book,
+  .repo-carousel .repo-slide.is-next .repo-book,
+  .repo-carousel .repo-slide.is-far .repo-book {
+    transform:none;
+    opacity:1;
+  }
+  .repo-carousel .repo-book__page--image { max-height:205px; }
+  .repo-carousel .repo-slide__media > img { min-height:0; max-height:205px; }
+  .repo-carousel .repo-book__page--text { padding:clamp(15px,3.7vw,23px); gap:10px; }
+  .repo-carousel .repo-slide .repo-slide__body h3 { font-size:clamp(28px,8vw,41px); }
+  .repo-carousel .repo-slide .repo-slide__description {
+    font-size:12px;
+    -webkit-line-clamp:4;
+  }
+  .repo-carousel .repo-carousel__label { max-width:150px; }
+  .repo-carousel .repo-rail button { min-height:44px; padding:9px 12px; }
+}
+@media(max-width:375px), (max-height:600px) and (max-width:700px) {
+  .repo-carousel { --spotlight-height:clamp(440px,90dvh,680px); }
+  .repo-carousel .repo-book__page--image { max-height:155px; }
+  .repo-carousel .repo-slide__media > img { max-height:155px; }
+  .repo-carousel .repo-slide .repo-slide__description { -webkit-line-clamp:3; }
+  .repo-carousel .repo-slide .repo-slide__body h3 { font-size:clamp(25px,7.2vw,34px); }
+}
+/* Keep reading and navigation usable even on 2GB machines and for people who
+   request less motion. No automatic movement, animated blur, or animated images. */
+@media(prefers-reduced-motion:reduce) {
+  .repo-carousel .repo-carousel__viewport { scroll-behavior:auto !important; }
+  .repo-carousel .repo-slide .repo-book,
+  .repo-carousel .repo-slide.is-current .repo-book,
+  .repo-carousel .repo-slide.is-prev .repo-book,
+  .repo-carousel .repo-slide.is-next .repo-book,
+  .repo-carousel .repo-slide.is-far .repo-book {
+    transform:none !important;
+    transition:none !important;
+    animation:none !important;
+    opacity:1 !important;
+  }
+  .repo-carousel .repo-rail button { transition:none !important; }
+}
