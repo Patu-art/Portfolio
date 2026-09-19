@@ -1,3 +1,5 @@
+/* Glass Book: an accessible, one-repository-per-page vertical carousel.
+   The checked-in index is the reliable first paint; live GitHub is progressive. */
 const root = document.querySelector('[data-repo-carousel]');
 if (root) {
   const OWNER = 'Patu-art';
@@ -8,203 +10,310 @@ if (root) {
   const progress = root.querySelector('[data-repo-progress]');
   const progressBar = root.querySelector('[data-repo-progress-bar]');
   const count = document.querySelector('[data-repository-count]');
+  const status = root.querySelector('[data-repo-status]');
   let slides = [];
-  let current = 0;
-  let frame = 0;
+  let activeIndex = 0;
+  let activeName = '';
+  let lastSignature = '';
+  let ticking = false;
+  let scrollLockUntil = 0;
+  let wheelLockUntil = 0;
 
-  const create = (tag, className = '', text) => {
+  const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const make = (tag, className = '', content) => {
     const node = document.createElement(tag);
     if (className) node.className = className;
-    if (text !== undefined) node.textContent = text;
+    if (content !== undefined) node.textContent = String(content);
     return node;
   };
-
-  const titleCase = (name) => name.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
-
-  const screenshotFallback = (repo) => {
-    const box = create('div', 'repo-slide__missing');
-    box.append(create('span', '', 'FIELD NOTES / PREVIEW PENDING'),
-      create('strong', '', repo.title || titleCase(repo.name)),
-      create('span', '', repo.live ? 'Live build available ↗' : 'View repository ↗'));
+  const titleCase = (name) => String(name).replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const safeDate = (value) => typeof value === 'string' ? value : '';
+  const repoName = (value) => /^[a-z0-9_.-]{1,100}$/i.test(value || '') ? value : '';
+  const safeURL = (value, type) => {
+    try {
+      const url = new URL(value);
+      if (url.protocol !== 'https:') return '';
+      if (type === 'source') return url.hostname === 'github.com' &&
+        url.pathname.startsWith('/' + OWNER + '/') ? url.href : '';
+      if (type === 'image') return '';
+      return url.href;
+    } catch { return ''; }
+  };
+  const safeImage = (value) => typeof value === 'string' &&
+    /^assets\/images\/repo-previews\/[A-Za-z0-9_.-]+\.png$/.test(value) ? value : '';
+  const fallback = (repo) => {
+    const box = make('div', 'repo-slide__missing');
+    box.append(make('span', '', 'PROJECT / FIELD NOTES'),
+      make('strong', '', repo.title || titleCase(repo.name)),
+      make('span', '', repo.live ? 'WEBSITE LIVE · SCREENSHOT PENDING' : 'SOURCE AVAILABLE'));
     return box;
   };
+  const action = (label, url, primary = false) => {
+    const anchor = make('a', 'repo-slide__link' + (primary ? ' repo-slide__link--primary' : ''), label);
+    anchor.href = url;
+    anchor.target = '_blank';
+    anchor.rel = 'noopener noreferrer';
+    return anchor;
+  };
+  const dayNumber = (repo) => {
+    const match = repo.name.match(/^day-?0*(\d+)$/i);
+    return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
+  };
+  const order = (items) => [...items].sort((a, b) =>
+    dayNumber(a) - dayNumber(b) || safeDate(b.created_at).localeCompare(safeDate(a.created_at)));
 
-  function sourceLink(text, url) {
-    const link = create('a', 'repo-slide__link', text);
-    link.href = url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    return link;
+  function normalize(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    const name = repoName(raw.name);
+    const url = safeURL(raw.url, 'source');
+    if (!name || !url || raw.is_fork || raw.fork || raw.archived || raw.private) return null;
+    return {
+      name,
+      title: String(raw.title || titleCase(name)).slice(0, 100),
+      description: String(raw.description || 'Open the repository for project details.').slice(0, 320),
+      language: String(raw.language || 'PROJECT').slice(0, 35),
+      url,
+      live: safeURL(raw.live, 'live'),
+      image: safeImage(raw.image),
+      created_at: safeDate(raw.created_at),
+      pushed_at: safeDate(raw.pushed_at)
+    };
   }
 
   function makeSlide(repo, index, total) {
-    const slide = create('section', 'repo-slide');
+    const slide = make('section', 'repo-slide');
     slide.id = 'repo-' + repo.name.replace(/[^a-z0-9-]/gi, '-');
     slide.dataset.repo = repo.name;
-    slide.setAttribute('aria-label', (index + 1) + ' of ' + total + ': ' + (repo.title || repo.name));
+    slide.setAttribute('aria-label', (index + 1) + ' of ' + total + ': ' + repo.title);
 
-    const card = create('article', 'repo-slide__card');
-    const picture = create('div', 'repo-slide__media');
-    const mediaLabel = create('div', 'repo-slide__media-label', repo.image ? 'WEBSITE CAPTURE' : 'WEBSITE CAPTURE PENDING');
-    picture.append(mediaLabel);
+    const book = make('article', 'repo-slide__card repo-book');
+    const spine = make('div', 'repo-book__spine');
+    spine.setAttribute('aria-hidden', 'true');
+    const picture = make('div', 'repo-slide__media repo-book__page repo-book__page--image');
+    picture.append(make('span', 'repo-slide__media-label', repo.image ? 'CAPTURED FROM THE LIVE WEBSITE' : 'WEBSITE PREVIEW PENDING'));
     if (repo.image) {
-      const image = create('img');
+      const image = make('img');
       image.src = repo.image;
-      image.alt = (repo.title || repo.name) + ' published website preview';
-      image.loading = index < 2 ? 'eager' : 'lazy';
-      image.decoding = 'async';
+      image.alt = repo.title + ' website screenshot';
       image.width = 1365;
       image.height = 850;
-      image.addEventListener('error', () => image.replaceWith(screenshotFallback(repo)), { once: true });
+      image.loading = index < 2 ? 'eager' : 'lazy';
+      image.decoding = 'async';
+      image.addEventListener('error', () => {
+        picture.querySelector('.repo-slide__media-label').textContent = 'WEBSITE PREVIEW PENDING';
+        image.replaceWith(fallback(repo));
+      }, { once: true });
       picture.append(image);
-    } else picture.append(screenshotFallback(repo));
+    } else picture.append(fallback(repo));
 
-    const body = create('div', 'repo-slide__body');
-    const label = create('p', 'repo-slide__eyebrow',
-      String(index + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0') +
-      '  ·  ' + (repo.language || 'PROJECT').toUpperCase());
-    const title = create('h3', '', repo.title || titleCase(repo.name));
-    const description = create('p', 'repo-slide__description',
-      repo.description || 'Project details are available in the GitHub repository.');
-    const details = create('div', 'repo-slide__facts');
-    details.append(create('span', '', 'GITHUB / ' + repo.name),
-      create('span', '', repo.live ? 'PUBLISHED WEBSITE' : 'SOURCE CODE'));
-    const links = create('div', 'repo-slide__links');
-    if (repo.live) links.append(sourceLink('Open website ↗', repo.live));
-    links.append(sourceLink('GitHub repository ↗', repo.url));
-    body.append(label, title, description, details, links);
-    card.append(picture, body);
-    slide.append(card);
+    const body = make('div', 'repo-slide__body repo-book__page repo-book__page--text');
+    body.append(make('p', 'repo-slide__eyebrow',
+      'CHAPTER ' + String(index + 1).padStart(2, '0') + ' / ' +
+      String(total).padStart(2, '0') + ' · ' + repo.language.toUpperCase()));
+    body.append(make('h3', '', repo.title));
+    body.append(make('p', 'repo-slide__description', repo.description));
+    const facts = make('div', 'repo-slide__facts');
+    facts.append(make('span', '', 'GITHUB / ' + repo.name),
+      make('span', '', repo.live ? 'PUBLISHED WEBSITE' : 'SOURCE CODE'));
+    body.append(facts);
+    const links = make('div', 'repo-slide__links');
+    if (repo.live) links.append(action('Explore live site ↗', repo.live, true));
+    links.append(action('View GitHub ↗', repo.url, !repo.live));
+    body.append(links);
+    book.append(spine, picture, body);
+    slide.append(book);
     return slide;
   }
 
-  function orderRepos(items) {
-    return [...items].sort((a, b) => {
-      const day = (repo) => {
-        const match = repo.name.match(/^day-?0*(\d+)$/i);
-        return match ? Number(match[1]) : Infinity;
-      };
-      return day(a) - day(b) || (b.created_at || '').localeCompare(a.created_at || '');
-    });
-  }
-
-  function updateActive(index) {
+  function updateActive(index, direction = 0) {
     if (!slides.length) return;
-    current = Math.max(0, Math.min(index, slides.length - 1));
-    slides.forEach((slide, position) => {
-      const active = position === current;
-      slide.classList.toggle('is-current', active);
-      slide.setAttribute('aria-current', String(active));
+    const next = Math.max(0, Math.min(index, slides.length - 1));
+    if (next !== activeIndex) {
+      slides[activeIndex]?.classList.remove('is-current');
+      slides[activeIndex]?.classList.add('is-past');
+      activeIndex = next;
+      if (direction) {
+        slides[activeIndex].classList.remove('turn-forward', 'turn-backward');
+        void slides[activeIndex].offsetWidth; // restart the new page-turn only on real changes
+        slides[activeIndex].classList.add(direction > 0 ? 'turn-forward' : 'turn-backward');
+      }
+    }
+    activeName = slides[activeIndex].dataset.repo;
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('is-current', i === activeIndex);
+      slide.classList.toggle('is-past', i < activeIndex);
+      slide.setAttribute('aria-current', String(i === activeIndex));
     });
-    progress.textContent = String(current + 1).padStart(2, '0') + ' / ' +
+    progress.textContent = String(activeIndex + 1).padStart(2, '0') + ' / ' +
       String(slides.length).padStart(2, '0');
-    progressBar.style.width = ((current + 1) / slides.length * 100) + '%';
-    previousButton.disabled = current === 0;
-    nextButton.disabled = current === slides.length - 1;
+    progressBar.style.width = (100 * (activeIndex + 1) / slides.length) + '%';
+    previousButton.disabled = activeIndex === 0;
+    nextButton.disabled = activeIndex === slides.length - 1;
   }
 
-  function navigate(index) {
-    const target = slides[Math.max(0, Math.min(index, slides.length - 1))];
-    if (!target) return;
-    const top = target.offsetTop - slides[0].offsetTop;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    viewport.scrollTo({ top, behavior: reduced ? 'instant' : 'smooth' });
-    updateActive(slides.indexOf(target));
+  function slideTop(index) {
+    return slides[index].getBoundingClientRect().top -
+      slides[0].getBoundingClientRect().top;
+  }
+  function goTo(index, animate = true) {
+    if (!slides.length) return;
+    const targetIndex = Math.max(0, Math.min(index, slides.length - 1));
+    const direction = Math.sign(targetIndex - activeIndex);
+    if (!direction && animate) return;
+    const top = slideTop(targetIndex);
+    updateActive(targetIndex, animate ? direction : 0);
+    scrollLockUntil = performance.now() + (prefersReducedMotion() || !animate ? 80 : 650);
+    viewport.scrollTo({ top, behavior: !animate || prefersReducedMotion() ? 'instant' : 'smooth' });
   }
 
-  previousButton.addEventListener('click', () => navigate(current - 1));
-  nextButton.addEventListener('click', () => navigate(current + 1));
+  previousButton.addEventListener('click', () => goTo(activeIndex - 1));
+  nextButton.addEventListener('click', () => goTo(activeIndex + 1));
   viewport.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowDown' || event.key === 'PageDown') {
-      event.preventDefault(); navigate(current + 1);
-    } else if (event.key === 'ArrowUp' || event.key === 'PageUp') {
-      event.preventDefault(); navigate(current - 1);
-    } else if (event.key === 'Home') {
-      event.preventDefault(); navigate(0);
-    } else if (event.key === 'End') {
-      event.preventDefault(); navigate(slides.length - 1);
+    const key = event.key;
+    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End'].includes(key)) {
+      if (event.target.closest('a, button')) return;
+      event.preventDefault();
+      const target = key === 'Home' ? 0 : key === 'End' ? slides.length - 1 :
+        activeIndex + (key === 'ArrowDown' || key === 'PageDown' ? 1 : -1);
+      goTo(target);
     }
   });
+  viewport.addEventListener('wheel', (event) => {
+    if (event.ctrlKey || event.shiftKey || !slides.length ||
+        Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+    const delta = Math.sign(event.deltaY);
+    if ((delta < 0 && activeIndex === 0) ||
+        (delta > 0 && activeIndex === slides.length - 1)) return; // let document continue
+    if (event.cancelable) event.preventDefault();
+    const now = performance.now();
+    if (now < wheelLockUntil) return;
+    wheelLockUntil = now + (prefersReducedMotion() ? 220 : 700);
+    goTo(activeIndex + delta);
+  }, { passive: false });
+
   viewport.addEventListener('scroll', () => {
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(() => {
-      if (!slides.length) return;
-      const start = slides[0].offsetTop;
+    if (ticking || !slides.length) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      if (performance.now() < scrollLockUntil) return;
+      const target = viewport.getBoundingClientRect().top;
       const closest = slides.reduce((best, slide, index) => {
-        const distance = Math.abs((slide.offsetTop - start) - viewport.scrollTop);
+        const distance = Math.abs(slide.getBoundingClientRect().top - target);
         return distance < best.distance ? { index, distance } : best;
       }, { index: 0, distance: Infinity });
-      updateActive(closest.index);
+      if (closest.index !== activeIndex)
+        updateActive(closest.index, Math.sign(closest.index - activeIndex));
     });
   }, { passive: true });
 
   function show(items) {
-    if (!items.length) {
-      track.replaceChildren(create('p', 'repo-empty', 'Repositories are temporarily unavailable.'));
+    const seen = new Set();
+    const clean = order(items.map(normalize).filter(repo => {
+      if (!repo || seen.has(repo.name.toLowerCase())) return false;
+      seen.add(repo.name.toLowerCase());
+      return true;
+    }));
+    if (!clean.length) {
+      if (!slides.length) {
+        track.replaceChildren(make('p', 'repo-empty',
+          'Repository information is temporarily unavailable. Open GitHub to browse the work.'));
+        previousButton.disabled = true;
+        nextButton.disabled = true;
+        if (status) status.textContent = 'Repository data unavailable';
+      }
       return;
     }
-    const ordered = orderRepos(items);
-    slides = ordered.map((repo, index) => makeSlide(repo, index, ordered.length));
+    const signature = JSON.stringify(clean);
+    if (signature === lastSignature) return; // prevent jumping to the first slide during live refresh
+    lastSignature = signature;
+    const focused = track.contains(document.activeElement) ?
+      { repo: document.activeElement.closest('[data-repo]')?.dataset.repo,
+        href: document.activeElement.getAttribute('href') } : null;
+    const retainName = activeName;
+    slides = clean.map(makeSlide);
     track.replaceChildren(...slides);
-    if (count) count.textContent = ordered.length + ' PUBLIC REPOSITORIES';
-    viewport.scrollTop = 0;
-    updateActive(0);
+    if (count) count.textContent = clean.length + ' PUBLIC REPOSITORIES';
+    const keep = Math.max(0, clean.findIndex(repo => repo.name === retainName));
+    activeIndex = keep;
+    updateActive(keep);
+    requestAnimationFrame(() => goTo(keep, false));
+    if (focused?.repo) {
+      const oldLink = [...track.querySelectorAll('a')].find(anchor =>
+        anchor.closest('[data-repo]')?.dataset.repo === focused.repo &&
+        anchor.getAttribute('href') === focused.href);
+      oldLink?.focus({ preventScroll: true });
+    }
+    if (status) status.textContent = 'Repository archive ready';
   }
 
   async function loadStored() {
     const response = await fetch('data/repos.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error('Repository index unavailable: ' + response.status);
+    if (!response.ok) throw new Error('Saved repository index: HTTP ' + response.status);
     const data = await response.json();
-    return Array.isArray(data.repositories) ? data.repositories : [];
+    if (!Array.isArray(data.repositories)) throw new Error('Invalid saved repository index');
+    return data.repositories;
   }
-
-  async function loadPublicLive(existing) {
-    // Immediate discovery of newly created public repositories; scheduled Actions
-    // creates their permanent HTML metadata and screenshot later.
-    const response = await fetch('https://api.github.com/users/' + OWNER +
-      '/repos?per_page=100&type=owner&sort=created', { headers: { Accept: 'application/vnd.github+json' } });
-    if (!response.ok) throw new Error('Public GitHub API rate limit / network error: ' + response.status);
-    const apiRepos = await response.json();
-    if (!Array.isArray(apiRepos)) throw new Error('Unexpected GitHub API response');
-    const known = new Map(existing.map((repo) => [repo.name.toLowerCase(), repo]));
-    const list = [];
-    for (const repo of apiRepos) {
-      if (repo.private || repo.fork || repo.archived) continue;
-      const old = known.get(repo.name.toLowerCase());
-      const live = repo.homepage && /^https:\/\//i.test(repo.homepage) ? repo.homepage :
-        (repo.has_pages ? 'https://patu-art.github.io/' + encodeURIComponent(repo.name) + '/' : '');
-      list.push({
-        ...old,
-        name: repo.name,
-        title: old?.title || titleCase(repo.name),
-        description: repo.description?.trim() || old?.description ||
-          'Project information will appear after its website or GitHub description is published.',
-        language: repo.language || old?.language || '',
-        url: repo.html_url,
-        live: live || old?.live || '',
-        image: old?.image || '',
-        created_at: repo.created_at || old?.created_at || ''
+  async function loadLive(stored) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 7500);
+    let response;
+    try {
+      response = await fetch('https://api.github.com/users/' + OWNER +
+        '/repos?type=owner&per_page=100&sort=created', {
+        headers: { Accept: 'application/vnd.github+json' },
+        signal: controller.signal
       });
+    } finally {
+      clearTimeout(timeout);
     }
-    // Retain indexed repos if GitHub's public user listing has not indexed them yet.
-    // The scheduled sync removes deleted repos from the saved index on a later run.
-    const seen = new Set(list.map((repo) => repo.name.toLowerCase()));
-    for (const cached of existing) {
-      if (!seen.has(cached.name.toLowerCase())) list.push(cached);
+    if (!response.ok) throw new Error('GitHub API: HTTP ' + response.status);
+    const result = await response.json();
+    if (!Array.isArray(result)) throw new Error('Unexpected GitHub API response');
+    const indexed = new Map(stored.map(repo => [String(repo.name).toLowerCase(), repo]));
+    const live = result.filter(repo => repo && !repo.private && !repo.fork && !repo.archived)
+      .map(repo => {
+        const old = indexed.get(String(repo.name).toLowerCase());
+        // Keep existing curated project title and image; use the latest GitHub description.
+        return {
+          ...old, name: repo.name,
+          title: old?.title || titleCase(repo.name),
+          description: repo.description?.trim() || old?.description || '',
+          language: repo.language || old?.language || 'PROJECT',
+          url: 'https://github.com/' + OWNER + '/' + encodeURIComponent(repo.name),
+          live: repo.homepage?.startsWith('https://') ? repo.homepage :
+            (repo.has_pages ? 'https://patu-art.github.io/' + encodeURIComponent(repo.name) + '/' : ''),
+          image: old?.image || '',
+          created_at: repo.created_at || old?.created_at || ''
+        };
+      });
+    // GitHub user listing may lag for new public repos. Retain *verified* cached
+    // entries only. Do not leak a repo made private by blindly keeping old data.
+    for (const old of stored) {
+      if (live.some(repo => repo.name.toLowerCase() === String(old.name).toLowerCase())) continue;
+      try {
+        const response = await fetch('https://api.github.com/repos/' + OWNER + '/' +
+          encodeURIComponent(old.name), { headers: { Accept: 'application/vnd.github+json' } });
+        if (!response.ok) continue;
+        const repo = await response.json();
+        if (!repo.private && !repo.fork && !repo.archived && repo.owner?.login?.toLowerCase() === OWNER.toLowerCase())
+          live.push({ ...old, url: repo.html_url });
+      } catch { /* do not show an unverified missing repo */ }
     }
-    return list;
+    return live;
   }
 
-  loadStored().catch((error) => {
-    console.warn('Using live repository discovery because the saved list failed.', error);
+  loadStored().catch(error => {
+    console.warn('Saved archive unavailable; checking GitHub.', error);
     return [];
-  }).then(async (stored) => {
+  }).then(async stored => {
     if (stored.length) show(stored);
     try {
-      const latest = await loadPublicLive(stored);
+      const latest = await loadLive(stored);
       if (latest.length) show(latest);
+      else if (!stored.length) show([]);
     } catch (error) {
-      console.warn('Live GitHub discovery unavailable; saved list remains visible.', error);
+      console.warn('GitHub refresh unavailable; retaining saved project data.', error);
       if (!stored.length) show([]);
     }
   });
