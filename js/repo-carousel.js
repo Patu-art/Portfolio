@@ -247,7 +247,7 @@ if (root) {
       { repo: document.activeElement.closest('[data-repo]')?.dataset.repo,
         href: document.activeElement.getAttribute('href') } : null;
     const retainName = activeName;
-    slides = clean.map(makeSlide);
+    slides = clean.map((repo, index) => makeSlide(repo, index, clean.length));
     track.replaceChildren(...slides);
     refreshOffsets();
     if (count) count.textContent = clean.length + ' PUBLIC REPOSITORIES';
