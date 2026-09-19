@@ -61,7 +61,10 @@ function titleFor(repo) {
 
 async function captureSite(browser, repo, config, previous) {
   const output = { image: previous?.image || '', preview_revision: previous?.preview_revision || '',
-    preview_source: previous?.preview_source || '', site_description: previous?.site_description || '' };
+    preview_source: previous?.preview_source || '', preview_recipe: previous?.preview_recipe || '',
+    site_description: previous?.site_description || '' };
+  const viewportCapture = config?.capture === 'viewport';
+  const previewRecipe = viewportCapture ? 'viewport-1365x768-v2' : 'section-v1';
   const url = siteUrl(repo, config);
   if (!url) return output;
   const filename = path.join(PREVIEW_DIR, safeName(repo.name) + '.png');
@@ -70,9 +73,10 @@ async function captureSite(browser, repo, config, previous) {
   if (!previousImageExists) output.image = '';
   const temporary = filename.replace(/\.png$/i, '.pending.png');
   if (alreadyCaptured && previous?.preview_revision === repo.pushed_at &&
-      previous?.preview_source === 'automatic') return output;
+      previous?.preview_source === 'automatic' &&
+      (!viewportCapture || previous?.preview_recipe === previewRecipe)) return output;
 
-  const page = await browser.newPage({ viewport: { width: 1365, height: 900 }, deviceScaleFactor: 1 });
+  const page = await browser.newPage({ viewport: { width: 1365, height: viewportCapture ? 768 : 900 }, deviceScaleFactor: 1 });
   try {
     const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 25000 });
     if (!response || response.status() !== 200) throw new Error('Website not published: HTTP ' + (response?.status() ?? 'no response'));
@@ -115,18 +119,27 @@ async function captureSite(browser, repo, config, previous) {
     ))).catch(() => {});
     await fs.mkdir(PREVIEW_DIR, { recursive: true });
     const bounds = await target.boundingBox();
-    if (bounds?.height > 1700) {
+    if (viewportCapture) {
+      // The actual first fold includes the logo, header, hero photograph and headline.
+      // A tall hero element screenshot otherwise crops out the brand or shows only text.
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+      await page.screenshot({ path: temporary, fullPage: false, animations: 'disabled', timeout: 16000 });
+    } else if (bounds?.height > 1700) {
       await page.screenshot({ path: temporary, fullPage: false, animations: 'disabled', timeout: 16000 });
     } else {
       await target.screenshot({ path: temporary, animations: 'disabled', timeout: 16000 });
     }
+    const shot = await sharp(temporary).metadata();
+    if (shot.width < 900 || shot.height < 500)
+      throw new Error('Screenshot has invalid dimensions: ' + shot.width + 'x' + shot.height);
     // Publish only a complete, successful capture. Interrupted work never
     // replaces the previous good image or commits a partial screenshot.
     await fs.rename(temporary, filename);
     output.image = filename.split(path.sep).join('/');
     output.preview_revision = repo.pushed_at || '';
     output.preview_source = 'automatic';
-    console.log('Captured ' + repo.name + ' area: ' + selectors.find(Boolean));
+    output.preview_recipe = previewRecipe;
+    console.log('Captured ' + repo.name + ' as ' + shot.width + 'x' + shot.height + ' (' + previewRecipe + ')');
   } catch (error) {
     console.warn('Screenshot pending for ' + repo.name + ': ' + error.message);
   } finally {
@@ -139,7 +152,7 @@ async function captureSite(browser, repo, config, previous) {
 // Save the original PNG for per-repo HTML and Open Graph, but deliver a small
 // 900px WebP to the interactive carousel. All compression runs on GitHub,
 // not on visitors' devices. Never publish a partially written thumbnail.
-async function makeThumbnail(imagePath, name) {
+async function makeThumbnail(imagePath, name, config = {}) {
   if (!imagePath || !/^assets\/images\/repo-previews\/[A-Za-z0-9_.-]+\.png$/.test(imagePath)) return '';
   const output = path.join(PREVIEW_DIR, safeName(name) + '.webp');
   const temporary = path.join(PREVIEW_DIR, safeName(name) + '.pending.webp');
@@ -147,8 +160,11 @@ async function makeThumbnail(imagePath, name) {
     const inputStat = await fs.stat(imagePath);
     const previous = await fs.stat(output).catch(() => null);
     if (!previous || previous.mtimeMs < inputStat.mtimeMs) {
-      await sharp(imagePath).rotate().resize({ width:900, withoutEnlargement:true })
-        .webp({ quality:67, effort:4 }).toFile(temporary);
+      const quality = Number.isInteger(config.thumbnailQuality) && config.thumbnailQuality >= 67 &&
+        config.thumbnailQuality <= 85 ? config.thumbnailQuality : 67;
+      const width = config.capture === 'viewport' ? 1200 : 900;
+      await sharp(imagePath).rotate().resize({ width, withoutEnlargement:true })
+        .webp({ quality, effort:4 }).toFile(temporary);
       await fs.rename(temporary, output);
     }
     return output.split(path.sep).join('/');
@@ -237,7 +253,7 @@ try {
     const screenshotRepo = repo.name === 'Portfolio' && portfolioContentRevision ?
       { ...repo, pushed_at: portfolioContentRevision } : repo;
     const preview = await captureSite(browser, screenshotRepo, override, old);
-    const thumbnail = await makeThumbnail(preview.image, repo.name);
+    const thumbnail = await makeThumbnail(preview.image, repo.name, override);
     const description = (repo.description?.trim() || preview.site_description ||
       old?.site_description || 'Repository by Prathamesh Dhumal. Open GitHub for project details.').slice(0, 300);
     collected.push({
@@ -256,6 +272,7 @@ try {
       archived: false,
       preview_revision: preview.preview_revision,
       preview_source: preview.preview_source,
+      preview_recipe: preview.preview_recipe,
       site_description: preview.site_description
     });
   }
