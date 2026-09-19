@@ -17,7 +17,14 @@ if (root) {
   let lastSignature = '';
   let ticking = false;
   let scrollLockUntil = 0;
-  let wheelLockUntil = 0;
+  let offsets = [];
+  const lowPower = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 8) ||
+    (navigator.deviceMemory && navigator.deviceMemory < 8) ||
+    Boolean(navigator.connection?.saveData) ||
+    !window.matchMedia('(pointer: fine)').matches;
+  if (!lowPower) root.classList.add('repo-carousel--enhanced');
+  else root.classList.add('repo-carousel--lite');
   previousButton.disabled = true;
   nextButton.disabled = true;
 
@@ -42,7 +49,7 @@ if (root) {
     } catch { return ''; }
   };
   const safeImage = (value) => typeof value === 'string' &&
-    /^assets\/images\/repo-previews\/[A-Za-z0-9_.-]+\.png$/.test(value) ? value : '';
+    /^assets\/images\/repo-previews\/[A-Za-z0-9_.-]+\.(?:png|webp)$/.test(value) ? value : '';
   const fallback = (repo) => {
     const box = make('div', 'repo-slide__missing');
     box.append(make('span', '', 'PROJECT / FIELD NOTES'),
@@ -77,6 +84,7 @@ if (root) {
       url,
       live: safeURL(raw.live, 'live'),
       image: safeImage(raw.image),
+      thumbnail: safeImage(raw.thumbnail),
       created_at: safeDate(raw.created_at),
       pushed_at: safeDate(raw.pushed_at)
     };
@@ -95,12 +103,13 @@ if (root) {
     picture.append(make('span', 'repo-slide__media-label', repo.image ? 'CAPTURED FROM THE LIVE WEBSITE' : 'WEBSITE PREVIEW PENDING'));
     if (repo.image) {
       const image = make('img');
-      image.src = repo.image;
+      image.dataset.src = repo.thumbnail || repo.image;
       image.alt = repo.title + ' website screenshot';
       image.width = 1365;
       image.height = 850;
-      image.loading = index < 2 ? 'eager' : 'lazy';
+      image.loading = index === 0 ? 'eager' : 'lazy';
       image.decoding = 'async';
+      image.fetchPriority = index === 0 ? 'high' : 'low';
       image.addEventListener('error', () => {
         picture.querySelector('.repo-slide__media-label').textContent = 'WEBSITE PREVIEW PENDING';
         image.replaceWith(fallback(repo));
@@ -127,6 +136,22 @@ if (root) {
     return slide;
   }
 
+  function hydrateNearby(index) {
+    // Only the current and adjacent chapters request screenshots.
+    // Other cards carry data-src but do not download or decode offscreen PNGs.
+    for (let i = Math.max(0, index - 1); i <= Math.min(slides.length - 1, index + 1); i++) {
+      const img = slides[i].querySelector('img[data-src]');
+      if (img && !img.getAttribute('src')) img.src = img.dataset.src;
+    }
+  }
+  function refreshOffsets() {
+    const first = slides[0]?.offsetTop || 0;
+    offsets = slides.map(slide => slide.offsetTop - first);
+  }
+  window.addEventListener('resize', () => {
+    if (slides.length) refreshOffsets();
+  }, { passive: true });
+
   function updateActive(index, direction = 0) {
     if (!slides.length) return;
     const next = Math.max(0, Math.min(index, slides.length - 1));
@@ -141,6 +166,7 @@ if (root) {
       }
     }
     activeName = slides[activeIndex].dataset.repo;
+    hydrateNearby(activeIndex);
     slides.forEach((slide, i) => {
       slide.classList.toggle('is-current', i === activeIndex);
       slide.classList.toggle('is-past', i < activeIndex);
@@ -154,8 +180,7 @@ if (root) {
   }
 
   function slideTop(index) {
-    return slides[index].getBoundingClientRect().top -
-      slides[0].getBoundingClientRect().top;
+    return offsets[index] ?? (slides[index].offsetTop - slides[0].offsetTop);
   }
   function goTo(index, animate = true) {
     if (!slides.length) return;
@@ -180,31 +205,17 @@ if (root) {
       goTo(target);
     }
   });
-  viewport.addEventListener('wheel', (event) => {
-    if (event.ctrlKey || event.shiftKey || !slides.length ||
-        Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
-    // If a short phone has a taller book than the visible area, allow normal
-    // scrolling so no paragraph or link can be trapped below the viewport.
-    if (slides[activeIndex].getBoundingClientRect().height > viewport.clientHeight + 4) return;
-    const delta = Math.sign(event.deltaY);
-    if ((delta < 0 && activeIndex === 0) ||
-        (delta > 0 && activeIndex === slides.length - 1)) return; // let document continue
-    if (event.cancelable) event.preventDefault();
-    const now = performance.now();
-    if (now < wheelLockUntil) return;
-    wheelLockUntil = now + (prefersReducedMotion() ? 220 : 700);
-    goTo(activeIndex + delta);
-  }, { passive: false });
-
+  // Native scroll-snap handles wheel/touch input; intercepting each wheel
+  // gesture previously scheduled competing smooth-scroll animations on low-end PCs.
   viewport.addEventListener('scroll', () => {
     if (ticking || !slides.length) return;
     ticking = true;
     requestAnimationFrame(() => {
       ticking = false;
       if (performance.now() < scrollLockUntil) return;
-      const target = viewport.getBoundingClientRect().top;
-      const closest = slides.reduce((best, slide, index) => {
-        const distance = Math.abs(slide.getBoundingClientRect().top - target);
+      const target = viewport.scrollTop;
+      const closest = offsets.reduce((best, top, index) => {
+        const distance = Math.abs(top - target);
         return distance < best.distance ? { index, distance } : best;
       }, { index: 0, distance: Infinity });
       if (closest.index !== activeIndex)
@@ -238,6 +249,7 @@ if (root) {
     const retainName = activeName;
     slides = clean.map(makeSlide);
     track.replaceChildren(...slides);
+    refreshOffsets();
     if (count) count.textContent = clean.length + ' PUBLIC REPOSITORIES';
     const keep = Math.max(0, clean.findIndex(repo => repo.name === retainName));
     activeIndex = keep;
@@ -289,6 +301,7 @@ if (root) {
           live: repo.homepage?.startsWith('https://') ? repo.homepage :
             (repo.has_pages ? 'https://patu-art.github.io/' + encodeURIComponent(repo.name) + '/' : ''),
           image: old?.image || '',
+          thumbnail: old?.thumbnail || '',
           created_at: repo.created_at || old?.created_at || ''
         };
       });
@@ -308,18 +321,17 @@ if (root) {
     return live;
   }
 
-  loadStored().catch(error => {
-    console.warn('Saved archive unavailable; checking GitHub.', error);
-    return [];
-  }).then(async stored => {
-    if (stored.length) show(stored);
-    try {
-      const latest = await loadLive(stored);
-      if (latest.length) show(latest);
-      else if (!stored.length) show([]);
-    } catch (error) {
-      console.warn('GitHub refresh unavailable; retaining saved project data.', error);
-      if (!stored.length) show([]);
+  loadStored().then(stored => {
+    if (stored.length) {
+      // The server-side GitHub Actions sync updates this index every six hours.
+      // Avoid a second network request and complete DOM re-render on every visit.
+      show(stored);
+      if (status) status.textContent = 'Ready · repository data synced automatically';
+      return;
     }
+    return loadLive([]).then(show);
+  }).catch(error => {
+    console.warn('Repository index unavailable.', error);
+    if (!slides.length) show([]);
   });
 }
