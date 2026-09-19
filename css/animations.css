@@ -1,15 +1,15 @@
-[data-reveal] {
+.js-ready [data-reveal] {
   opacity:0;
   transform:translateY(34px);
   will-change:transform,opacity
 }
-[data-reveal='left'] {
+.js-ready [data-reveal='left'] {
   transform:translateX(-45px)
 }
-[data-reveal='right'] {
+.js-ready [data-reveal='right'] {
   transform:translateX(45px)
 }
-[data-reveal='clip'] {
+.js-ready [data-reveal='clip'] {
   clip-path:inset(0 0 100% 0);
   transform:none
 }
@@ -19,10 +19,16 @@
   clip-path:inset(0 0 0 0);
   transition:opacity .8s var(--ease),transform .8s var(--ease),clip-path 1s var(--ease)
 }
-[data-stagger]>* {
+.js-ready [data-stagger]>* {
   opacity:0;
   transform:translateY(24px)
 }
+.js-ready [data-stagger] > *.is-visible {
+  opacity:1;
+  transform:none;
+  transition:opacity .65s var(--ease),transform .65s var(--ease);
+}
+
 .cursor {
   display:none !important;
 }
@@ -119,7 +125,7 @@
   }
 }
 
-[data-reveal='scale'] {
+.js-ready [data-reveal='scale'] {
   transform:translateY(20px) scale(.96)
 }
 .blueprint-draw.is-drawn {

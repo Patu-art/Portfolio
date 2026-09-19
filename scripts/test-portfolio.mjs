@@ -221,6 +221,52 @@ try {
   assert.equal(apiCalls, 0, 'Page must not poll GitHub in the background');
   console.log('Saved index refresh, no live API polling, ≤3 hydrated images and stable chapter: PASS');
   await page.close();
+
+  // Homepage regression: static/no-JavaScript fallback, real media, and visible stagger content.
+  const buildDayLabels = ['DAY 04', 'DAY 05', 'DAY 06', 'DAY 07', 'DAY 08', 'DAY 09'];
+  for (const width of [320, 390, 1280]) {
+    const home = await browser.newPage({ viewport: { width, height: 800 } });
+    const errors = [];
+    home.on('pageerror', error => errors.push(error.message));
+    await home.goto('http://127.0.0.1:' + port + '/index.html', { waitUntil: 'domcontentloaded' });
+    await home.locator('.v2-proof strong').first().waitFor({ state: 'attached', timeout: 10000 });
+    await home.waitForFunction(() => document.querySelector('.v2-day-list li:last-child .day')?.textContent === 'DAY 09',
+      { timeout: 12000 });
+    assert.equal((await home.locator('.v2-proof strong').first().textContent()).trim(), '09',
+      width + 'px: shipped build counter did not match verified repository index');
+    assert.deepEqual(await home.locator('.v2-day-list .day').allTextContents(), buildDayLabels,
+      width + 'px: latest challenge days missing or out of order');
+
+    const proof = home.locator('.v2-proof > div').first();
+    await proof.scrollIntoViewIfNeeded();
+    await home.waitForFunction(() => {
+      const el = document.querySelector('.v2-proof > div');
+      return el && Number(getComputedStyle(el).opacity) > .98;
+    }, { timeout: 3500 });
+    const portrait = home.locator('.v2-portrait img');
+    await portrait.evaluate(img => img.decode());
+    assert(await portrait.evaluate(img => img.naturalWidth > 100), width + 'px: real portrait not loaded');
+    const visible = await proof.evaluate(el => {
+      const r = el.getBoundingClientRect();
+      return r.width > 50 && r.left >= -3 && r.right <= innerWidth + 3;
+    });
+    assert(visible, width + 'px: homepage proof counter overflows or collapses');
+    assert.equal(errors.length, 0, width + 'px: homepage browser exception(s): ' + errors.join(', '));
+    console.log(width + 'px: homepage, dynamic Day 09 proof, stagger visibility and portrait: PASS');
+    await home.close();
+  }
+
+  const withoutJS = await browser.newPage({ viewport: { width: 390, height: 800 }, javaScriptEnabled: false });
+  await withoutJS.goto('http://127.0.0.1:' + port + '/index.html', { waitUntil: 'domcontentloaded' });
+  const fallback = await withoutJS.locator('.v2-proof > div').first().evaluate(el => ({
+    opacity: Number(getComputedStyle(el).opacity),
+    label: el.innerText
+  }));
+  assert(fallback.opacity > .98 && fallback.label.includes('09'),
+    'No-JavaScript homepage fallback is invisible or its shipped count is stale');
+  await withoutJS.close();
+  console.log('Homepage no-JavaScript content visibility: PASS');
+
 } finally {
   await browser.close();
   await new Promise(resolve => server.close(resolve));

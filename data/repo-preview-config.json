@@ -13,6 +13,9 @@
     },
     "Day-8": {
       "title": "Lane & Brew"
+    },
+    "new-home-invitation-": {
+      "exclude": true
     }
   },
   "notes": "Optional overrides for known project brands. For future repositories, the sync uses their GitHub name as the default title and automatically uses the public site's metadata for descriptions and screenshots."
