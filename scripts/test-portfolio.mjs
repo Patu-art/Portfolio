@@ -53,8 +53,8 @@ await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const port = server.address().port;
 const browser = await chromium.launch({ headless: true });
 try {
-  for (const width of [360, 390, 768, 1280]) {
-    const page = await browser.newPage({ viewport: { width, height: 800 } });
+  for (const {width,height} of [{width:320,height:568},{width:360,height:640},{width:390,height:800},{width:768,height:800},{width:1280,height:800}]) {
+    const page = await browser.newPage({ viewport: { width, height } });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.route('https://api.github.com/**', route => route.abort());
