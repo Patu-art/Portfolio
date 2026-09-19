@@ -55,6 +55,33 @@ function makeTags(items = []) {
   return list;
 }
 
+function makeMedia(project, index = 0, eager = false) {
+  if (project.image) {
+    const image = document.createElement('img');
+    image.src = project.image;
+    image.alt = `${project.title} project preview`;
+    image.width = 1200;
+    image.height = 760;
+    image.loading = eager ? 'eager' : 'lazy';
+    return image;
+  }
+
+  const placeholder = document.createElement('div');
+  placeholder.className = 'project-media-placeholder';
+  placeholder.setAttribute('role', 'img');
+  placeholder.setAttribute('aria-label', `${project.title} preview image will be added soon`);
+
+  const day = document.createElement('span');
+  day.textContent = project.day || `PROJECT ${String(index + 1).padStart(2, '0')}`;
+  const title = document.createElement('strong');
+  title.textContent = project.title;
+  const note = document.createElement('small');
+  note.textContent = 'PREVIEW IMAGE / ADDING SOON';
+
+  placeholder.append(day, title, note);
+  return placeholder;
+}
+
 export function createProjectCard(project, index = 0, options = {}) {
   const article = document.createElement('article');
   article.className = `project-card${options.carousel ? ' project-card--carousel' : ''}`;
@@ -69,14 +96,7 @@ export function createProjectCard(project, index = 0, options = {}) {
   const lead = project.day || String(index + 1).padStart(2, '0');
   indexLabel.textContent = `${lead} / ${String(project.category || 'Project').toUpperCase()}`;
 
-  const image = document.createElement('img');
-  image.src = project.image;
-  image.alt = `${project.title} project preview`;
-  image.width = 1200;
-  image.height = 760;
-  image.loading = index === 0 && options.carousel ? 'eager' : 'lazy';
-
-  media.append(indexLabel, image);
+  media.append(indexLabel, makeMedia(project, index, index === 0 && options.carousel));
 
   const body = document.createElement('div');
   body.className = 'project-card__body';
