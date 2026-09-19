@@ -251,6 +251,34 @@ try {
       return r.width > 50 && r.left >= -3 && r.right <= innerWidth + 3;
     });
     assert(visible, width + 'px: homepage proof counter overflows or collapses');
+    // New homepage proof sections must show actual screenshots and usable links.
+    const siteproVisual = home.locator('.v2-sitepro-proof');
+    await siteproVisual.scrollIntoViewIfNeeded();
+    assert.equal(await siteproVisual.locator('img').count(), 3,
+      width + 'px: SITEPRO proof needs three real project previews');
+    for (const img of await siteproVisual.locator('img').all()) {
+      await img.evaluate(image => image.decode());
+      assert(await img.evaluate(image => image.naturalWidth > 100),
+        width + 'px: SITEPRO proof screenshot did not load');
+    }
+    const latest = home.locator('.v2-latest-build');
+    assert.equal(await latest.count(), 1,
+      width + 'px: live-build spotlight missing');
+    await latest.scrollIntoViewIfNeeded();
+    const latestImage = latest.locator('img');
+    await latestImage.evaluate(image => image.decode());
+    assert(await latestImage.evaluate(image => image.naturalWidth > 100),
+      width + 'px: latest-build screenshot did not load');
+    assert.equal(await latest.locator('a[href="https://patu-art.github.io/Day-9/"]').count(), 2,
+      width + 'px: published demo links missing');
+    assert.equal(await home.locator('.v2-truth').count(), 0,
+      width + 'px: repeated generic status-card section still present');
+    const latestRect = await latest.evaluate(el => {
+      const box = el.getBoundingClientRect();
+      return { width:box.width, left:box.left, right:box.right };
+    });
+    assert(latestRect.width > 250 && latestRect.left >= -3 && latestRect.right <= width + 3,
+      width + 'px: latest-build card is clipped or overflows the viewport');
     assert.equal(errors.length, 0, width + 'px: homepage browser exception(s): ' + errors.join(', '));
     console.log(width + 'px: homepage, dynamic Day 09 proof, stagger visibility and portrait: PASS');
     await home.close();
