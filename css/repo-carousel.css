@@ -349,3 +349,72 @@ body[data-page="projects"] .v2-section { padding:clamp(42px,5.5vw,78px) 0 !impor
     transition:none !important;
   }
 }
+
+
+/* Low-cost book rendering: glass look from static translucency, not a continuously
+   blurred fullscreen GPU layer. Only the ACTIVE leaf animates on capable PCs. */
+.repo-carousel .repo-carousel__track,
+.repo-carousel .repo-slide,
+.repo-carousel .repo-book,
+.repo-carousel .repo-book__page {
+  transform-style:flat;
+}
+.repo-carousel .repo-book {
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+  transform:none;
+  background:linear-gradient(125deg,rgba(255,255,255,.93),rgba(222,234,240,.91));
+  box-shadow:0 11px 27px rgba(23,36,42,.085),6px 7px 0 -3px rgba(178,200,209,.53);
+}
+.repo-carousel .repo-book::before { transform:none; box-shadow:none; }
+.repo-carousel .repo-book__spine { transform:translateX(-50%); }
+.repo-carousel .repo-slide__media-label {
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+  background:rgba(245,249,251,.95);
+}
+.repo-carousel .repo-slide__media > img { transition:none; transform:none; }
+.repo-carousel .repo-slide.is-current .repo-slide__media > img { transform:none; }
+.repo-carousel .repo-slide .repo-book,
+.repo-carousel .repo-slide .repo-book__page--image,
+.repo-carousel .repo-slide .repo-book__page--text {
+  animation:none;
+  filter:none;
+  will-change:auto;
+}
+/* Small page-turn for higher-spec computers; fewer layers and no animated blur. */
+@media (min-width:701px) and (prefers-reduced-motion:no-preference) {
+  .repo-carousel--enhanced .repo-slide.is-current { perspective:1100px; }
+  .repo-carousel--enhanced .repo-slide.turn-forward .repo-book__page--image {
+    transform-origin:right center;
+    animation:book-lite-forward .35s ease-out both;
+  }
+  .repo-carousel--enhanced .repo-slide.turn-backward .repo-book__page--image {
+    transform-origin:right center;
+    animation:book-lite-backward .35s ease-out both;
+  }
+  .repo-carousel--enhanced .repo-slide.turn-forward .repo-book__page--text,
+  .repo-carousel--enhanced .repo-slide.turn-backward .repo-book__page--text {
+    animation:book-lite-text .3s ease-out both;
+  }
+}
+@keyframes book-lite-forward {
+  from { opacity:.79; transform:rotateY(-19deg); }
+  to { opacity:1; transform:rotateY(0); }
+}
+@keyframes book-lite-backward {
+  from { opacity:.79; transform:rotateY(15deg); }
+  to { opacity:1; transform:rotateY(0); }
+}
+@keyframes book-lite-text {
+  from { opacity:.76; }
+  to { opacity:1; }
+}
+@media(max-width:700px) {
+  .repo-carousel .repo-book__spine { transform:translateY(-5px); }
+  .repo-carousel .repo-slide__media-label { font-size:8px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .repo-carousel .repo-slide .repo-book__page--image,
+  .repo-carousel .repo-slide .repo-book__page--text { animation:none !important; }
+}
