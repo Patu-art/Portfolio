@@ -1,6 +1,6 @@
 {
   "owner": "Patu-art",
-  "repository_count": 12,
+  "repository_count": 11,
   "updated_at": "2026-09-19T11:12:48.644Z",
   "repositories": [
     {
@@ -200,24 +200,6 @@
       "preview_revision": "2026-08-24T16:05:15Z",
       "preview_source": "automatic",
       "site_description": "WEB HQ maps your team, your deploys and your work into one living network — a command center for engineering teams."
-    },
-    {
-      "name": "new-home-invitation-",
-      "title": "Home Invitation",
-      "description": "Repository by Prathamesh Dhumal. Open GitHub for project details.",
-      "description_source": "fallback",
-      "language": "HTML",
-      "url": "https://github.com/Patu-art/new-home-invitation-",
-      "live": "https://patu-art.github.io/new-home-invitation-/",
-      "image": "",
-      "thumbnail": "",
-      "pushed_at": "2026-08-23T16:26:42Z",
-      "created_at": "2026-08-23T15:24:04Z",
-      "is_fork": false,
-      "archived": false,
-      "preview_revision": "",
-      "preview_source": "",
-      "site_description": ""
     }
   ]
 }
