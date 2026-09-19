@@ -1,0 +1,12 @@
+{
+  "defaultSelector": "main > section:first-of-type",
+  "repositories": {
+    "Day-9": {
+      "selector": "main > section:first-of-type"
+    },
+    "Portfolio": {
+      "selector": ".v2-hero"
+    }
+  },
+  "notes": "For a new repository, no configuration is needed. Only add a selector when its published homepage needs a different screenshot area; add [data-portfolio-preview] to the desired section for automatic selection."
+}
