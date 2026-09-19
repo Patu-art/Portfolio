@@ -2,56 +2,79 @@ const header = document.querySelector('[data-header]');
 const toggle = document.querySelector('.nav-toggle');
 const menu = document.querySelector('.mobile-menu');
 
-const setScrolled = () => header?.classList.toggle('is-scrolled', scrollY > 24);
-setScrolled();
-addEventListener('scroll', setScrolled, { passive: true });
+const updateHeader = () => header?.classList.toggle('is-scrolled', window.scrollY > 24);
+updateHeader();
+window.addEventListener('scroll', updateHeader, { passive: true });
 
-if (toggle && menu) {
-  let lastFocused = null;
+if (header && toggle && menu) {
+  // A fixed overlay nested inside a backdrop-filtered header is positioned
+  // relative to that header in browsers. Put it beside the header instead.
+  if (header.contains(menu)) header.after(menu);
 
-  const close = (restoreFocus = false) => {
+  let restoreTarget = toggle;
+  menu.inert = true;
+  menu.setAttribute('aria-hidden', 'true');
+
+  const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
+
+  function close(restoreFocus = true) {
+    if (!isOpen()) return;
     toggle.setAttribute('aria-expanded', 'false');
     toggle.setAttribute('aria-label', 'Open menu');
     menu.classList.remove('is-open');
-    menu.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('menu-open');
+    if (restoreFocus) (restoreTarget?.isConnected ? restoreTarget : toggle).focus({ preventScroll: true });
+    menu.inert = true;
+    menu.setAttribute('aria-hidden', 'true');
+  }
 
-    if (restoreFocus && lastFocused instanceof HTMLElement) {
-      lastFocused.focus();
-    }
-  };
-
-  const open = () => {
-    lastFocused = document.activeElement;
+  function open() {
+    restoreTarget = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
+    menu.inert = false;
+    menu.setAttribute('aria-hidden', 'false');
     toggle.setAttribute('aria-expanded', 'true');
     toggle.setAttribute('aria-label', 'Close menu');
     menu.classList.add('is-open');
-    menu.setAttribute('aria-hidden', 'false');
     document.body.classList.add('menu-open');
-
-    requestAnimationFrame(() => {
-      menu.querySelector('a')?.focus({ preventScroll: true });
+    window.requestAnimationFrame(() => {
+      if (isOpen()) menu.querySelector('nav a[href]')?.focus({ preventScroll: true });
     });
-  };
+  }
 
-  toggle.addEventListener('click', () => {
-    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-    isOpen ? close(true) : open();
+  toggle.addEventListener('click', () => isOpen() ? close() : open());
+
+  menu.addEventListener('click', (event) => {
+    if (event.target === menu) close();
   });
-
-  menu.querySelectorAll('a').forEach((link) => {
+  menu.querySelectorAll('a[href]').forEach((link) => {
     link.addEventListener('click', () => close(false));
   });
 
-  addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
-      close(true);
+  document.addEventListener('keydown', (event) => {
+    if (!isOpen()) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const links = [...menu.querySelectorAll('a[href]')];
+    const focusables = [toggle, ...links];
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    } else if (!focusables.includes(document.activeElement)) {
+      event.preventDefault();
+      (links[0] || toggle).focus();
     }
   });
 
-  addEventListener('resize', () => {
-    if (innerWidth > 1100 && toggle.getAttribute('aria-expanded') === 'true') {
-      close(false);
-    }
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 1100) close(false);
   }, { passive: true });
 }
