@@ -133,6 +133,11 @@ try {
       await page.waitForTimeout(450);
       assert.equal(await page.locator('.repo-slide.is-current').getAttribute('data-repo'), 'Day-7',
         'Chapter navigation must jump to requested business without losing its brand title');
+      await rail.first().click();
+      await page.waitForTimeout(550);
+      assert.equal(await page.locator('[data-repo-progress]').innerText(),
+        '01 / ' + String(data.repository_count).padStart(2, '0'),
+        'Chapter picker must return to first before mousewheel navigation');
     }
     if (width === 1280 && data.repository_count > 2) {
       await page.waitForTimeout(750);
