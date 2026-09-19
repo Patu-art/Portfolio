@@ -1,0 +1,156 @@
+/* PROJECTS FINAL: editorial restraint. Preserve the 3D coverflow, remove duplicate
+   ornament, keep all content/links available on narrow and short screens. */
+body[data-page="projects"] .page-hero {
+  padding:clamp(104px,10vw,145px) 0 clamp(27px,3.5vw,46px) !important;
+}
+body[data-page="projects"] .page-hero__grid { align-items:end; }
+body[data-page="projects"] .page-hero h1 {
+  font-size:clamp(48px,7.3vw,100px);
+  line-height:.94;
+  text-wrap:balance;
+}
+body[data-page="projects"] .page-hero__aside { max-width:470px; }
+body[data-page="projects"] .page-hero__aside p { margin:0; }
+body[data-page="projects"] .page-hero__aside .project-count {
+  margin-top:14px;
+  color:#5b6e74;
+  font:500 11px/1.5 "JetBrains Mono",monospace;
+}
+body[data-page="projects"] .v2-section--paper {
+  padding:clamp(20px,3vw,38px) 0 clamp(16px,2.8vw,34px) !important;
+}
+.repo-carousel { border-top:1px solid rgba(82,111,121,.18); background:none; }
+.repo-carousel::before { content:none; }
+.repo-carousel .repo-carousel__toolbar { padding:10px 0 15px; }
+.repo-carousel .repo-carousel__label {
+  color:#526e78;
+  font:600 10px/1.35 "JetBrains Mono",monospace;
+  letter-spacing:.1em;
+}
+.repo-carousel .repo-carousel__progress,
+.repo-carousel .repo-carousel__hint,
+.repo-carousel .repo-carousel__status[hidden] { display:none !important; }
+.repo-carousel .repo-carousel__viewport {
+  /* The active book is the focal point; no pointless viewport-height fill. */
+  --spotlight-height:clamp(480px,calc(100dvh - var(--header-h,78px) - 104px),670px);
+}
+.repo-carousel .repo-slide { padding-block:7px 16px; }
+.repo-carousel .repo-slide .repo-book {
+  border-radius:17px;
+  box-shadow:0 15px 38px rgba(29,59,70,.11),0 1px 0 rgba(255,255,255,.9) inset;
+}
+.repo-carousel .repo-slide.is-current .repo-book {
+  box-shadow:0 18px 45px rgba(29,59,70,.14),0 1px 0 rgba(255,255,255,.95) inset;
+}
+.repo-carousel .repo-slide .repo-book::before,
+.repo-carousel .repo-slide .repo-book::after { box-shadow:none; }
+.repo-carousel .repo-slide .repo-slide__media-label {
+  top:14px; left:14px;
+  background:rgba(249,251,253,.96);
+  border:1px solid rgba(82,111,121,.13);
+  padding:7px 10px;
+  font-size:9px;
+}
+.repo-carousel .repo-slide .repo-book__page--text {
+  padding:clamp(24px,3.3vw,46px);
+  gap:clamp(12px,1.6vw,20px);
+}
+.repo-carousel .repo-slide .repo-slide__eyebrow {
+  font-size:10px;
+  line-height:1.5;
+  letter-spacing:.06em;
+}
+.repo-carousel .repo-slide .repo-slide__body h3 {
+  font-size:clamp(32px,4.35vw,66px);
+  max-width:12ch;
+}
+.repo-carousel .repo-slide .repo-slide__description {
+  max-width:48ch;
+  font-size:clamp(13px,1.2vw,16px);
+  line-height:1.58;
+  -webkit-line-clamp:4;
+}
+.repo-carousel .repo-slide .repo-slide__links { margin-top:7px; }
+.repo-carousel .repo-slide .repo-slide__link {
+  border-radius:999px;
+  min-height:43px;
+  font-size:12px;
+}
+.repo-carousel .repo-rail {
+  gap:8px;
+  margin-top:10px;
+  padding:6px 0 8px;
+}
+.repo-carousel .repo-rail button {
+  min-height:42px;
+  padding:9px 12px;
+  box-shadow:none;
+  background:transparent;
+}
+.repo-carousel .repo-rail button[aria-current="true"] {
+  background:#17242a;
+  color:#fff;
+}
+.repo-carousel .repo-rail button .repo-rail__title { max-width:140px; }
+.repo-carousel .repo-carousel__status:not([hidden]) {
+  margin:10px 0 0;
+  padding:10px 12px;
+  font:500 12px/1.5 "Inter",system-ui,sans-serif;
+  color:#526f79;
+  border:1px solid rgba(82,111,121,.2);
+  border-radius:10px;
+}
+.projects-outro {
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px 24px;
+  padding:10px 0 clamp(38px,5vw,64px);
+  border-top:1px solid rgba(82,111,121,.16);
+}
+.projects-outro a {
+  color:#17242a;
+  text-underline-offset:5px;
+  font:600 12px/1.5 "Inter",system-ui,sans-serif;
+}
+.projects-outro a:hover { color:#526f79; }
+.projects-outro a:focus-visible { outline:3px solid #819fa7; outline-offset:3px; }
+@media(max-width:900px) {
+  .repo-carousel .repo-slide .repo-book__page--text { padding:clamp(17px,3vw,27px); }
+  .repo-carousel .repo-slide .repo-slide__body h3 { font-size:clamp(29px,4.4vw,49px); }
+}
+@media(max-width:700px) {
+  body[data-page="projects"] .page-hero { padding-top:calc(var(--header-h,70px) + 24px) !important; }
+  body[data-page="projects"] .page-hero h1 { font-size:clamp(45px,10vw,67px); }
+  body[data-page="projects"] .page-hero__aside p { font-size:14px; line-height:1.5; }
+  body[data-page="projects"] .page-hero__aside .project-count { margin-top:9px; font-size:10px; }
+  .repo-carousel .repo-carousel__desktop-hint { display:none; }
+  .repo-carousel .repo-slide .repo-book__page--text { padding:clamp(15px,3.8vw,21px); gap:9px; }
+  .repo-carousel .repo-slide .repo-slide__body h3 { max-width:none; font-size:clamp(27px,7.6vw,39px); }
+  .repo-carousel .repo-slide .repo-slide__description {
+    -webkit-line-clamp:unset; display:block; overflow:visible;
+    font-size:12px; line-height:1.45;
+  }
+  .repo-carousel .repo-slide .repo-slide__media-label { top:8px; left:8px; font-size:8px; padding:6px 8px; }
+  .repo-carousel .repo-slide .repo-slide__links { margin-top:2px; gap:7px; }
+  .repo-carousel .repo-slide .repo-slide__link { min-height:44px; padding:10px 13px; font-size:11px; }
+  .repo-carousel .repo-rail button { min-height:44px; padding:9px 11px; }
+  .repo-carousel .repo-rail button .repo-rail__title { max-width:95px; }
+}
+@media(max-width:375px), (max-height:600px) and (max-width:700px) {
+  .repo-carousel .repo-carousel__viewport { --spotlight-height:clamp(490px,90dvh,660px); }
+  .repo-carousel .repo-slide .repo-book__page--image { max-height:145px; }
+  .repo-carousel .repo-slide__media > img { max-height:145px; }
+  .repo-carousel .repo-slide .repo-book__page--text { gap:7px; padding:12px 13px; }
+  .repo-carousel .repo-slide .repo-slide__body h3 { font-size:clamp(25px,7.2vw,34px); }
+  .repo-carousel .repo-slide .repo-slide__description { font-size:11px; line-height:1.4; }
+}
+/* Small devices can scroll a book's content vertically if it is taller than the
+   viewport. Never hide action links below a clipped fixed-height slide. */
+@media(max-width:700px) and (max-height:540px) {
+  .repo-carousel .repo-carousel__viewport { --spotlight-height:540px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .repo-carousel .repo-slide .repo-book { transition:none !important; }
+  .repo-carousel .repo-rail button { transition:none !important; }
+}
