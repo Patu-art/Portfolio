@@ -18,6 +18,8 @@ if (root) {
   let ticking = false;
   let scrollLockUntil = 0;
   let wheelLockUntil = 0;
+  previousButton.disabled = true;
+  nextButton.disabled = true;
 
   const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const make = (tag, className = '', content) => {
@@ -181,6 +183,9 @@ if (root) {
   viewport.addEventListener('wheel', (event) => {
     if (event.ctrlKey || event.shiftKey || !slides.length ||
         Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+    // If a short phone has a taller book than the visible area, allow normal
+    // scrolling so no paragraph or link can be trapped below the viewport.
+    if (slides[activeIndex].getBoundingClientRect().height > viewport.clientHeight + 4) return;
     const delta = Math.sign(event.deltaY);
     if ((delta < 0 && activeIndex === 0) ||
         (delta > 0 && activeIndex === slides.length - 1)) return; // let document continue
