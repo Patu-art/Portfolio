@@ -61,6 +61,20 @@ try {
     await page.goto('http://127.0.0.1:' + port + '/projects.html', { waitUntil: 'domcontentloaded' });
     await page.locator('.repo-slide.is-current').waitFor({ timeout: 16000 });
     const slides = page.locator('.repo-slide');
+    const horizontal = await page.locator('[data-repo-viewport]').evaluate(element => ({
+      scrollWidth:element.scrollWidth,clientWidth:element.clientWidth,
+      scrollHeight:element.scrollHeight,clientHeight:element.clientHeight,
+      snap:getComputedStyle(element).scrollSnapType,
+      overflowX:getComputedStyle(element).overflowX,
+      overflowY:getComputedStyle(element).overflowY
+    }));
+    assert(horizontal.scrollWidth >= horizontal.clientWidth * data.repository_count - 8,
+      width + 'px: repository slides are not laid out horizontally');
+    assert(horizontal.snap.includes('x') && horizontal.overflowX === 'auto' &&
+      horizontal.overflowY === 'hidden', width + 'px: wrong horizontal scrolling mode');
+    assert(horizontal.scrollHeight <= horizontal.clientHeight + 3,
+      width + 'px: nested vertical overflow is not allowed');
+
     assert.equal(await slides.count(), data.repository_count, width + 'px: missing repository slides');
     const chapterLabels = await page.locator('.repo-slide__eyebrow').allTextContents();
     assert.equal(chapterLabels.length, data.repository_count, width + 'px: missing chapter labels');
@@ -91,11 +105,17 @@ try {
     assert(bookStyle.rect.left >= -3 && bookStyle.rect.right <= width + 3,
       width + 'px: book overflows viewport');
     await page.locator('[data-repo-next]').click();
+    await page.waitForTimeout(500);
+    const horizontalPosition = await page.locator('[data-repo-viewport]').evaluate(el => el.scrollLeft);
+    assert(horizontalPosition > 20, width + 'px: next must move horizontally');
     await page.waitForTimeout(250);
     assert.equal(await page.locator('[data-repo-progress]').innerText(),
       '02 / ' + String(data.repository_count).padStart(2, '0'),
       width + 'px: next page did not advance by one');
     await page.locator('[data-repo-prev]').click();
+    await page.waitForTimeout(500);
+    assert((await page.locator('[data-repo-viewport]').evaluate(el => el.scrollLeft)) < 20,
+      width + 'px: previous must scroll back left');
     assert.equal(await page.locator('[data-repo-progress]').innerText(),
       '01 / ' + String(data.repository_count).padStart(2, '0'),
       width + 'px: previous page did not return');
@@ -107,9 +127,9 @@ try {
       await page.waitForTimeout(950);
       assert.equal(await page.locator('[data-repo-progress]').innerText(),
         '02 / ' + String(data.repository_count).padStart(2, '0'),
-        'Wheel input should turn exactly one book page');
+        'Wheel input should advance one horizontal book page');
     }
-    console.log(width + 'px: glass, perspective, slider controls, image fallbacks and API outage: PASS');
+    console.log(width + 'px: horizontal snap, 3D perspective, left/right controls, image fallbacks: PASS');
     await page.close();
   }
   // Saved GitHub data is sufficient for a no-API, low-bandwidth first paint.
