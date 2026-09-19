@@ -6,6 +6,7 @@ on:
       - 'projects.html'
       - 'js/repo-carousel.js'
       - 'css/repo-carousel.css'
+      - 'css/coverflow-v5.css'
       - 'scripts/test-portfolio.mjs'
       - '.github/workflows/check-portfolio.yml'
   workflow_dispatch:
