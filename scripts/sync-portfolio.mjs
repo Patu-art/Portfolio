@@ -65,6 +65,9 @@ async function captureSite(browser, repo, config, previous) {
   if (!url) return output;
   const filename = path.join(PREVIEW_DIR, safeName(repo.name) + '.png');
   const alreadyCaptured = await fs.access(filename).then(() => true).catch(() => false);
+  const previousImageExists = previous?.image ? await fs.access(previous.image).then(() => true).catch(() => false) : false;
+  if (!previousImageExists) output.image = '';
+  const temporary = filename.replace(/\.png$/i, '.pending.png');
   if (alreadyCaptured && previous?.preview_revision === repo.pushed_at &&
       previous?.preview_source === 'automatic') return output;
 
@@ -81,7 +84,10 @@ async function captureSite(browser, repo, config, previous) {
     }
     await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
     await page.evaluate(() => document.fonts?.ready).catch(() => {});
-    await page.locator('.site-loader').first().waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    const loader = page.locator('.site-loader').first();
+    if (await loader.isVisible().catch(() => false)) {
+      await loader.waitFor({ state: 'hidden', timeout: 7000 });
+    }
 
     const siteDescription = await page.locator('meta[name="description"]').first()
       .getAttribute('content').catch(() => null);
@@ -109,10 +115,13 @@ async function captureSite(browser, repo, config, previous) {
     await fs.mkdir(PREVIEW_DIR, { recursive: true });
     const bounds = await target.boundingBox();
     if (bounds?.height > 1700) {
-      await page.screenshot({ path: filename, fullPage: false, animations: 'disabled', timeout: 16000 });
+      await page.screenshot({ path: temporary, fullPage: false, animations: 'disabled', timeout: 16000 });
     } else {
-      await target.screenshot({ path: filename, animations: 'disabled', timeout: 16000 });
+      await target.screenshot({ path: temporary, animations: 'disabled', timeout: 16000 });
     }
+    // Publish only a complete, successful capture. Interrupted work never
+    // replaces the previous good image or commits a partial screenshot.
+    await fs.rename(temporary, filename);
     output.image = filename.split(path.sep).join('/');
     output.preview_revision = repo.pushed_at || '';
     output.preview_source = 'automatic';
@@ -120,6 +129,7 @@ async function captureSite(browser, repo, config, previous) {
   } catch (error) {
     console.warn('Screenshot pending for ' + repo.name + ': ' + error.message);
   } finally {
+    await fs.rm(temporary, { force: true }).catch(() => {});
     await page.close();
   }
   return output;
