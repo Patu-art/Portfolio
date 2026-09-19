@@ -12,6 +12,12 @@ if (root) {
   const count = document.querySelector('[data-repository-count]');
   const status = root.querySelector('[data-repo-status]');
   const chapterRail = root.querySelector('[data-repo-rail]');
+  const previewDialog = document.querySelector('[data-preview-dialog]');
+  const previewImage = previewDialog?.querySelector('[data-preview-image]');
+  const previewTitle = previewDialog?.querySelector('[data-preview-title]');
+  const previewLive = previewDialog?.querySelector('[data-preview-live]');
+  const previewFailure = previewDialog?.querySelector('[data-preview-failure]');
+  let previewTrigger = null;
   let railButtons = [];
   let slides = [];
   let activeIndex = 0;
@@ -66,6 +72,18 @@ if (root) {
     anchor.rel = 'noopener noreferrer';
     return anchor;
   };
+  // Notes describe visible design decisions, not unverified client outcomes.
+  const designFocus = {
+    'day-4': 'Photography-led café storytelling and a playful cat motif.',
+    'day-9': 'A venue story moving from pop-up to a permanent space.',
+    'day-10': 'Coffee by day and a listening-bar identity after dark.',
+    'day-11': 'Real food photography, smoker story and a clear route to visit.'
+  };
+  const previewSrc = (repo, full = false) => {
+    const path = full ? repo.image : (repo.thumbnail || repo.image);
+    const version = repo.preview_recipe + '-' + repo.preview_revision;
+    return path + (repo.preview_recipe ? '?v=' + encodeURIComponent(version) : '');
+  };
   const dayNumber = (repo) => {
     const match = repo.name.match(/^day-?0*(\d+)$/i);
     return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
@@ -109,9 +127,7 @@ if (root) {
     picture.append(make('span', 'repo-slide__media-label', repo.image ? 'LIVE SITE PREVIEW' : 'PREVIEW PENDING'));
     if (repo.image) {
       const image = make('img');
-      const previewURL = repo.thumbnail || repo.image;
-      const previewVersion = repo.preview_recipe + '-' + repo.preview_revision;
-      image.dataset.src = previewURL + (repo.preview_recipe ? '?v=' + encodeURIComponent(previewVersion) : '');
+      image.dataset.src = previewSrc(repo);
       image.alt = repo.title + ' website screenshot';
       image.width = 1365;
       image.height = 850;
@@ -123,14 +139,27 @@ if (root) {
         image.replaceWith(fallback(repo));
       }, { once: true });
       picture.append(image);
+      if (previewDialog) {
+        const inspect = make('button', 'repo-slide__inspect', 'Inspect screenshot ↗');
+        inspect.type = 'button';
+        inspect.setAttribute('aria-label', 'Enlarge screenshot of ' + repo.title);
+        inspect.addEventListener('click', () => openPreview(repo, inspect));
+        picture.append(inspect);
+      }
     } else picture.append(fallback(repo));
 
     const body = make('div', 'repo-slide__body repo-book__page repo-book__page--text');
     body.append(make('p', 'repo-slide__eyebrow',
-      'PROJECT ' + String(index + 1).padStart(2, '0') + ' / ' +
+      (Number.isFinite(dayNumber(repo)) ? 'CHAPTER ' + String(dayNumber(repo)).padStart(2, '0') : 'PROJECT ' + String(index + 1).padStart(2, '0')) + ' / ' +
       String(total).padStart(2, '0') + ' · ' + repo.language.toUpperCase()));
     body.append(make('h3', '', repo.title));
     body.append(make('p', 'repo-slide__description', repo.description));
+    const focus = designFocus[repo.name.toLowerCase()];
+    if (focus) {
+      const note = make('p', 'repo-slide__focus');
+      note.append(make('span', '', 'DESIGN FOCUS'), document.createTextNode(focus));
+      body.append(note);
+    }
     const links = make('div', 'repo-slide__links');
     if (repo.live) links.append(action('Explore live site ↗', repo.live, true));
     links.append(action('View GitHub ↗', repo.url, !repo.live));
@@ -138,6 +167,43 @@ if (root) {
     book.append(spine, picture, body);
     slide.append(book);
     return slide;
+  }
+
+  function closePreview() {
+    if (!previewDialog?.open) return;
+    previewDialog.close();
+  }
+  function openPreview(repo, trigger) {
+    if (!previewDialog || !previewImage || !repo.image || !previewDialog.showModal) return;
+    previewTrigger = trigger;
+    previewTitle.textContent = repo.title + ' / full screenshot';
+    previewImage.alt = repo.title + ' full website screenshot';
+    previewImage.hidden = false;
+    previewFailure.hidden = true;
+    previewImage.src = previewSrc(repo, true);
+    if (repo.live) {
+      previewLive.href = repo.live;
+      previewLive.hidden = false;
+    } else {
+      previewLive.removeAttribute('href');
+      previewLive.hidden = true;
+    }
+    previewDialog.showModal();
+  }
+  if (previewDialog) {
+    previewDialog.querySelector('[data-preview-close]')?.addEventListener('click', closePreview);
+    previewDialog.addEventListener('click', (event) => {
+      if (event.target === previewDialog) closePreview();
+    });
+    previewDialog.addEventListener('close', () => {
+      previewImage?.removeAttribute('src');
+      if (previewTrigger?.isConnected) previewTrigger.focus({ preventScroll: true });
+      previewTrigger = null;
+    });
+    previewImage?.addEventListener('error', () => {
+      previewImage.hidden = true;
+      if (previewFailure) previewFailure.hidden = false;
+    });
   }
 
   function hydrateNearby(index) {
@@ -179,8 +245,8 @@ if (root) {
       slide.classList.toggle('is-far', Math.abs(i - activeIndex) > 1);
       slide.setAttribute('aria-current', String(i === activeIndex));
       slide.setAttribute('aria-hidden', String(i !== activeIndex));
-      slide.querySelectorAll('a[href]').forEach(link => {
-        link.tabIndex = i === activeIndex ? 0 : -1;
+      slide.querySelectorAll('a[href], button').forEach(control => {
+        control.tabIndex = i === activeIndex ? 0 : -1;
       });
     });
     progress.textContent = String(activeIndex + 1).padStart(2, '0') + ' / ' +
