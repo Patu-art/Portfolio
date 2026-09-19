@@ -47,7 +47,7 @@ ensureStylesheet('css/portfolio-refresh.css');
       './contact.js', './portfolio-upgrade.js'
     ];
 
-    if (document.querySelector('[data-repo-carousel]')) modules.push('./repo-carousel.js?v=20260919b');
+    if (document.querySelector('[data-repo-carousel]')) modules.push('./repo-carousel.js?v=20260919c');
 
     const results = await Promise.allSettled(modules.map((src) => import(src)));
     results.forEach((result, index) => {
