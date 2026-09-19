@@ -61,6 +61,12 @@ try {
     await page.goto('http://127.0.0.1:' + port + '/projects.html', { waitUntil: 'domcontentloaded' });
     await page.locator('.repo-slide.is-current').waitFor({ timeout: 16000 });
     const slides = page.locator('.repo-slide');
+    const rail = page.locator('[data-repo-rail] button');
+    assert.equal(await rail.count(), data.repository_count, width + 'px: chapter index is incomplete');
+    assert.equal(await page.locator('.repo-slide.is-current').count(), 1,
+      width + 'px: exactly one chapter must be selected');
+    assert.equal(await page.locator('.repo-slide.is-next').count(), 1,
+      width + 'px: next project should visibly peek from the side');
     const horizontal = await page.locator('[data-repo-viewport]').evaluate(element => ({
       scrollWidth:element.scrollWidth,clientWidth:element.clientWidth,
       scrollHeight:element.scrollHeight,clientHeight:element.clientHeight,
@@ -68,8 +74,8 @@ try {
       overflowX:getComputedStyle(element).overflowX,
       overflowY:getComputedStyle(element).overflowY
     }));
-    assert(horizontal.scrollWidth >= horizontal.clientWidth * data.repository_count - 8,
-      width + 'px: repository slides are not laid out horizontally');
+    assert(horizontal.scrollWidth > horizontal.clientWidth * (data.repository_count - 1) * .73,
+      width + 'px: coverflow chapters are not laid out horizontally');
     assert(horizontal.snap.includes('x') && horizontal.overflowX === 'auto' &&
       horizontal.overflowY === 'hidden', width + 'px: wrong horizontal scrolling mode');
     assert(horizontal.scrollHeight <= horizontal.clientHeight + 3,
@@ -104,6 +110,8 @@ try {
     assert(bookStyle.rect.width > 220, 'Book became too small');
     assert(bookStyle.rect.left >= -3 && bookStyle.rect.right <= width + 3,
       width + 'px: book overflows viewport');
+    assert(bookStyle.rect.width < width * .98,
+      width + 'px: active book fills all available space; adjacent previews cannot peek');
     await page.locator('[data-repo-next]').click();
     await page.waitForTimeout(500);
     const horizontalPosition = await page.locator('[data-repo-viewport]').evaluate(el => el.scrollLeft);
@@ -120,6 +128,12 @@ try {
       '01 / ' + String(data.repository_count).padStart(2, '0'),
       width + 'px: previous page did not return');
     assert.equal(errors.length, 0, width + 'px: browser exception(s): ' + errors.join(', '));
+    if (width === 1280) {
+      await rail.nth(6).click();
+      await page.waitForTimeout(450);
+      assert.equal(await page.locator('.repo-slide.is-current').getAttribute('data-repo'), 'Day-7',
+        'Chapter navigation must jump to requested business without losing its brand title');
+    }
     if (width === 1280 && data.repository_count > 2) {
       await page.waitForTimeout(750);
       await page.locator('[data-repo-viewport]').hover();
