@@ -1,4 +1,4 @@
-/* Glass Book: an accessible, one-repository-per-page vertical carousel.
+/* Glass Book: an accessible, one-repository-per-page horizontal carousel.
    The checked-in index is the reliable first paint; live GitHub is progressive. */
 const root = document.querySelector('[data-repo-carousel]');
 if (root) {
@@ -145,8 +145,8 @@ if (root) {
     }
   }
   function refreshOffsets() {
-    const first = slides[0]?.offsetTop || 0;
-    offsets = slides.map(slide => slide.offsetTop - first);
+    const first = slides[0]?.offsetLeft || 0;
+    offsets = slides.map(slide => slide.offsetLeft - first);
   }
   window.addEventListener('resize', () => {
     if (slides.length) refreshOffsets();
@@ -179,41 +179,55 @@ if (root) {
     nextButton.disabled = activeIndex === slides.length - 1;
   }
 
-  function slideTop(index) {
-    return offsets[index] ?? (slides[index].offsetTop - slides[0].offsetTop);
+  function slideLeft(index) {
+    return offsets[index] ?? (slides[index].offsetLeft - slides[0].offsetLeft);
   }
   function goTo(index, animate = true) {
     if (!slides.length) return;
     const targetIndex = Math.max(0, Math.min(index, slides.length - 1));
     const direction = Math.sign(targetIndex - activeIndex);
     if (!direction && animate) return;
-    const top = slideTop(targetIndex);
+    const left = slideLeft(targetIndex);
     updateActive(targetIndex, animate ? direction : 0);
     scrollLockUntil = performance.now() + (prefersReducedMotion() || !animate ? 80 : 650);
-    viewport.scrollTo({ top, behavior: !animate || prefersReducedMotion() ? 'instant' : 'smooth' });
+    viewport.scrollTo({ left, behavior: !animate || prefersReducedMotion() ? 'instant' : 'smooth' });
   }
 
   previousButton.addEventListener('click', () => goTo(activeIndex - 1));
   nextButton.addEventListener('click', () => goTo(activeIndex + 1));
   viewport.addEventListener('keydown', (event) => {
     const key = event.key;
-    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End'].includes(key)) {
+    if (['ArrowRight', 'ArrowLeft', 'PageDown', 'PageUp', 'Home', 'End'].includes(key)) {
       if (event.target.closest('a, button')) return;
       event.preventDefault();
       const target = key === 'Home' ? 0 : key === 'End' ? slides.length - 1 :
-        activeIndex + (key === 'ArrowDown' || key === 'PageDown' ? 1 : -1);
+        activeIndex + (key === 'ArrowRight' || key === 'PageDown' ? 1 : -1);
       goTo(target);
     }
   });
-  // Native scroll-snap handles wheel/touch input; intercepting each wheel
-  // gesture previously scheduled competing smooth-scroll animations on low-end PCs.
+  // Native horizontal scroll-snap supports touch swipes, trackpads and Shift+wheel.
+  // On mouse/PC, one vertical wheel gesture advances one book without costly
+  // repeated smooth-scroll animations. At either edge, the page scrolls normally.
+  let wheelBlockedUntil = 0;
+  viewport.addEventListener('wheel', (event) => {
+    if (!slides.length || event.ctrlKey || event.shiftKey || event.deltaX !== 0 ||
+        Math.abs(event.deltaY) < 2 || event.target.closest('a,button') ||
+        !window.matchMedia('(pointer:fine)').matches) return;
+    const direction = Math.sign(event.deltaY);
+    if ((direction < 0 && activeIndex === 0) ||
+        (direction > 0 && activeIndex === slides.length - 1)) return;
+    if (event.cancelable) event.preventDefault();
+    if (performance.now() < wheelBlockedUntil) return;
+    wheelBlockedUntil = performance.now() + 480;
+    goTo(activeIndex + direction);
+  }, { passive:false });
   viewport.addEventListener('scroll', () => {
     if (ticking || !slides.length) return;
     ticking = true;
     requestAnimationFrame(() => {
       ticking = false;
       if (performance.now() < scrollLockUntil) return;
-      const target = viewport.scrollTop;
+      const target = viewport.scrollLeft;
       const closest = offsets.reduce((best, top, index) => {
         const distance = Math.abs(top - target);
         return distance < best.distance ? { index, distance } : best;
