@@ -28,7 +28,7 @@ jobs:
           node-version: '22'
       - name: Install screenshot browser
         run: |
-          npm install --no-save --no-package-lock playwright
+          npm install --no-save --no-package-lock playwright sharp
           npx playwright install --with-deps chromium
       - name: Sync public repositories and published websites
         env:
