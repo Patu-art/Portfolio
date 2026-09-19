@@ -1,0 +1,34 @@
+name: Check glass book portfolio
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'projects.html'
+      - 'js/repo-carousel.js'
+      - 'css/repo-carousel.css'
+      - 'scripts/test-portfolio.mjs'
+      - '.github/workflows/check-portfolio.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: glass-book-qa
+  cancel-in-progress: true
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install headless browser
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Validate carousel and saved repository data
+        run: |
+          node --check js/repo-carousel.js
+          node --check scripts/test-portfolio.mjs
+          node scripts/test-portfolio.mjs
