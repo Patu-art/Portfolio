@@ -217,6 +217,7 @@ if (root) {
     if (!previewDialog?.open || previewClosing) return;
     previewClosing = true;
     previewDialog.classList.add('is-returning');
+    previewDialog.dataset.previewMotion = 'return';
     await animatePreview(false);
     previewDialog.close();
     previewDialog.classList.remove('is-returning');
@@ -244,6 +245,7 @@ if (root) {
       previewLive.hidden = true;
     }
     previewDialog.showModal();
+    previewDialog.dataset.previewMotion = 'front';
     root.classList.add('is-preview-open');
     previewDialog.classList.remove('is-returning');
     void animatePreview(true);
@@ -262,6 +264,7 @@ if (root) {
       previewMotion = null;
       previewImage?.removeAttribute('src');
       previewDialog.classList.remove('is-returning');
+      delete previewDialog.dataset.previewMotion;
       root.classList.remove('is-preview-open');
       if (previewTrigger?.isConnected) previewTrigger.focus({ preventScroll: true });
       previewSource = null;
