@@ -306,9 +306,10 @@ if (root) {
   // repeated smooth-scroll animations. At either edge, the page scrolls normally.
   let wheelBlockedUntil = 0;
   viewport.addEventListener('wheel', (event) => {
-    if (!slides.length || event.ctrlKey || event.shiftKey || event.deltaX !== 0 ||
-        Math.abs(event.deltaY) < 2 || event.target.closest('a,button') ||
-        !window.matchMedia('(pointer:fine)').matches) return;
+    // Wheel should still turn the carousel when the pointer rests on the central
+    // screenshot's Inspect button. Its old button guard trapped desktop scrolling.
+    if (!slides.length || previewDialog?.open || event.ctrlKey || event.shiftKey || event.deltaX !== 0 ||
+        Math.abs(event.deltaY) < 2 || !window.matchMedia('(pointer:fine)').matches) return;
     const direction = Math.sign(event.deltaY);
     if ((direction < 0 && activeIndex === 0) ||
         (direction > 0 && activeIndex === slides.length - 1)) return;
