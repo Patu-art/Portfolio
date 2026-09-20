@@ -1,0 +1,348 @@
+/* Projects reel adaptation — glassy, centered poster coverflow from the supplied
+   video, translated into the portfolio's soft-blue palette. Projects page ONLY.
+   The repo index, screenshot sync and existing carousel controls stay intact. */
+body[data-page="projects"] .repo-carousel.reel-carousel {
+  --reel-card:clamp(292px,32vw,424px);
+  --reel-gap:clamp(13px,2vw,28px);
+  --reel-stage:clamp(525px,calc(100dvh - var(--header-h,78px) - 95px),685px);
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  isolation:isolate;
+  border-top:0;
+  overflow:visible;
+  background:
+    radial-gradient(ellipse at 52% 38%,rgba(129,159,167,.34),transparent 49%),
+    radial-gradient(ellipse at 24% 62%,rgba(91,110,116,.10),transparent 45%);
+}
+body[data-page="projects"] .reel-carousel .repo-carousel__viewport {
+  order:1;
+  height:var(--reel-stage) !important;
+  --spotlight-height:var(--reel-stage);
+  padding:0 !important;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  scroll-padding-inline:calc((100% - var(--reel-card))/2);
+  scroll-snap-type:x mandatory !important;
+  overscroll-behavior-inline:contain;
+  perspective:1400px;
+  scrollbar-width:none;
+}
+body[data-page="projects"] .reel-carousel .repo-carousel__viewport::-webkit-scrollbar {display:none;}
+body[data-page="projects"] .reel-carousel .repo-carousel__track {
+  display:flex !important;
+  flex-flow:row nowrap !important;
+  align-items:stretch;
+  box-sizing:border-box;
+  width:100% !important;
+  min-width:100%;
+  height:100%;
+  padding-inline:calc((100% - var(--reel-card))/2) !important;
+  gap:var(--reel-gap) !important;
+}
+body[data-page="projects"] .reel-carousel .repo-slide {
+  box-sizing:border-box;
+  flex:0 0 var(--reel-card) !important;
+  width:var(--reel-card) !important;
+  max-width:var(--reel-card) !important;
+  min-width:0;
+  height:100%;
+  padding:18px 0 19px !important;
+  scroll-snap-align:center !important;
+  scroll-snap-stop:always;
+  overflow:visible !important;
+  perspective:1400px;
+  cursor:pointer;
+}
+body[data-page="projects"] .reel-carousel .repo-slide .repo-book {
+  display:flex !important;
+  flex-direction:column !important;
+  box-sizing:border-box;
+  width:100%;
+  height:100%;
+  min-height:0 !important;
+  max-height:100%;
+  margin:0;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.94) !important;
+  border-radius:23px !important;
+  background:rgba(245,249,251,.78) !important;
+  box-shadow:0 15px 52px rgba(38,65,75,.10),inset 0 1px 0 rgba(255,255,255,.94);
+  -webkit-backdrop-filter:blur(15px) saturate(125%);
+  backdrop-filter:blur(15px) saturate(125%);
+  transform:perspective(1400px) translateZ(-115px) rotateY(0) scale(.86) !important;
+  transform-origin:center center !important;
+  opacity:.50 !important;
+  transition:transform .48s cubic-bezier(.2,.75,.2,1),opacity .4s ease,
+    box-shadow .45s ease !important;
+  backface-visibility:hidden;
+}
+body[data-page="projects"] .reel-carousel .repo-slide.is-current .repo-book {
+  opacity:1 !important;
+  transform:perspective(1400px) translateZ(0) rotateY(0) scale(1) !important;
+  box-shadow:0 23px 62px rgba(38,65,75,.18),0 0 0 1px rgba(129,159,167,.14),
+    inset 0 1px 0 #fff !important;
+}
+body[data-page="projects"] .reel-carousel .repo-slide.is-prev .repo-book {
+  opacity:.69 !important;
+  transform:perspective(1400px) translateZ(-90px) rotateY(13deg) scale(.91) !important;
+}
+body[data-page="projects"] .reel-carousel .repo-slide.is-next .repo-book {
+  opacity:.69 !important;
+  transform:perspective(1400px) translateZ(-90px) rotateY(-13deg) scale(.91) !important;
+}
+body[data-page="projects"] .reel-carousel .repo-slide.is-far .repo-book {
+  opacity:.35 !important;
+  transform:perspective(1400px) translateZ(-145px) scale(.84) !important;
+}
+body[data-page="projects"] .reel-carousel .repo-book::before,
+body[data-page="projects"] .reel-carousel .repo-book::after,
+body[data-page="projects"] .reel-carousel .repo-book__spine {display:none !important;}
+body[data-page="projects"] .reel-carousel .repo-book__page--image {
+  display:block;
+  position:relative;
+  flex:0 0 55%;
+  min-height:0 !important;
+  max-height:none !important;
+  width:100%;
+  overflow:hidden;
+  border-radius:0 !important;
+  background:#dce6ec;
+  transform:none !important;
+}
+body[data-page="projects"] .reel-carousel .repo-book__page--image::after {
+  background:linear-gradient(to top,rgba(18,39,49,.18),transparent 48%);
+}
+body[data-page="projects"] .reel-carousel .repo-slide__media > img {
+  display:block;
+  width:100%;
+  height:100% !important;
+  min-height:0 !important;
+  max-height:none !important;
+  aspect-ratio:auto !important;
+  object-fit:cover;
+  object-position:top center;
+  transform:none !important;
+}
+body[data-page="projects"] .reel-carousel .repo-slide__media-label {
+  top:12px !important;left:12px !important;
+  padding:7px 10px !important;
+  border-radius:999px !important;
+  background:rgba(243,245,249,.94) !important;
+  color:#334e59;
+  font-size:9px !important;
+  letter-spacing:.06em;
+}
+body[data-page="projects"] .reel-carousel .repo-slide__inspect {
+  inset:auto 50% 16px auto !important;
+  transform:translateX(50%) !important;
+  min-height:44px;
+  padding:11px 17px;
+  border:1px solid rgba(255,255,255,.9) !important;
+  background:rgba(243,245,249,.93) !important;
+  color:#17242a !important;
+  box-shadow:0 7px 26px rgba(18,39,49,.19);
+  white-space:nowrap;
+}
+body[data-page="projects"] .reel-carousel .repo-slide__inspect:hover {
+  background:#17242a !important;
+  color:#fff !important;
+}
+body[data-page="projects"] .reel-carousel .repo-book__page--text {
+  box-sizing:border-box;
+  flex:1 1 auto;
+  min-height:0 !important;
+  max-height:none !important;
+  width:100%;
+  display:flex !important;
+  align-items:flex-start;
+  justify-content:center;
+  gap:clamp(7px,.9vw,12px) !important;
+  padding:clamp(13px,1.6vw,20px) !important;
+  border-radius:0 !important;
+  background:linear-gradient(155deg,rgba(255,255,255,.84),rgba(237,243,246,.83)) !important;
+  text-align:left;
+}
+body[data-page="projects"] .reel-carousel .repo-slide__eyebrow {
+  font-size:9px !important;
+  line-height:1.3 !important;
+  color:#5b6e74;
+}
+body[data-page="projects"] .reel-carousel .repo-slide__body h3 {
+  max-width:none;
+  width:100%;
+  font-size:clamp(28px,2.6vw,37px) !important;
+  line-height:1.04;
+  margin:0;
+}
+body[data-page="projects"] .reel-carousel .repo-slide__description {
+  display:-webkit-box !important;
+  -webkit-line-clamp:2 !important;
+  overflow:hidden !important;
+  max-width:100%;
+  font-size:12px !important;
+  line-height:1.45 !important;
+}
+body[data-page="projects"] .reel-carousel .repo-slide__focus {display:none;}
+body[data-page="projects"] .reel-carousel .repo-slide__links {
+  display:flex;
+  flex-wrap:nowrap;
+  width:100%;
+  gap:8px;
+  margin-top:auto;
+}
+body[data-page="projects"] .reel-carousel .repo-slide__link {
+  flex:1 1 0;
+  min-width:0;
+  min-height:44px;
+  padding:10px 7px;
+  font-size:11px !important;
+  text-align:center;
+  line-height:1.2;
+}
+body[data-page="projects"] .reel-carousel .repo-slide:not(.is-current) .repo-slide__inspect {
+  visibility:hidden;
+}
+body[data-page="projects"] .reel-carousel .repo-carousel__toolbar {
+  order:2;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:15px;
+  width:max-content;
+  max-width:calc(100% - 20px);
+  min-height:56px;
+  margin:0 auto 9px;
+  padding:6px 10px !important;
+  border:1px solid rgba(91,110,116,.2);
+  border-radius:999px;
+  background:rgba(255,255,255,.86);
+  box-shadow:0 10px 35px rgba(38,65,75,.10);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+}
+body[data-page="projects"] .reel-carousel .repo-carousel__label {
+  font:600 10px/1.2 "JetBrains Mono",monospace;
+  color:#526f79;
+  letter-spacing:.035em;
+}
+body[data-page="projects"] .reel-carousel .repo-carousel__desktop-hint {display:none;}
+body[data-page="projects"] .reel-carousel .repo-carousel__actions {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+body[data-page="projects"] .reel-carousel .repo-carousel__actions button {
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  min-height:42px;
+  border-radius:50%;
+  background:#e5edf0;
+  border:1px solid rgba(91,110,116,.19);
+  color:#17242a;
+  font-size:20px;
+}
+body[data-page="projects"] .reel-carousel .repo-carousel__actions button:hover:not(:disabled) {
+  color:#fff;
+  background:#526f79;
+}
+body[data-page="projects"] .reel-carousel .repo-carousel__actions button:disabled {
+  opacity:.36;
+}
+body[data-page="projects"] .reel-carousel .repo-carousel__count {
+  font:600 11px/1.25 "JetBrains Mono",monospace;
+  min-width:54px;
+  color:#334e59;
+}
+body[data-page="projects"] .reel-carousel .repo-rail {
+  order:3;
+  max-width:100%;
+  margin-top:5px;
+}
+body[data-page="projects"] .reel-carousel .repo-carousel__status {order:4;}
+body[data-page="projects"] .repo-preview-dialog {
+  background:rgba(243,245,249,.96);
+  border:1px solid rgba(255,255,255,.83);
+  box-shadow:0 35px 115px rgba(12,33,43,.46);
+}
+body[data-page="projects"] .repo-preview-dialog::backdrop {
+  background:rgba(21,39,49,.65);
+  backdrop-filter:blur(9px);
+}
+@media (prefers-reduced-motion:no-preference) {
+  body[data-page="projects"] .repo-preview-dialog[open] {
+    animation:reelPreviewIn .24s cubic-bezier(.2,.75,.2,1) both;
+  }
+  @keyframes reelPreviewIn {
+    from {opacity:0;transform:translateY(12px) scale(.975);}
+    to {opacity:1;transform:translateY(0) scale(1);}
+  }
+}
+@media(max-width:700px) {
+  body[data-page="projects"] .repo-carousel.reel-carousel {
+    --reel-card:clamp(260px,79vw,335px);
+    --reel-gap:8px;
+    --reel-stage:clamp(490px,calc(100dvh - var(--header-h,70px) - 80px),610px);
+  }
+  body[data-page="projects"] .reel-carousel .repo-slide {padding:8px 0 11px !important;}
+  body[data-page="projects"] .reel-carousel .repo-slide .repo-book {
+    border-radius:17px !important;
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+  }
+  body[data-page="projects"] .reel-carousel .repo-book__page--image {
+    flex-basis:43%;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+  }
+  body[data-page="projects"] .reel-carousel .repo-slide__body h3 {
+    font-size:clamp(26px,7.2vw,33px) !important;
+  }
+  body[data-page="projects"] .reel-carousel .repo-slide__description {
+    -webkit-line-clamp:3 !important;
+  }
+  body[data-page="projects"] .reel-carousel .repo-slide__focus {display:none !important;}
+  body[data-page="projects"] .reel-carousel .repo-book__page--text {
+    gap:7px !important;
+    padding:12px 13px !important;
+  }
+  body[data-page="projects"] .reel-carousel .repo-slide__link {
+    padding:8px 5px;
+    font-size:10px !important;
+  }
+  body[data-page="projects"] .reel-carousel .repo-slide__inspect {
+    bottom:9px !important;
+    padding:9px 12px !important;
+    font-size:11px !important;
+  }
+  body[data-page="projects"] .reel-carousel .repo-carousel__toolbar {
+    width:max-content;
+    min-height:52px;
+    gap:10px;
+    padding:5px 8px !important;
+  }
+  body[data-page="projects"] .reel-carousel .repo-carousel__label {
+    font-size:9px;
+  }
+  body[data-page="projects"] .reel-carousel .repo-rail {margin-top:4px;}
+}
+@media(max-width:370px), (max-height:600px) and (max-width:700px) {
+  body[data-page="projects"] .repo-carousel.reel-carousel {
+    --reel-stage:clamp(495px,92dvh,565px);
+  }
+  body[data-page="projects"] .reel-carousel .repo-book__page--image {flex-basis:39%;}
+  body[data-page="projects"] .reel-carousel .repo-slide__description {
+    -webkit-line-clamp:2 !important;
+  }
+  body[data-page="projects"] .reel-carousel .repo-book__page--text {
+    padding:10px 12px !important;
+    gap:6px !important;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  body[data-page="projects"] .reel-carousel .repo-slide .repo-book,
+  body[data-page="projects"] .repo-preview-dialog {transition:none !important;animation:none !important;}
+}
