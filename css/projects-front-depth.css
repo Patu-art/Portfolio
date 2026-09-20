@@ -5,7 +5,7 @@ body[data-page="projects"] .reel-carousel .repo-slide.is-current {
   z-index:10;
 }
 body[data-page="projects"] .reel-carousel .repo-slide.is-current .repo-book {
-  transform:perspective(1400px) translateZ(80px) scale(1.025) !important;
+  transform:perspective(1400px) translateZ(42px) scale(.972) !important;
   opacity:1 !important;
   box-shadow:0 29px 70px rgba(38,65,75,.21),
     0 0 0 1px rgba(129,159,167,.13),
@@ -42,7 +42,7 @@ body[data-page="projects"] .reel-carousel .repo-slide.is-current .repo-slide__me
 }
 @media (max-width:700px) {
   body[data-page="projects"] .reel-carousel .repo-slide.is-current .repo-book {
-    transform:perspective(1000px) translateZ(48px) scale(1.012) !important;
+    transform:perspective(1000px) translateZ(25px) scale(.972) !important;
   }
   body[data-page="projects"] .reel-carousel .repo-slide.is-prev .repo-book {
     transform:perspective(1000px) translateZ(-95px) rotateY(9deg) scale(.90) !important;
