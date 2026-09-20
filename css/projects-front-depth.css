@@ -1,0 +1,61 @@
+/* Shared-element FRONT-DEPTH interaction from the uploaded reference.
+   The selected project advances toward the viewer; it does not travel sideways
+   into the preview. Scope is Projects only. */
+body[data-page="projects"] .reel-carousel .repo-slide.is-current {
+  z-index:10;
+}
+body[data-page="projects"] .reel-carousel .repo-slide.is-current .repo-book {
+  transform:perspective(1400px) translateZ(42px) scale(.972) !important;
+  opacity:1 !important;
+  box-shadow:0 29px 70px rgba(38,65,75,.21),
+    0 0 0 1px rgba(129,159,167,.13),
+    inset 0 1px 0 rgba(255,255,255,.98) !important;
+}
+body[data-page="projects"] .reel-carousel .repo-slide.is-prev .repo-book {
+  transform:perspective(1400px) translateZ(-138px) rotateY(11deg) scale(.87) !important;
+  opacity:.55 !important;
+}
+body[data-page="projects"] .reel-carousel .repo-slide.is-next .repo-book {
+  transform:perspective(1400px) translateZ(-138px) rotateY(-11deg) scale(.87) !important;
+  opacity:.55 !important;
+}
+body[data-page="projects"] .reel-carousel.is-preview-open .repo-slide:not(.is-current) .repo-book {
+  opacity:.22 !important;
+}
+/* Override the earlier generic slide-up modal keyframes. Geometry and
+   timing are supplied by the actual card-to-preview animation in JS. */
+body[data-page="projects"] .repo-preview-dialog[open] {
+  animation:none !important;
+  transform-origin:center center;
+  will-change:transform,opacity;
+  backface-visibility:hidden;
+}
+body[data-page="projects"] .repo-preview-dialog::backdrop {
+  background:rgba(17,31,38,.66);
+  backdrop-filter:blur(6px);
+}
+body[data-page="projects"] .reel-carousel .repo-slide.is-current .repo-slide__media {
+  cursor:zoom-in;
+}
+body[data-page="projects"] .reel-carousel .repo-slide.is-current .repo-slide__media img {
+  cursor:zoom-in;
+}
+@media (max-width:700px) {
+  body[data-page="projects"] .reel-carousel .repo-slide.is-current .repo-book {
+    transform:perspective(1000px) translateZ(25px) scale(.972) !important;
+  }
+  body[data-page="projects"] .reel-carousel .repo-slide.is-prev .repo-book {
+    transform:perspective(1000px) translateZ(-95px) rotateY(9deg) scale(.90) !important;
+  }
+  body[data-page="projects"] .reel-carousel .repo-slide.is-next .repo-book {
+    transform:perspective(1000px) translateZ(-95px) rotateY(-9deg) scale(.90) !important;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  body[data-page="projects"] .repo-preview-dialog[open] {
+    will-change:auto;
+  }
+  body[data-page="projects"] .reel-carousel .repo-slide .repo-book {
+    transition:none !important;
+  }
+}

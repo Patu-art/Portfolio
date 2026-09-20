@@ -18,8 +18,12 @@ if (root) {
   const previewLive = previewDialog?.querySelector('[data-preview-live]');
   const previewFailure = previewDialog?.querySelector('[data-preview-failure]');
   let previewTrigger = null;
+  let previewSource = null;
+  let previewMotion = null;
+  let previewClosing = false;
   let railButtons = [];
   let slides = [];
+  let currentItems = [];
   let activeIndex = 0;
   let activeName = '';
   let lastSignature = '';
@@ -170,13 +174,64 @@ if (root) {
     return slide;
   }
 
-  function closePreview() {
-    if (!previewDialog?.open) return;
+  // The reference uses a shared-element zoom: the selected poster advances
+  // straight toward the viewer, then returns to exactly the same card on close.
+  // No sideways sliding or generic scale-from-the-middle modal.
+  const motionDuration = () => prefersReducedMotion() ? 0 : 470;
+  const previewGeometry = (source) => {
+    const start = source?.getBoundingClientRect();
+    const finish = previewDialog?.getBoundingClientRect();
+    if (!start?.width || !finish?.width) return null;
+    return {
+      x: (start.left + start.width / 2) - (finish.left + finish.width / 2),
+      y: (start.top + start.height / 2) - (finish.top + finish.height / 2),
+      sx: Math.min(1, Math.max(.15, start.width / finish.width)),
+      sy: Math.min(1, Math.max(.15, start.height / finish.height))
+    };
+  };
+  const fromCard = (g) =>
+    'translate3d(' + g.x + 'px,' + g.y + 'px,0) scale(' + g.sx + ',' + g.sy + ')';
+  const animatePreview = (opening) => {
+    const g = previewGeometry(previewSource);
+    if (!g || !motionDuration() || typeof previewDialog.animate !== 'function')
+      return Promise.resolve();
+    previewMotion?.cancel();
+    const start = fromCard(g);
+    const frames = opening
+      ? [{ transform:start, opacity:.66, borderRadius:'24px' },
+         { transform:'translate3d(0,0,0) scale(1)', opacity:1, borderRadius:'18px' }]
+      : [{ transform:'translate3d(0,0,0) scale(1)', opacity:1, borderRadius:'18px' },
+         { transform:start, opacity:.66, borderRadius:'24px' }];
+    const animation = previewDialog.animate(frames, {
+      duration:motionDuration(), easing:'cubic-bezier(.22,.78,.20,1)', fill:'both'
+    });
+    previewMotion = animation;
+    return animation.finished.catch(() => {}).then(() => {
+      if (previewMotion === animation) {
+        animation.cancel();
+        previewMotion = null;
+      }
+    });
+  };
+  async function closePreview() {
+    if (!previewDialog?.open || previewClosing) return;
+    previewClosing = true;
+    previewDialog.classList.add('is-returning');
+    previewDialog.dataset.previewMotion = 'return';
+    await animatePreview(false);
     previewDialog.close();
+    previewDialog.classList.remove('is-returning');
+    root.classList.remove('is-preview-open');
+    previewClosing = false;
   }
   function openPreview(repo, trigger) {
-    if (!previewDialog || !previewImage || !repo.image || !previewDialog.showModal) return;
-    previewTrigger = trigger;
+    if (!previewDialog || previewDialog.open || !previewImage || !repo.image ||
+        !previewDialog.showModal) return;
+    const card = trigger.closest('.repo-book');
+    if (!card) return;
+    previewSource = card;
+    previewTrigger = trigger.matches('button, a') ? trigger :
+      card.querySelector('.repo-slide__inspect') || viewport;
     previewTitle.textContent = repo.title + ' / full screenshot';
     previewImage.alt = repo.title + ' full website screenshot';
     previewImage.hidden = false;
@@ -190,16 +245,31 @@ if (root) {
       previewLive.hidden = true;
     }
     previewDialog.showModal();
+    previewDialog.dataset.previewMotion = 'front';
+    root.classList.add('is-preview-open');
+    previewDialog.classList.remove('is-returning');
+    void animatePreview(true);
   }
   if (previewDialog) {
-    previewDialog.querySelector('[data-preview-close]')?.addEventListener('click', closePreview);
+    previewDialog.querySelector('[data-preview-close]')?.addEventListener('click', () => { void closePreview(); });
     previewDialog.addEventListener('click', (event) => {
-      if (event.target === previewDialog) closePreview();
+      if (event.target === previewDialog) void closePreview();
+    });
+    previewDialog.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      void closePreview();
     });
     previewDialog.addEventListener('close', () => {
+      previewMotion?.cancel();
+      previewMotion = null;
       previewImage?.removeAttribute('src');
+      previewDialog.classList.remove('is-returning');
+      delete previewDialog.dataset.previewMotion;
+      root.classList.remove('is-preview-open');
       if (previewTrigger?.isConnected) previewTrigger.focus({ preventScroll: true });
+      previewSource = null;
       previewTrigger = null;
+      previewClosing = false;
     });
     previewImage?.addEventListener('error', () => {
       previewImage.hidden = true;
@@ -279,14 +349,21 @@ if (root) {
     const left = slideLeft(targetIndex);
     updateActive(targetIndex, animate ? direction : 0);
     scrollLockUntil = performance.now() + (prefersReducedMotion() || !animate ? 80 : 650);
-    viewport.scrollTo({ left, behavior: !animate || prefersReducedMotion() ? 'instant' : 'smooth' });
+    // Card selection cuts to the new center; visual movement is in depth, not a
+    // horizontal slide from one side to the other. Touch drag stays native.
+    viewport.scrollTo({ left, behavior:root.classList.contains('reel-carousel') ? 'instant' :
+      (!animate || prefersReducedMotion() ? 'instant' : 'smooth') });
   }
 
   viewport.addEventListener('click', event => {
     const slide = event.target.closest('.repo-slide');
-    if (!slide || event.target.closest('a,button') || slide.classList.contains('is-current')) return;
+    if (!slide || event.target.closest('a,button')) return;
     const index = slides.indexOf(slide);
-    if (index >= 0) goTo(index);
+    if (index < 0) return;
+    if (slide.classList.contains('is-current') && root.classList.contains('reel-carousel')) {
+      const repo = normalize(currentItems[index]);
+      if (repo?.image) openPreview(repo, slide.querySelector('.repo-book'));
+    } else if (!slide.classList.contains('is-current')) goTo(index);
   });
 
   previousButton.addEventListener('click', () => goTo(activeIndex - 1));
@@ -358,6 +435,7 @@ if (root) {
       { repo: document.activeElement.closest('[data-repo]')?.dataset.repo,
         href: document.activeElement.getAttribute('href') } : null;
     const retainName = activeName;
+    currentItems = clean;
     slides = clean.map((repo, index) => makeSlide(repo, index, clean.length));
     track.replaceChildren(...slides);
     if (chapterRail) {
