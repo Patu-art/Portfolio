@@ -68,8 +68,9 @@ body[data-page="projects"] .reel-carousel .repo-slide .repo-book {
   border-radius:23px !important;
   background:rgba(245,249,251,.78) !important;
   box-shadow:0 15px 52px rgba(38,65,75,.10),inset 0 1px 0 rgba(255,255,255,.94);
-  -webkit-backdrop-filter:blur(15px) saturate(125%);
-  backdrop-filter:blur(15px) saturate(125%);
+  /* Layered translucent surfaces simulate frosted glass without per-card blur. */
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
   transform:perspective(1400px) translateZ(-115px) rotateY(0) scale(.86) !important;
   transform-origin:center center !important;
   opacity:.50 !important;
