@@ -167,6 +167,8 @@ try {
       width + 'px: active book fills all available space; adjacent previews cannot peek');
     await page.locator('[data-repo-next]').click();
     await page.waitForTimeout(500);
+    assert.equal(await page.locator('.repo-slide.is-current').getAttribute('data-repo'), chapterNames[1],
+      width + 'px: next selection must bring the new poster forward without sliding the overlay');
     const horizontalPosition = await page.locator('[data-repo-viewport]').evaluate(el => el.scrollLeft);
     assert(horizontalPosition > 20, width + 'px: next must move horizontally');
     await page.waitForTimeout(250);
@@ -185,6 +187,17 @@ try {
     await inspect.click();
     const previewDialog = page.locator('[data-preview-dialog]');
     assert(await previewDialog.evaluate(dialog => dialog.open), width + 'px: screenshot dialog did not open');
+    assert.equal(await previewDialog.getAttribute('data-preview-motion'), 'front',
+      width + 'px: preview did not use the forward depth transition');
+    if (width === 1280) {
+      const actual = await previewDialog.evaluate(dialog => {
+        const animations = dialog.getAnimations();
+        return animations.some(animation => animation.effect?.getKeyframes().some(frame =>
+          String(frame.transform || '').includes('translate3d(') &&
+          String(frame.transform || '').includes('scale(')));
+      });
+      assert(actual, 'Preview must animate geometrically from the selected poster, not slide upward');
+    }
     const fullImage = previewDialog.locator('[data-preview-image]');
     assert((await fullImage.getAttribute('src')).includes('.png'),
       width + 'px: screenshot dialog did not load the full captured PNG');
@@ -192,8 +205,10 @@ try {
     assert(await fullImage.evaluate(img => img.naturalWidth >= 900),
       width + 'px: full preview screenshot is missing or too small');
     await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('[data-preview-dialog]')?.open,
+      null, { timeout: 2000 });
     assert(!(await previewDialog.evaluate(dialog => dialog.open)),
-      width + 'px: Escape did not close the screenshot dialog');
+      width + 'px: Escape did not return the preview to the card');
     assert(await inspect.evaluate(button => document.activeElement === button),
       width + 'px: screenshot dialog did not restore focus to its trigger');
     assert.equal(errors.length, 0, width + 'px: browser exception(s): ' + errors.join(', '));
