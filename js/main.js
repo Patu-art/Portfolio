@@ -54,7 +54,7 @@ ensureStylesheet('css/portfolio-refresh.css');
         './navbar.js?v=20260919a',
         './smooth-scroll.js',
         './animations.js',
-        './repo-carousel.js?v=20260919-project-book-v1'
+        './repo-carousel.js?v=20260920-glass-reel-v1'
       ]
       : isHome
         ? [
