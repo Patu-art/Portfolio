@@ -120,8 +120,11 @@ try {
       overflowX:getComputedStyle(element).overflowX,
       overflowY:getComputedStyle(element).overflowY
     }));
-    assert(horizontal.scrollWidth > horizontal.clientWidth * (data.repository_count - 1) * .73,
-      width + 'px: coverflow chapters are not laid out horizontally');
+    const slideWidth = await slides.first().evaluate(el => el.getBoundingClientRect().width);
+    assert(horizontal.scrollWidth > slideWidth * data.repository_count,
+      width + 'px: centered glass cards are not arranged in a horizontal rail');
+    assert(slideWidth <= width * .87 && slideWidth >= 220,
+      width + 'px: cards are too small or adjacent chapters cannot peek');
     assert(horizontal.snap.includes('x') && horizontal.overflowX === 'auto' &&
       horizontal.overflowY === 'hidden', width + 'px: wrong horizontal scrolling mode');
     assert(horizontal.scrollHeight <= horizontal.clientHeight + 3,
