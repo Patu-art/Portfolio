@@ -6,10 +6,10 @@ body[data-page="projects"] .orbit-carousel .repo-slide{--x:0px;--y:0px;--z:-300p
 body[data-page="projects"] .orbit-carousel:not(.orbit-ready) .repo-slide{transition:none!important}
 body[data-page="projects"] .orbit-carousel .repo-slide.is-current,body[data-page="projects"] .orbit-carousel .repo-slide.is-prev,body[data-page="projects"] .orbit-carousel .repo-slide.is-next{visibility:visible;opacity:1!important;pointer-events:auto;transition:transform .62s cubic-bezier(.18,.82,.25,1.08),opacity .42s ease,visibility 0s!important}
 body[data-page="projects"] .orbit-carousel .repo-slide.is-current{--z:90px;--scale:.97;z-index:5}
-body[data-page="projects"] .orbit-carousel .repo-slide.is-prev{--x:calc(0px - var(--orbit-step));--y:20px;--z:-140px;--turn:14deg;--scale:.78;z-index:3;opacity:.75!important}
-body[data-page="projects"] .orbit-carousel .repo-slide.is-next{--x:var(--orbit-step);--y:20px;--z:-140px;--turn:-14deg;--scale:.78;z-index:3;opacity:.75!important}
-body[data-page="projects"] .orbit-carousel .repo-slide.is-before{--x:calc(0px - var(--orbit-far));--y:42px;--z:-320px;--turn:24deg;--scale:.51;z-index:1}
-body[data-page="projects"] .orbit-carousel .repo-slide.is-after{--x:var(--orbit-far);--y:42px;--z:-320px;--turn:-24deg;--scale:.51;z-index:1}
+body[data-page="projects"] .orbit-carousel .repo-slide.is-prev{--x:calc(0px - var(--orbit-step));--y:20px;--z:-140px;--turn:0deg;--scale:.78;z-index:3;opacity:.75!important}
+body[data-page="projects"] .orbit-carousel .repo-slide.is-next{--x:var(--orbit-step);--y:20px;--z:-140px;--turn:0deg;--scale:.78;z-index:3;opacity:.75!important}
+body[data-page="projects"] .orbit-carousel .repo-slide.is-before{--x:calc(0px - var(--orbit-far));--y:42px;--z:-320px;--turn:0deg;--scale:.51;z-index:1}
+body[data-page="projects"] .orbit-carousel .repo-slide.is-after{--x:var(--orbit-far);--y:42px;--z:-320px;--turn:0deg;--scale:.51;z-index:1}
 body[data-page="projects"] .orbit-carousel .repo-slide .repo-book,body[data-page="projects"] .orbit-carousel .repo-slide.is-current .repo-book,body[data-page="projects"] .orbit-carousel .repo-slide.is-prev .repo-book,body[data-page="projects"] .orbit-carousel .repo-slide.is-next .repo-book,body[data-page="projects"] .orbit-carousel .repo-slide.is-far .repo-book{width:100%!important;height:100%!important;margin:0!important;transform:none!important;opacity:1!important;transition:none!important;box-shadow:0 17px 46px rgba(26,50,63,.18),inset 0 1px 0 rgba(255,255,255,.97)!important}
 body[data-page="projects"] .orbit-carousel .repo-slide.is-current .repo-book{box-shadow:0 24px 65px rgba(26,50,63,.25),0 0 0 1px rgba(91,110,116,.14)!important}
 body[data-page="projects"] .orbit-carousel .repo-slide:not(.is-current) .repo-slide__inspect{visibility:hidden;pointer-events:none}
@@ -20,3 +20,36 @@ body[data-page="projects"] .orbit-carousel.is-preview-open .repo-slide:not(.is-c
 @media(max-width:700px){body[data-page="projects"] .orbit-carousel{--orbit-card:clamp(240px,70vw,320px);--orbit-step:clamp(166px,48vw,215px);--orbit-far:clamp(260px,77vw,340px);--orbit-height:clamp(500px,calc(100dvh - 142px),620px)}body[data-page="projects"] .orbit-carousel .repo-slide{height:calc(var(--orbit-height) - 36px)!important}body[data-page="projects"] .orbit-carousel .repo-slide.is-prev,body[data-page="projects"] .orbit-carousel .repo-slide.is-next{--z:-100px;--scale:.76}body[data-page="projects"] .orbit-carousel .repo-slide.is-current{--z:55px;--scale:.95}}
 @media(max-width:370px){body[data-page="projects"] .orbit-carousel{--orbit-card:clamp(242px,75vw,262px);--orbit-step:clamp(151px,46vw,175px);--orbit-far:clamp(242px,76vw,285px);--orbit-height:510px}body[data-page="projects"] .orbit-carousel .repo-slide{height:474px!important}}
 @media(prefers-reduced-motion:reduce){body[data-page="projects"] .orbit-carousel .repo-slide{transition:none!important}}
+
+/* The reference is a floating orbit, NEVER a page-flip: the poster faces the
+   viewer throughout the journey from back-left to front-center to back-right. */
+body[data-page="projects"] .orbit-carousel .repo-slide .repo-book__page--image,
+body[data-page="projects"] .orbit-carousel .repo-slide .repo-book__page--text{
+  animation:none !important;
+  transform:none !important;
+  backface-visibility:visible;
+}
+@keyframes orbit-idle-float {
+  0%,100%{translate:0 0}
+  50%{translate:0 -7px}
+}
+@media(prefers-reduced-motion:no-preference){
+  body[data-page="projects"] .orbit-carousel.orbit-ready
+    .repo-slide.is-current:not(.is-jumping) .repo-book{
+    animation:orbit-idle-float 3.3s ease-in-out infinite !important;
+  }
+}
+/* Cards changing slots move as solid posters; only their X/Y/Z position and
+   scale change, so there is no flipping of the screenshot around the Y axis. */
+body[data-page="projects"] .orbit-carousel .repo-slide{
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+@media(prefers-reduced-motion:reduce){
+  body[data-page="projects"] .orbit-carousel .repo-slide,
+  body[data-page="projects"] .orbit-carousel .repo-slide .repo-book{
+    animation:none !important;
+    transition:none !important;
+    will-change:auto;
+  }
+}
