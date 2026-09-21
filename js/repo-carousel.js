@@ -29,7 +29,10 @@ if (root) {
   let lastSignature = '';
   let ticking = false;
   let scrollLockUntil = 0;
-  let offsets = [];
+  let jumpTimer = null;
+  let swipeStart = null;
+  let ignoreClickUntil = 0;
+  root.classList.add('orbit-carousel');
   const lowPower = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
     (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 8) ||
     (navigator.deviceMemory && navigator.deviceMemory < 8) ||
@@ -285,79 +288,74 @@ if (root) {
       if (img && !img.getAttribute('src')) img.src = img.dataset.src;
     }
   }
-  function refreshOffsets() {
-    const first = slides[0]?.offsetLeft || 0;
-    offsets = slides.map(slide => slide.offsetLeft - first);
-  }
-  window.addEventListener('resize', () => {
-    if (slides.length) refreshOffsets();
-  }, { passive: true });
-
+  const wrapIndex = index => (index + slides.length) % slides.length;
+  const signedDistance = (index, center) => {
+    const forward = (index - center + slides.length) % slides.length;
+    return forward > slides.length / 2 ? forward - slides.length : forward;
+  };
   function updateActive(index, direction = 0) {
     if (!slides.length) return;
-    const next = Math.max(0, Math.min(index, slides.length - 1));
-    if (next !== activeIndex) {
-      slides[activeIndex]?.classList.remove('is-current');
-      slides[activeIndex]?.classList.add('is-past');
-      activeIndex = next;
-      if (direction) {
-        slides[activeIndex].classList.remove('turn-forward', 'turn-backward');
-        void slides[activeIndex].offsetWidth; // restart the new page-turn only on real changes
-        slides[activeIndex].classList.add(direction > 0 ? 'turn-forward' : 'turn-backward');
-      }
-    }
-    activeName = slides[activeIndex].dataset.repo;
-    hydrateNearby(activeIndex);
-    slides.forEach((slide, i) => {
-      slide.classList.toggle('is-current', i === activeIndex);
-      slide.classList.toggle('is-past', i < activeIndex);
-      slide.classList.toggle('is-prev', i === activeIndex - 1);
-      slide.classList.toggle('is-next', i === activeIndex + 1);
-      slide.classList.toggle('is-far', Math.abs(i - activeIndex) > 1);
-      slide.setAttribute('aria-current', String(i === activeIndex));
-      slide.setAttribute('aria-hidden', String(i !== activeIndex));
-      slide.querySelectorAll('a[href], button').forEach(control => {
-        control.tabIndex = i === activeIndex ? 0 : -1;
+    const next = wrapIndex(index);
+    const old = activeIndex;
+    activeIndex = next;
+    activeName = slides[next].dataset.repo;
+    hydrateNearby(next);
+    // Render exactly three floating positions. +2 is staged just beyond the
+    // right, -2 beyond the left. When one card moves from center to a side,
+    // the next card emerges from the OPPOSITE side into the vacant position.
+    slides.forEach((slide,i) => {
+      const distance = signedDistance(i,next);
+      slide.classList.remove('is-current','is-prev','is-next','is-before','is-after','is-far',
+        'is-past','turn-forward','turn-backward');
+      const role = distance === 0 ? 'is-current' :
+        distance === -1 ? 'is-prev' : distance === 1 ? 'is-next' :
+        distance < -1 ? 'is-before' : 'is-after';
+      slide.classList.add(role);
+      if (Math.abs(distance)>1) slide.classList.add('is-far');
+      slide.setAttribute('aria-current',String(distance===0));
+      slide.setAttribute('aria-hidden',String(distance!==0));
+      // Side cards can be selected with a mouse, but only the center has
+      // keyboard-operable actions; the rail/buttons retain full keyboard access.
+      slide.querySelectorAll('a[href],button').forEach(control => {
+        control.tabIndex = distance === 0 ? 0 : -1;
       });
     });
-    progress.textContent = String(activeIndex + 1).padStart(2, '0') + ' / ' +
-      String(slides.length).padStart(2, '0');
-    if (progressBar) progressBar.style.width = (100 * (activeIndex + 1) / slides.length) + '%';
-    previousButton.disabled = activeIndex === 0;
-    nextButton.disabled = activeIndex === slides.length - 1;
-    railButtons.forEach((button, i) => {
-      button.setAttribute('aria-current', String(i === activeIndex));
-      button.setAttribute('aria-label', (i === activeIndex ? 'Current chapter: ' : 'Go to chapter: ') + slides[i].dataset.repo);
-    });
-    if (chapterRail && railButtons[activeIndex]) {
-      const selected = railButtons[activeIndex];
-      const leftEdge = selected.offsetLeft - chapterRail.offsetLeft;
-      if (leftEdge < chapterRail.scrollLeft || leftEdge + selected.offsetWidth > chapterRail.scrollLeft + chapterRail.clientWidth) {
-        chapterRail.scrollTo({ left:Math.max(0,leftEdge - chapterRail.clientWidth / 3), behavior:'instant' });
+    if (direction && next !== old && !prefersReducedMotion()) {
+      const moving = [old,next,wrapIndex(old+direction),wrapIndex(next+direction)];
+      for (const index of new Set(moving)) {
+        slides[index].classList.remove('is-jumping');
+        void slides[index].offsetWidth;
+        slides[index].classList.add('is-jumping');
       }
+      clearTimeout(jumpTimer);
+      jumpTimer = setTimeout(()=>slides.forEach(slide=>slide.classList.remove('is-jumping')),670);
+    }
+    progress.textContent=String(next+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+    if(progressBar) progressBar.style.width=(100*(next+1)/slides.length)+'%';
+    previousButton.disabled=slides.length<2;
+    nextButton.disabled=slides.length<2;
+    railButtons.forEach((button,i)=>{
+      button.setAttribute('aria-current',String(i===next));
+      button.setAttribute('aria-label',(i===next?'Current chapter: ':'Go to chapter: ')+slides[i].dataset.repo);
+    });
+    if(chapterRail&&railButtons[next]){
+      const selected=railButtons[next];
+      const left=selected.offsetLeft-chapterRail.offsetLeft;
+      if(left<chapterRail.scrollLeft||left+selected.offsetWidth>chapterRail.scrollLeft+chapterRail.clientWidth)
+        chapterRail.scrollTo({left:Math.max(0,left-chapterRail.clientWidth/3),behavior:'instant'});
     }
   }
-
-  function slideLeft(index) {
-    return offsets[index] ?? (slides[index].offsetLeft - slides[0].offsetLeft);
-  }
-  function goTo(index, animate = true) {
-    if (!slides.length) return;
-    const targetIndex = Math.max(0, Math.min(index, slides.length - 1));
-    const direction = Math.sign(targetIndex - activeIndex);
-    if (!direction && animate) return;
-    const left = slideLeft(targetIndex);
-    updateActive(targetIndex, animate ? direction : 0);
-    scrollLockUntil = performance.now() + (prefersReducedMotion() || !animate ? 80 : 650);
-    // Card selection cuts to the new center; visual movement is in depth, not a
-    // horizontal slide from one side to the other. Touch drag stays native.
-    viewport.scrollTo({ left, behavior:root.classList.contains('reel-carousel') ? 'instant' :
-      (!animate || prefersReducedMotion() ? 'instant' : 'smooth') });
+  function goTo(index, animate=true) {
+    if(!slides.length||previewDialog?.open) return;
+    const next=wrapIndex(index);
+    if(next===activeIndex) return;
+    const delta=signedDistance(next,activeIndex);
+    updateActive(next,animate?Math.sign(delta):0);
   }
 
   viewport.addEventListener('click', event => {
     const slide = event.target.closest('.repo-slide');
-    if (!slide || event.target.closest('a,button')) return;
+    if (performance.now()<ignoreClickUntil || !slide || event.target.closest('a,button')) return;
     const index = slides.indexOf(slide);
     if (index < 0) return;
     if (slide.classList.contains('is-current') && root.classList.contains('reel-carousel')) {
@@ -378,9 +376,7 @@ if (root) {
       goTo(target);
     }
   });
-  // Native horizontal scroll-snap supports touch swipes, trackpads and Shift+wheel.
-  // On mouse/PC, one vertical wheel gesture advances one book without costly
-  // repeated smooth-scroll animations. At either edge, the page scrolls normally.
+  // Fixed three-card stage: wheel moves the cards between 3D positions, never a scrolling strip.
   let wheelBlockedUntil = 0;
   viewport.addEventListener('wheel', (event) => {
     // Wheel should still turn the carousel when the pointer rests on the central
@@ -388,28 +384,27 @@ if (root) {
     if (!slides.length || previewDialog?.open || event.ctrlKey || event.shiftKey || event.deltaX !== 0 ||
         Math.abs(event.deltaY) < 2 || !window.matchMedia('(pointer:fine)').matches) return;
     const direction = Math.sign(event.deltaY);
-    if ((direction < 0 && activeIndex === 0) ||
-        (direction > 0 && activeIndex === slides.length - 1)) return;
+    if (slides.length<2) return;
     if (event.cancelable) event.preventDefault();
     if (performance.now() < wheelBlockedUntil) return;
     wheelBlockedUntil = performance.now() + 480;
     goTo(activeIndex + direction);
   }, { passive:false });
-  viewport.addEventListener('scroll', () => {
-    if (ticking || !slides.length) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      ticking = false;
-      if (performance.now() < scrollLockUntil) return;
-      const target = viewport.scrollLeft;
-      const closest = offsets.reduce((best, top, index) => {
-        const distance = Math.abs(top - target);
-        return distance < best.distance ? { index, distance } : best;
-      }, { index: 0, distance: Infinity });
-      if (closest.index !== activeIndex)
-        updateActive(closest.index, Math.sign(closest.index - activeIndex));
-    });
-  }, { passive: true });
+  // Pointer/touch swipes rotate the same three floating slots on mobile.
+  // Vertical gestures continue scrolling the document.
+  viewport.addEventListener('touchstart',event=>{
+    if(event.touches.length===1) swipeStart={x:event.touches[0].clientX,y:event.touches[0].clientY};
+  },{passive:true});
+  viewport.addEventListener('touchend',event=>{
+    if(!swipeStart||!event.changedTouches.length) return;
+    const dx=event.changedTouches[0].clientX-swipeStart.x;
+    const dy=event.changedTouches[0].clientY-swipeStart.y;
+    swipeStart=null;
+    if(Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.25){
+      ignoreClickUntil=performance.now()+500;
+      goTo(activeIndex+(dx<0?1:-1));
+    }
+  },{passive:true});
 
   function show(items) {
     const seen = new Set();
@@ -451,12 +446,12 @@ if (root) {
       });
       chapterRail.replaceChildren(...railButtons);
     }
-    refreshOffsets();
+    root.classList.remove('orbit-ready');
     if (count) count.textContent = clean.length + ' PUBLIC REPOSITORIES';
     const keep = Math.max(0, clean.findIndex(repo => repo.name === retainName));
     activeIndex = keep;
     updateActive(keep);
-    requestAnimationFrame(() => goTo(keep, false));
+    requestAnimationFrame(() => root.classList.add('orbit-ready'));
     if (focused?.repo) {
       const oldLink = [...track.querySelectorAll('a')].find(anchor =>
         anchor.closest('[data-repo]')?.dataset.repo === focused.repo &&
