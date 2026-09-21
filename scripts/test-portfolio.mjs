@@ -124,8 +124,10 @@ try {
     }));
     assert.equal(stage.overflowX,'hidden',width+'px: orbit must not be a horizontal scrolling strip');
     assert.equal(stage.snap,'none',width+'px: old scroll snapping still active');
-    assert(stage.scrollWidth <= stage.clientWidth+3 && stage.scrollLeft===0,
-      width+'px: cards are still sliding as a horizontal strip');
+    assert.equal(stage.scrollLeft,0,
+      width+'px: the fixed orbit stage unexpectedly scrolled horizontally');
+    assert.equal(await page.locator('[data-repo-track]').evaluate(el=>getComputedStyle(el).display),'block',
+      width+'px: the old horizontal flex strip is still in use');
     const coordinates=await page.locator('.repo-slide.is-prev, .repo-slide.is-current, .repo-slide.is-next')
       .evaluateAll(nodes => Object.fromEntries(nodes.map(node=>[
         node.classList.contains('is-prev')?'left':node.classList.contains('is-next')?'right':'center',
