@@ -282,8 +282,10 @@ if (root) {
   function hydrateNearby(index) {
     // Only the current and adjacent chapters request screenshots.
     // Other cards carry data-src but do not download or decode offscreen PNGs.
+    // Only the three visible cards fetch screenshots. The incoming card is
+    // hydrated on the next selection, avoiding four or more initial downloads.
     const neighbors = [index, (index - 1 + slides.length) % slides.length,
-      (index + 1) % slides.length, (index + 2) % slides.length];
+      (index + 1) % slides.length];
     for (const i of new Set(neighbors)) {
       const img = slides[i]?.querySelector('img[data-src]');
       if (img && !img.getAttribute('src')) img.src = img.dataset.src;
