@@ -1,5 +1,6 @@
-/* Glass Book: an accessible, one-repository-per-page horizontal carousel.
-   The checked-in index is the reliable first paint; live GitHub is progressive. */
+/* Three-card orbital project carousel: left and right cards recede, the current
+   project floats in front, and navigation exchanges 3D slots without moving a
+   horizontal strip. The checked-in project index supplies the first paint. */
 const root = document.querySelector('[data-repo-carousel]');
 if (root) {
   const OWNER = 'Patu-art';
