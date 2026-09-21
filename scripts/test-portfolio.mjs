@@ -112,23 +112,42 @@ try {
     assert.equal(await page.locator('.repo-slide.is-current').count(), 1,
       width + 'px: exactly one chapter must be selected');
     assert.equal(await page.locator('.repo-slide.is-next').count(), 1,
-      width + 'px: next project should visibly peek from the side');
-    const horizontal = await page.locator('[data-repo-viewport]').evaluate(element => ({
-      scrollWidth:element.scrollWidth,clientWidth:element.clientWidth,
-      scrollHeight:element.scrollHeight,clientHeight:element.clientHeight,
-      snap:getComputedStyle(element).scrollSnapType,
-      overflowX:getComputedStyle(element).overflowX,
-      overflowY:getComputedStyle(element).overflowY
+      width + 'px: right background card missing');
+    assert.equal(await page.locator('.repo-slide.is-prev').count(), 1,
+      width + 'px: left background card missing');
+    assert.equal(await page.locator('.repo-slide.is-current, .repo-slide.is-prev, .repo-slide.is-next').count(), 3,
+      width + 'px: there must be exactly three floating cards');
+    const stage = await page.locator('[data-repo-viewport]').evaluate(el=>({
+      scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,
+      scrollLeft:el.scrollLeft,overflowX:getComputedStyle(el).overflowX,
+      snap:getComputedStyle(el).scrollSnapType
     }));
-    const slideWidth = await slides.first().evaluate(el => el.getBoundingClientRect().width);
-    assert(horizontal.scrollWidth > slideWidth * data.repository_count,
-      width + 'px: centered glass cards are not arranged in a horizontal rail');
-    assert(slideWidth <= width * .87 && slideWidth >= 220,
-      width + 'px: cards are too small or adjacent chapters cannot peek');
-    assert(horizontal.snap.includes('x') && horizontal.overflowX === 'auto' &&
-      horizontal.overflowY === 'hidden', width + 'px: wrong horizontal scrolling mode');
-    assert(horizontal.scrollHeight <= horizontal.clientHeight + 3,
-      width + 'px: nested vertical overflow is not allowed');
+    assert.equal(stage.overflowX,'hidden',width+'px: orbit must not be a horizontal scrolling strip');
+    assert.equal(stage.snap,'none',width+'px: old scroll snapping still active');
+    assert.equal(stage.scrollLeft,0,
+      width+'px: the fixed orbit stage unexpectedly scrolled horizontally');
+    assert.equal(await page.locator('[data-repo-track]').evaluate(el=>getComputedStyle(el).display),'block',
+      width+'px: the old horizontal flex strip is still in use');
+    const coordinates=await page.locator('.repo-slide.is-prev, .repo-slide.is-current, .repo-slide.is-next')
+      .evaluateAll(nodes => Object.fromEntries(nodes.map(node=>[
+        node.classList.contains('is-prev')?'left':node.classList.contains('is-next')?'right':'center',
+        {rect:node.getBoundingClientRect().toJSON(),
+         transform:getComputedStyle(node).transform,
+         visible:getComputedStyle(node).visibility}
+      ])));
+    assert(coordinates.left.rect.x < coordinates.center.rect.x &&
+      coordinates.center.rect.x < coordinates.right.rect.x,
+      width+'px: left/center/right cards are not separate fixed floating positions');
+    assert(coordinates.left.visible==='visible'&&coordinates.right.visible==='visible',
+      width+'px: adjacent floating cards are hidden');
+    const frontFacing=await page.locator('.repo-slide.is-prev, .repo-slide.is-current, .repo-slide.is-next')
+      .evaluateAll(nodes => nodes.every(node => {
+        const matrix = new DOMMatrixReadOnly(getComputedStyle(node).transform);
+        const media=node.querySelector('.repo-book__page--image');
+        return Math.abs(matrix.m13)<.00001 && Math.abs(matrix.m31)<.00001 &&
+          getComputedStyle(media).animationName==='none';
+      }));
+    assert(frontFacing,width+'px: project cards must float front-facing, never page-flip');
 
     assert.equal(await slides.count(), data.repository_count, width + 'px: missing repository slides');
     const chapterNames = await page.locator('.repo-slide').evaluateAll(nodes => nodes.map(node => node.dataset.repo));
@@ -169,16 +188,22 @@ try {
     await page.waitForTimeout(500);
     assert.equal(await page.locator('.repo-slide.is-current').getAttribute('data-repo'), chapterNames[1],
       width + 'px: next selection must bring the new poster forward without sliding the overlay');
-    const horizontalPosition = await page.locator('[data-repo-viewport]').evaluate(el => el.scrollLeft);
-    assert(horizontalPosition > 20, width + 'px: next must move horizontally');
+    assert.equal(await page.locator('[data-repo-viewport]').evaluate(el=>el.scrollLeft),0,
+      width+'px: next must move via depth positions rather than scrollLeft');
+    assert.equal(await slides.nth(0).evaluate(el=>el.classList.contains('is-prev')),true,
+      width+'px: former center must jump to the left background slot');
+    assert.equal(await slides.nth(2).evaluate(el=>el.classList.contains('is-next')),true,
+      width+'px: a new project must enter from the right background slot');
     await page.waitForTimeout(250);
     assert.equal(await page.locator('[data-repo-progress]').innerText(),
       '02 / ' + String(data.repository_count).padStart(2, '0'),
       width + 'px: next page did not advance by one');
     await page.locator('[data-repo-prev]').click();
     await page.waitForTimeout(500);
-    assert((await page.locator('[data-repo-viewport]').evaluate(el => el.scrollLeft)) < 20,
-      width + 'px: previous must scroll back left');
+    assert.equal(await page.locator('[data-repo-viewport]').evaluate(el=>el.scrollLeft),0,
+      width+'px: reverse navigation must not move a scrolling rail');
+    assert.equal(await slides.last().evaluate(el=>el.classList.contains('is-prev')),true,
+      width+'px: wraparound left card is missing');
     assert.equal(await page.locator('[data-repo-progress]').innerText(),
       '01 / ' + String(data.repository_count).padStart(2, '0'),
       width + 'px: previous page did not return');
@@ -245,9 +270,16 @@ try {
       await page.waitForTimeout(950);
       assert.equal(await page.locator('[data-repo-progress]').innerText(),
         '02 / ' + String(data.repository_count).padStart(2, '0'),
-        'Wheel input should advance one horizontal book page');
+        'Vertical wheel must orbit center to the left and bring right card forward');
+      await page.waitForTimeout(640);
+      await page.locator('[data-repo-carousel]').hover();
+      await page.mouse.wheel(425, 0);
+      await page.waitForTimeout(780);
+      assert.equal(await page.locator('[data-repo-progress]').innerText(),
+        '03 / ' + String(data.repository_count).padStart(2, '0'),
+        'Horizontal trackpad wheel must also rotate three floating cards');
     }
-    console.log(width + 'px: book navigation, screenshot zoom, focus restoration and readable links: PASS');
+    console.log(width + 'px: three-slot orbit, opposite-side entry, screenshot zoom and focus: PASS');
     await page.close();
   }
   // Saved GitHub data is sufficient for a no-API, low-bandwidth first paint.
