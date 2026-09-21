@@ -381,7 +381,7 @@ if (root) {
   // work on touchscreen laptops too. When over the stage the wheel controls
   // chapters; everywhere else the document scrolls normally.
   let wheelBlockedUntil = 0;
-  viewport.addEventListener('wheel', event => {
+  root.addEventListener('wheel', event => {
     if (slides.length < 2 || previewDialog?.open || event.ctrlKey || event.metaKey ||
         event.altKey || event.shiftKey) return;
     const amount = Math.abs(event.deltaX) > Math.abs(event.deltaY) ?
