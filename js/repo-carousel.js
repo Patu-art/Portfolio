@@ -28,8 +28,6 @@ if (root) {
   let activeIndex = 0;
   let activeName = '';
   let lastSignature = '';
-  let ticking = false;
-  let scrollLockUntil = 0;
   let jumpTimer = null;
   let swipeStart = null;
   let ignoreClickUntil = 0;
