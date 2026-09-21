@@ -359,10 +359,9 @@ if (root) {
     if (performance.now()<ignoreClickUntil || !slide || event.target.closest('a,button')) return;
     const index = slides.indexOf(slide);
     if (index < 0) return;
-    if (slide.classList.contains('is-current') && root.classList.contains('reel-carousel')) {
-      const repo = normalize(currentItems[index]);
-      if (repo?.image) openPreview(repo, slide.querySelector('.repo-book'));
-    } else if (!slide.classList.contains('is-current')) goTo(index);
+    // The center is the floating poster, not an implicit page-flip trigger.
+    // Open the full image only when the visible Inspect button is clicked.
+    if (!slide.classList.contains('is-current')) goTo(index);
   });
 
   previousButton.addEventListener('click', () => goTo(activeIndex - 1));
@@ -377,22 +376,25 @@ if (root) {
       goTo(target);
     }
   });
-  // Fixed three-card stage: wheel moves the cards between 3D positions, never a scrolling strip.
+  // Vertical mouse-wheel AND horizontal trackpad gestures rotate the three
+  // cards in place. Do not require pointer:fine: external mice and trackpads
+  // work on touchscreen laptops too. When over the stage the wheel controls
+  // chapters; everywhere else the document scrolls normally.
   let wheelBlockedUntil = 0;
-  viewport.addEventListener('wheel', (event) => {
-    // Wheel should still turn the carousel when the pointer rests on the central
-    // screenshot's Inspect button. Its old button guard trapped desktop scrolling.
-    if (!slides.length || previewDialog?.open || event.ctrlKey || event.shiftKey || event.deltaX !== 0 ||
-        Math.abs(event.deltaY) < 2 || !window.matchMedia('(pointer:fine)').matches) return;
-    const direction = Math.sign(event.deltaY);
-    if (slides.length<2) return;
+  viewport.addEventListener('wheel', event => {
+    if (slides.length < 2 || previewDialog?.open || event.ctrlKey || event.metaKey ||
+        event.altKey || event.shiftKey) return;
+    const amount = Math.abs(event.deltaX) > Math.abs(event.deltaY) ?
+      event.deltaX : event.deltaY;
+    if (Math.abs(amount) < 2) return;
     if (event.cancelable) event.preventDefault();
     if (performance.now() < wheelBlockedUntil) return;
-    wheelBlockedUntil = performance.now() + 480;
-    goTo(activeIndex + direction);
+    wheelBlockedUntil = performance.now() + 570;
+    goTo(activeIndex + Math.sign(amount));
   }, { passive:false });
-  // Pointer/touch swipes rotate the same three floating slots on mobile.
-  // Vertical gestures continue scrolling the document.
+  // Horizontal touch swipes rotate the same three floating slots on mobile.
+  // Vertical finger gestures continue scrolling the document. A mouse drag
+  // also rotates the stage for desktop users who do not have a wheel.
   viewport.addEventListener('touchstart',event=>{
     if(event.touches.length===1) swipeStart={x:event.touches[0].clientX,y:event.touches[0].clientY};
   },{passive:true});
@@ -406,6 +408,23 @@ if (root) {
       goTo(activeIndex+(dx<0?1:-1));
     }
   },{passive:true});
+  let mouseDrag = null;
+  viewport.addEventListener('pointerdown', event => {
+    if (event.pointerType !== 'mouse' || event.button !== 0 ||
+        event.target.closest('a,button') || previewDialog?.open) return;
+    mouseDrag = {x:event.clientX,y:event.clientY};
+  });
+  viewport.addEventListener('pointerup', event => {
+    if (!mouseDrag || event.pointerType !== 'mouse') return;
+    const dx = event.clientX - mouseDrag.x;
+    const dy = event.clientY - mouseDrag.y;
+    mouseDrag = null;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      ignoreClickUntil = performance.now() + 500;
+      goTo(activeIndex + (dx < 0 ? 1 : -1));
+    }
+  });
+  viewport.addEventListener('pointercancel', () => { mouseDrag = null; });
 
   function show(items) {
     const seen = new Set();
