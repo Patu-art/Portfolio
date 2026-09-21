@@ -140,6 +140,14 @@ try {
       width+'px: left/center/right cards are not separate fixed floating positions');
     assert(coordinates.left.visible==='visible'&&coordinates.right.visible==='visible',
       width+'px: adjacent floating cards are hidden');
+    const frontFacing=await page.locator('.repo-slide.is-prev, .repo-slide.is-current, .repo-slide.is-next')
+      .evaluateAll(nodes => nodes.every(node => {
+        const matrix = new DOMMatrixReadOnly(getComputedStyle(node).transform);
+        const media=node.querySelector('.repo-book__page--image');
+        return Math.abs(matrix.m13)<.00001 && Math.abs(matrix.m31)<.00001 &&
+          getComputedStyle(media).animationName==='none';
+      }));
+    assert(frontFacing,width+'px: project cards must float front-facing, never page-flip');
 
     assert.equal(await slides.count(), data.repository_count, width + 'px: missing repository slides');
     const chapterNames = await page.locator('.repo-slide').evaluateAll(nodes => nodes.map(node => node.dataset.repo));
@@ -262,7 +270,14 @@ try {
       await page.waitForTimeout(950);
       assert.equal(await page.locator('[data-repo-progress]').innerText(),
         '02 / ' + String(data.repository_count).padStart(2, '0'),
-        'Wheel input should advance one horizontal book page');
+        'Vertical wheel must orbit center to the left and bring right card forward');
+      await page.waitForTimeout(640);
+      await page.locator('[data-repo-carousel]').hover();
+      await page.mouse.wheel(425, 0);
+      await page.waitForTimeout(780);
+      assert.equal(await page.locator('[data-repo-progress]').innerText(),
+        '03 / ' + String(data.repository_count).padStart(2, '0'),
+        'Horizontal trackpad wheel must also rotate three floating cards');
     }
     console.log(width + 'px: three-slot orbit, opposite-side entry, screenshot zoom and focus: PASS');
     await page.close();
