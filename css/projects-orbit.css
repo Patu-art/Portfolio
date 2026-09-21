@@ -29,14 +29,17 @@ body[data-page="projects"] .orbit-carousel .repo-slide .repo-book__page--text{
   transform:none !important;
   backface-visibility:visible;
 }
-@keyframes orbit-idle-float {
-  0%,100%{translate:0 0}
-  50%{translate:0 -7px}
+/* Keep the card and its controls stationary between interactions. Soft
+   shadow breathing suggests suspension in depth without making buttons move
+   continuously or breaking pointer / keyboard access. */
+@keyframes orbit-idle-glow {
+  0%,100%{box-shadow:0 24px 65px rgba(26,50,63,.23),0 0 0 1px rgba(91,110,116,.14)}
+  50%{box-shadow:0 30px 74px rgba(26,50,63,.28),0 0 0 1px rgba(91,110,116,.20)}
 }
 @media(prefers-reduced-motion:no-preference){
   body[data-page="projects"] .orbit-carousel.orbit-ready
     .repo-slide.is-current:not(.is-jumping) .repo-book{
-    animation:orbit-idle-float 3.3s ease-in-out infinite !important;
+    animation:orbit-idle-glow 3.3s ease-in-out infinite !important;
   }
 }
 /* Cards changing slots move as solid posters; only their X/Y/Z position and
