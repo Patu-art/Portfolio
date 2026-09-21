@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
+import { fetchPublishedBrand, cardTitle } from './site-title.mjs';
 
 const OWNER = 'Patu-art';
 const API = 'https://api.github.com';
@@ -266,11 +267,20 @@ try {
       { ...repo, pushed_at: portfolioContentRevision } : repo;
     const preview = await captureSite(browser, screenshotRepo, override, old);
     const thumbnail = await makeThumbnail(preview.image, repo.name, override);
+    // Always read the published <title>, even when the screenshot was reused.
+    // A renamed café must not remain "Day 12" until another screenshot is taken.
+    const publishedBrand = await fetchPublishedBrand(siteUrl(repo, override));
+    const title = cardTitle({ override:override.title, published:publishedBrand,
+      previous:old?.title, repository:titleFor(repo) });
+    const titleSource = override.title ? 'manual' : publishedBrand ? 'website' :
+      old?.title ? (old.title_source || 'cached') : 'repository';
     const description = (repo.description?.trim() || preview.site_description ||
       old?.site_description || 'Repository by Prathamesh Dhumal. Open GitHub for project details.').slice(0, 300);
     collected.push({
       name: repo.name,
-      title: override.title || old?.title || titleFor(repo),
+      title,
+      title_source:titleSource,
+      site_title:publishedBrand || old?.site_title || '',
       description,
       description_source: repo.description?.trim() ? 'github' : (preview.site_description ? 'website' : 'fallback'),
       language: repo.language || '',
