@@ -272,7 +272,7 @@ try {
     const publishedBrand = await fetchPublishedBrand(siteUrl(repo, override));
     const title = cardTitle({ override:override.title, published:publishedBrand,
       previous:old?.title, repository:titleFor(repo) });
-    const titleSource = override.title ? 'manual' : publishedBrand ? 'website' :
+    const titleSource = publishedBrand ? 'website' : override.title ? 'manual' :
       old?.title ? (old.title_source || 'cached') : 'repository';
     const description = (repo.description?.trim() || preview.site_description ||
       old?.site_description || 'Repository by Prathamesh Dhumal. Open GitHub for project details.').slice(0, 300);
