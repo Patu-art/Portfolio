@@ -32,5 +32,5 @@
       "thumbnailQuality": 82
     }
   },
-  "notes": "Optional overrides for known project brands. For future repositories, the sync uses their GitHub name as the default title and automatically uses the public site's metadata for descriptions and screenshots."
+  "notes": "Optional overrides for known project brands. For future repositories, card names are read from the published website's HTML title (business name before SEO/location suffixes), even when the screenshot is reused. Explicit title overrides take precedence; a cached title or repository name is used only when site metadata is unavailable."
 }

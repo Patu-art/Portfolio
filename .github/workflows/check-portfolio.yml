@@ -8,6 +8,8 @@ on:
       - 'css/repo-carousel.css'
       - 'css/coverflow-v5.css'
       - 'scripts/test-portfolio.mjs'
+      - 'scripts/site-title.mjs'
+      - 'scripts/test-site-title.mjs'
       - '.github/workflows/check-portfolio.yml'
   pull_request:
     branches: [main]
@@ -24,6 +26,8 @@ on:
       - 'data/repos.json'
       - 'data/repo-preview-config.json'
       - 'scripts/test-portfolio.mjs'
+      - 'scripts/site-title.mjs'
+      - 'scripts/test-site-title.mjs'
       - '.github/workflows/check-portfolio.yml'
   workflow_dispatch:
 permissions:
@@ -44,8 +48,9 @@ jobs:
         run: |
           npm install --no-save --no-package-lock playwright sharp
           npx playwright install --with-deps chromium
-      - name: Validate homepage, carousel and saved repository data
+      - name: Validate homepage, carousel and published site titles
         run: |
+          node --test scripts/test-site-title.mjs
           node --check js/repo-carousel.js
           node --check scripts/test-portfolio.mjs
           node scripts/test-portfolio.mjs

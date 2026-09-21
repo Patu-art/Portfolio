@@ -7,6 +7,8 @@ on:
     paths:
       - '.github/workflows/sync-portfolio.yml'
       - 'scripts/sync-portfolio.mjs'
+      - 'scripts/site-title.mjs'
+      - 'scripts/test-site-title.mjs'
       - 'scripts/test-portfolio.mjs'
       - 'data/repo-preview-config.json'
 permissions:
@@ -32,6 +34,8 @@ jobs:
         run: |
           npm install --no-save --no-package-lock playwright sharp
           npx playwright install --with-deps chromium
+      - name: Verify website title extraction
+        run: node --test scripts/test-site-title.mjs
       - name: Sync public repositories and published websites
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
