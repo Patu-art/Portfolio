@@ -283,8 +283,10 @@ if (root) {
   function hydrateNearby(index) {
     // Only the current and adjacent chapters request screenshots.
     // Other cards carry data-src but do not download or decode offscreen PNGs.
-    for (let i = Math.max(0, index - 1); i <= Math.min(slides.length - 1, index + 1); i++) {
-      const img = slides[i].querySelector('img[data-src]');
+    const neighbors = [index, (index - 1 + slides.length) % slides.length,
+      (index + 1) % slides.length, (index + 2) % slides.length];
+    for (const i of new Set(neighbors)) {
+      const img = slides[i]?.querySelector('img[data-src]');
       if (img && !img.getAttribute('src')) img.src = img.dataset.src;
     }
   }
