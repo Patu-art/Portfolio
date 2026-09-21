@@ -55,5 +55,7 @@ export function cardTitle({ override, published, previous, repository }) {
   const manual = String(override ?? '').trim();
   const site = String(published ?? '').trim();
   const cached = String(previous ?? '').trim();
-  return (manual || site || cached || String(repository ?? '').trim()).slice(0,100);
+  // Published website metadata is canonical for cards. Manual config is only a
+  // fallback when the page title is missing or generic (for example "Day-12").
+  return (site || manual || cached || String(repository ?? '').trim()).slice(0,100);
 }
