@@ -1,28 +1,28 @@
 {
   "owner": "Patu-art",
   "repository_count": 16,
-  "updated_at": "2026-09-22T16:57:07.931Z",
+  "updated_at": "2026-09-22T21:17:52.998Z",
   "repositories": [
     {
       "name": "Day-14",
       "title": "Strange Brew",
       "title_source": "website",
       "site_title": "Strange Brew",
-      "description": "An independent website concept for Strange Brew in Chorlton: local beer, records, the front patio and a place to spend an evening.",
+      "description": "A website concept for Strange Brew, the neighbourhood bar on Barlow Moor Road in Chorlton. Local beer, records and a place to spend your evening.",
       "description_source": "website",
       "language": "CSS",
       "url": "https://github.com/Patu-art/Day-14",
       "live": "https://patu-art.github.io/Day-14/",
       "image": "assets/images/repo-previews/Day-14.png",
       "thumbnail": "assets/images/repo-previews/Day-14.webp",
-      "pushed_at": "2026-09-22T16:38:12Z",
+      "pushed_at": "2026-09-22T19:14:01Z",
       "created_at": "2026-09-22T16:22:15Z",
       "is_fork": false,
       "archived": false,
-      "preview_revision": "2026-09-22T16:38:12Z",
+      "preview_revision": "2026-09-22T19:14:01Z",
       "preview_source": "automatic",
       "preview_recipe": "section-v1",
-      "site_description": "An independent website concept for Strange Brew in Chorlton: local beer, records, the front patio and a place to spend an evening."
+      "site_description": "A website concept for Strange Brew, the neighbourhood bar on Barlow Moor Road in Chorlton. Local beer, records and a place to spend your evening."
     },
     {
       "name": "Day-13",
