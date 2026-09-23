@@ -1,7 +1,7 @@
 {
   "owner": "Patu-art",
   "repository_count": 18,
-  "updated_at": "2026-09-23T18:03:46.966Z",
+  "updated_at": "2026-09-23T18:10:42.001Z",
   "repositories": [
     {
       "name": "Patu-art",
@@ -111,7 +111,7 @@
     {
       "name": "Day-11",
       "title": "Sandy's Smokeshed",
-      "title_source": "manual",
+      "title_source": "website",
       "site_title": "Sandy's Smokeshed",
       "description": "Sandy's Smokeshed — slow-smoked BBQ under the railway arches in Castlefield, Manchester. Find the shed, see the food and follow the latest updates.",
       "description_source": "website",
@@ -132,7 +132,7 @@
     {
       "name": "Day-10",
       "title": "Kiku Hifi",
-      "title_source": "manual",
+      "title_source": "website",
       "site_title": "Kiku Hifi",
       "description": "Kiku Hifi: speciality coffee by day and a vinyl listening bar by night on Gradwell Street, Liverpool. A concept website.",
       "description_source": "website",
@@ -153,7 +153,7 @@
     {
       "name": "Day-8",
       "title": "Lane & Brew",
-      "title_source": "manual",
+      "title_source": "website",
       "site_title": "Lane & Brew",
       "description": "Lane & Brew Coffee Kitchen on Lark Lane, Liverpool. Join us for coffee, brunch, lunch and drinks at 83 Lark Lane.",
       "description_source": "website",
@@ -174,7 +174,7 @@
     {
       "name": "Day-9",
       "title": "Açaí Social Club",
-      "title_source": "manual",
+      "title_source": "website",
       "site_title": "Açaí Social Club",
       "description": "Açaí Social Club is getting its first permanent home in Leeds city centre. Follow the journey from pop-up to neighbourhood spot.",
       "description_source": "website",
@@ -195,7 +195,7 @@
     {
       "name": "Day-7",
       "title": "Hetherington's",
-      "title_source": "manual",
+      "title_source": "website",
       "site_title": "Hetherington's",
       "description": "Hetherington's, Pollard Street, New Islington — a relaxed local pub and cafe bar for pints, sport and good company.",
       "description_source": "website",
@@ -313,7 +313,7 @@
       "created_at": "2026-09-09T15:03:29Z",
       "is_fork": false,
       "archived": false,
-      "preview_revision": "7d27599accd1b763a7524a50e9c7a11ee1317a37",
+      "preview_revision": "df79c044ebf65d91e44e90214eb891f284561aa6",
       "preview_source": "automatic",
       "preview_recipe": "section-v1",
       "site_description": "Portfolio of Prathamesh Mahendra Dhumal — frontend developer, B.Tech CSE (AI/ML) student, creator of SITEPRO and builder of the 100-Day Local Business Website Challenge."
