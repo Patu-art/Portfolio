@@ -1,50 +1,11 @@
 name: Check glass book portfolio
+# Run on every proposed or published change, including workflows, access policy,
+# data and configuration. Required checks must never be skipped by path filters.
 on:
   push:
     branches: [main]
-    paths:
-      - '*.html'
-      - 'css/**'
-      - 'js/**'
-      - 'assets/**'
-      - 'sitemap.xml'
-      - 'robots.txt'
-      - 'manifest.json'
-      - 'scripts/audit-static.mjs'
-      - 'projects.html'
-      - 'js/repo-carousel.js'
-      - 'css/repo-carousel.css'
-      - 'css/coverflow-v5.css'
-      - 'scripts/test-portfolio.mjs'
-      - 'scripts/site-title.mjs'
-      - 'scripts/test-site-title.mjs'
-      - '.github/workflows/check-portfolio.yml'
   pull_request:
     branches: [main]
-    paths:
-      - '*.html'
-      - 'css/**'
-      - 'js/**'
-      - 'assets/**'
-      - 'sitemap.xml'
-      - 'robots.txt'
-      - 'manifest.json'
-      - 'scripts/audit-static.mjs'
-      - 'index.html'
-      - 'projects.html'
-      - 'js/main.js'
-      - 'js/home-challenge.js'
-      - 'js/repo-carousel.js'
-      - 'css/animations.css'
-      - 'css/repo-carousel.css'
-      - 'css/coverflow-v5.css'
-      - 'data/projects.json'
-      - 'data/repos.json'
-      - 'data/repo-preview-config.json'
-      - 'scripts/test-portfolio.mjs'
-      - 'scripts/site-title.mjs'
-      - 'scripts/test-site-title.mjs'
-      - '.github/workflows/check-portfolio.yml'
   workflow_dispatch:
 permissions:
   contents: read
