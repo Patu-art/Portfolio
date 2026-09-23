@@ -27,8 +27,10 @@ test('invalid, generic, 404 and absent titles never replace a business name', ()
   assert.equal(brandFromTitle('Home'), '');
 });
 
-test('explicit business overrides remain available, otherwise use fresh website metadata', () => {
-  assert.equal(cardTitle({ override:'Real Café',published:'Template Title',previous:'Day 12',repository:'Day-12' }),
+test('published title tag wins; curated business name is the fallback', () => {
+  assert.equal(cardTitle({ override:'Real Café',published:'Published Café',previous:'Day 12',repository:'Day-12' }),
+    'Published Café');
+  assert.equal(cardTitle({ override:'Real Café',published:'',previous:'Day 12',repository:'Day-12' }),
     'Real Café');
   assert.equal(cardTitle({ override:'',published:'Plere',previous:'Day 12',repository:'Day-12' }), 'Plere');
   assert.equal(cardTitle({ override:'',published:'',previous:'Plere',repository:'Day-12' }), 'Plere');
