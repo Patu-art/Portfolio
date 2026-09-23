@@ -1,32 +1,23 @@
-name: Sync portfolio repositories and screenshots
+# Read-only, owner-invoked audit. Publishing is intentionally disabled:
+# every production change must be explicitly approved by the repository owner.
+name: Preview portfolio sync (manual, no publishing)
 on:
-  schedule:
-    - cron: '17 */6 * * *'
   workflow_dispatch:
-  push:
-    paths:
-      - '.github/workflows/sync-portfolio.yml'
-      - 'scripts/sync-portfolio.mjs'
-      - 'scripts/site-title.mjs'
-      - 'scripts/test-site-title.mjs'
-      - 'scripts/test-portfolio.mjs'
-      - 'scripts/audit-static.mjs'
-      - 'data/repo-preview-config.json'
 permissions:
-  contents: write
+  contents: read
 concurrency:
-  group: portfolio-repository-sync
+  group: portfolio-repository-sync-preview
   cancel-in-progress: true
 jobs:
-  sync:
+  preview:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Checkout portfolio
+      - name: Checkout portfolio without write credentials
         uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          persist-credentials: false
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -37,11 +28,9 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Verify website title extraction
         run: node --test scripts/test-site-title.mjs
-      - name: Sync public repositories and published websites
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate local-only repository and website previews
         run: node scripts/sync-portfolio.mjs
-      - name: Validate synced repositories and responsive book carousel
+      - name: Validate generated snapshot and project archive
         env:
           REQUIRE_REFRESHED_PREVIEWS: '1'
         run: |
@@ -49,24 +38,6 @@ jobs:
           node --check js/repo-carousel.js
           node --check scripts/sync-portfolio.mjs
           node scripts/test-portfolio.mjs
-      - name: Publish updated repository index and screenshots
+      - name: Confirm no production code was published
         run: |
-          git add -A data/repos.json assets/images/repo-previews work
-          if git diff --cached --quiet; then
-            echo 'No changes to publish'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'Automatically refresh portfolio repositories and previews'
-          for attempt in 1 2 3; do
-            git fetch origin main
-            git rebase origin/main
-            if git push origin HEAD:main; then
-              echo 'Portfolio snapshots published'
-              exit 0
-            fi
-            sleep 3
-          done
-          echo 'Could not push screenshots after three attempts'
-          exit 1
+          echo "Preview only. No git push, no write-scoped token, no production updates."
