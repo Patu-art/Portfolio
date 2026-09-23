@@ -3,6 +3,6 @@
   "short_name": "PD Portfolio",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#14171C",
-  "theme_color": "#C9A227"
+  "background_color": "#F3F5F9",
+  "theme_color": "#819FA7"
 }
