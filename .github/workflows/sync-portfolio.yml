@@ -10,6 +10,7 @@ on:
       - 'scripts/site-title.mjs'
       - 'scripts/test-site-title.mjs'
       - 'scripts/test-portfolio.mjs'
+      - 'scripts/audit-static.mjs'
       - 'data/repo-preview-config.json'
 permissions:
   contents: write
@@ -44,6 +45,7 @@ jobs:
         env:
           REQUIRE_REFRESHED_PREVIEWS: '1'
         run: |
+          node scripts/audit-static.mjs
           node --check js/repo-carousel.js
           node --check scripts/sync-portfolio.mjs
           node scripts/test-portfolio.mjs
