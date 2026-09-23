@@ -20,10 +20,19 @@ test('titles may be multi-line, entity-encoded, or prefixed by Home', () => {
     "Woods' Café");
 });
 
-test('invalid, generic, 404 and absent titles never replace a business name', () => {
+test('generic titles fall back to website brand metadata or visible business heading', () => {
+  assert.equal(titleFromHtml('<head><title>Day-13</title><meta property="og:site_name" content="Moor Coffee"></head>'),
+    'Moor Coffee');
+  assert.equal(titleFromHtml('<head><title>Home</title><meta content="Kiku Hifi" name="application-name"></head>'),
+    'Kiku Hifi');
+  assert.equal(titleFromHtml('<head><title>Day-15</title></head><body><h1>Nomad Coffee</h1></body>'),
+    'Nomad Coffee');
+});
+
+test('invalid, generic, 404 and absent site naming never replace a business name', () => {
   assert.equal(titleFromHtml('<head><title>Day-13</title></head>'), '');
   assert.equal(titleFromHtml('<head><title>404 - Page not found</title></head>'), '');
-  assert.equal(titleFromHtml('<body><h1>Not the title tag</h1></body>'), '');
+  assert.equal(titleFromHtml('<body><h1>Home</h1></body>'), '');
   assert.equal(brandFromTitle('Home'), '');
 });
 

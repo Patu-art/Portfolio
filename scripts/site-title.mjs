@@ -27,10 +27,30 @@ function decodeTitleEntities(text) {
 }
 
 export function titleFromHtml(html) {
-  // Only <title> in <head> is accepted. Avoid headings/descriptions as guessed names.
-  const head = String(html ?? '').match(/<head\b[^>]*>([\s\S]*?)<\/head\s*>/i)?.[1] || '';
-  const raw = head.match(/<title\b[^>]*>([\s\S]*?)<\/title\s*>/i)?.[1] || '';
-  return brandFromTitle(decodeTitleEntities(raw.replace(/<[^>]*>/g, '').trim()));
+  const source = String(html ?? '');
+  const head = source.match(/<head\b[^>]*>([\s\S]*?)<\/head\s*>/i)?.[1] || '';
+
+  // 1) Canonical website <title>.
+  const rawTitle = head.match(/<title\b[^>]*>([\s\S]*?)<\/title\s*>/i)?.[1] || '';
+  const fromTitle = brandFromTitle(decodeTitleEntities(rawTitle.replace(/<[^>]*>/g, '').trim()));
+  if (fromTitle) return fromTitle;
+
+  // 2) Explicit site/brand metadata when the title is generic (e.g. "Day-14").
+  const metaPatterns = [
+    /<meta\b[^>]*(?:property|name)\s*=\s*["'](?:og:site_name|application-name)["'][^>]*content\s*=\s*["']([^"']+)["'][^>]*>/i,
+    /<meta\b[^>]*content\s*=\s*["']([^"']+)["'][^>]*(?:property|name)\s*=\s*["'](?:og:site_name|application-name)["'][^>]*>/i
+  ];
+  for (const pattern of metaPatterns) {
+    const raw = head.match(pattern)?.[1] || '';
+    const brand = brandFromTitle(decodeTitleEntities(raw.trim()));
+    if (brand) return brand;
+  }
+
+  // 3) Last website-derived fallback: the visible primary heading. This is only
+  // used when metadata is absent/generic, and still passes the same generic-name filter.
+  const rawH1 = source.match(/<h1\b[^>]*>([\s\S]*?)<\/h1\s*>/i)?.[1] || '';
+  const h1 = brandFromTitle(decodeTitleEntities(rawH1.replace(/<[^>]*>/g, ' ').trim()));
+  return h1;
 }
 
 export async function fetchPublishedBrand(url, fetcher = fetch) {
