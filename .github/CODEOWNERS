@@ -1,0 +1,3 @@
+# Default reviewer for every change to this portfolio.
+# Enforce this with GitHub Settings > Branches > main > Require review from Code Owners.
+* @Patu-art
