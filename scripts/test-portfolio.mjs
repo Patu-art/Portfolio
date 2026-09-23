@@ -26,21 +26,27 @@ for (const repo of data.repositories) {
   const html = await fs.readFile(htmlPath, 'utf8');
   assert(/<meta name="description" content="[^"]+"/.test(html), 'Missing HTML description: ' + repo.name);
 }
-// The screenshot recipe is checked after the generator runs, not against a
-// still-unrefreshed PR checkout. This is the quality gate for new Day 10/11 previews.
+// This gate follows configured high-quality captures rather than permanently
+// requiring Day 10/11, which would block every future sync if either was archived.
 if (process.env.REQUIRE_REFRESHED_PREVIEWS === '1') {
-  for (const name of ['Day-10', 'Day-11']) {
+  const config = JSON.parse(await fs.readFile('data/repo-preview-config.json', 'utf8'));
+  let verified = 0;
+  for (const [name, settings] of Object.entries(config.repositories || {})) {
+    if (settings?.capture !== 'viewport' || settings.exclude) continue;
     const repo = data.repositories.find(item => item.name.toLowerCase() === name.toLowerCase());
-    assert(repo, 'Published project missing: ' + name);
-    assert.equal(repo.preview_recipe, 'viewport-1365x768-v2', name + ': screenshot refresh did not run');
+    if (!repo) continue; // removed/archived projects must not hold future days hostage.
+    assert.equal(repo.preview_recipe, 'viewport-1365x768-v2',
+      name + ': expected a current viewport screenshot');
     assert.equal(repo.preview_source, 'automatic', name + ': screenshot was not captured');
     const png = await sharp(repo.image).metadata();
     assert(png.width === 1365 && png.height === 768, name + ': incomplete first-fold screenshot');
     const thumb = await sharp(repo.thumbnail).metadata();
     assert(thumb.width >= 1100 && thumb.height >= 600, name + ': low-resolution preview thumbnail');
+    verified++;
   }
-  console.log('Day 10/11 fresh hero screenshots and high-quality thumbnails: PASS');
+  console.log('Configured high-quality screenshots verified: ' + verified + ' projects: PASS');
 }
+
 console.log('Repository index: ' + data.repository_count + ' unique public repos, metadata and images verified.');
 
 const mime = file => file.endsWith('.html') ? 'text/html; charset=utf-8' :
