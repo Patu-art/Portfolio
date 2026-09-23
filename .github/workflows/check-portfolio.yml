@@ -3,6 +3,14 @@ on:
   push:
     branches: [main]
     paths:
+      - '*.html'
+      - 'css/**'
+      - 'js/**'
+      - 'assets/**'
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'manifest.json'
+      - 'scripts/audit-static.mjs'
       - 'projects.html'
       - 'js/repo-carousel.js'
       - 'css/repo-carousel.css'
@@ -14,6 +22,14 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - '*.html'
+      - 'css/**'
+      - 'js/**'
+      - 'assets/**'
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'manifest.json'
+      - 'scripts/audit-static.mjs'
       - 'index.html'
       - 'projects.html'
       - 'js/main.js'
@@ -48,8 +64,9 @@ jobs:
         run: |
           npm install --no-save --no-package-lock playwright sharp
           npx playwright install --with-deps chromium
-      - name: Validate homepage, carousel and published site titles
+      - name: Validate homepage, carousel, links and published site titles
         run: |
+          node scripts/audit-static.mjs
           node --test scripts/test-site-title.mjs
           node --check js/repo-carousel.js
           node --check scripts/test-portfolio.mjs
