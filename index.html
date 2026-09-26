@@ -6,9 +6,9 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://mtgsteiypoxudztltzpn.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"/>
   <meta name="referrer" content="strict-origin-when-cross-origin"/>
   <meta name="theme-color" content="#F3F5F9"/>
-  <meta name="description" content="Prathamesh Dhumal — frontend developer and B.Tech CSE (AI/ML) student building responsive websites, documenting a 100-Day Challenge and developing the SITEPRO workflow."/>
+  <meta name="description" content="Prathamesh Dhumal — frontend developer and B.Tech CSE (AI/ML) student focused on responsive web interfaces, UI/UX and practical frontend development."/>
   <meta property="og:title" content="Prathamesh Dhumal — Frontend Developer"/>
-  <meta property="og:description" content="Selected frontend work, the 100-Day website challenge, the process behind the builds and the SITEPRO system."/>
+  <meta property="og:description" content="Frontend developer portfolio focused on responsive interfaces, UI/UX and practical browser experiences."/>
   <meta property="og:type" content="website"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -20,8 +20,8 @@
   <link href="css/animations.css" rel="stylesheet"/>
   <link href="css/responsive.css" rel="stylesheet"/>
   <link href="css/portfolio-v2.css" rel="stylesheet"/>
-  <link href="css/home-v3.css?v=20260926" rel="stylesheet"/>
-  <script defer src="js/main.js?v=20260926-home-v3"></script>
+  <link href="css/home-v3.css?v=20260927-clean-home" rel="stylesheet"/>
+  <script defer src="js/main.js?v=20260927-clean-home"></script>
   <title>Prathamesh Dhumal — Frontend Developer</title>
 </head>
 <body data-page="home">
@@ -31,330 +31,154 @@
 <div data-component="header"></div>
 
 <main id="main">
-  <section class="home3-hero" aria-labelledby="home-title">
-    <div class="shell home3-hero__grid">
-      <div>
-        <div class="home3-hero__status" data-reveal>
-          <span>PORTFOLIO / 2026</span>
+  <section class="home-clean-hero" aria-labelledby="home-title">
+    <div class="shell home-clean-hero__grid">
+      <div class="home-clean-hero__copy">
+        <div class="home-clean-eyebrow" data-reveal>
+          <span>PRATHAMESH DHUMAL</span>
           <span>KALYAN · INDIA</span>
-          <span class="is-open">Open to frontend internships</span>
+          <span class="home-clean-availability">OPEN TO FRONTEND INTERNSHIPS</span>
         </div>
 
-        <h1 id="home-title">Frontend developer.<br>Learning by <em>shipping.</em></h1>
+        <h1 id="home-title" data-reveal="clip">I design and build<br><em>responsive web interfaces.</em></h1>
 
-        <p class="home3-hero__lead">
-          I’m <strong>Prathamesh Dhumal</strong>, a B.Tech CSE (AI/ML) student building responsive frontend experiences and learning in public through independent website concepts for real businesses.
+        <p class="home-clean-hero__lead" data-reveal>
+          I’m a <strong>frontend developer and B.Tech CSE (AI/ML) student</strong> focused on clear layouts, responsive behavior, thoughtful interaction and websites that feel intentional in the browser.
         </p>
 
-        <div class="home3-hero__actions">
-          <a class="button button--brass magnetic" href="projects.html">View selected work ↗</a>
-          <a class="button button--ghost magnetic" href="challenge.html">100 Days Challenge ↗</a>
+        <div class="home-clean-actions" data-reveal>
+          <a class="button button--brass magnetic" href="projects.html">View projects ↗</a>
           <a class="button button--ghost magnetic" href="assets/documents/Prathamesh_Dhumal_Resume.pdf" target="_blank" rel="noopener noreferrer">Resume ↗</a>
+          <a class="home-clean-textlink" href="contact.html">Contact me ↗</a>
         </div>
 
-        <div class="home3-hero__meta" data-stagger>
-          <div><strong>18</strong><span>Challenge repositories</span></div>
-          <div><strong>2nd yr</strong><span>CSE · AI/ML</span></div>
-          <div><strong>2029</strong><span>Expected graduation</span></div>
+        <div class="home-clean-stack" data-stagger aria-label="Core frontend stack">
+          <span>HTML5</span>
+          <span>CSS3</span>
+          <span>JavaScript</span>
+          <span>Responsive UI</span>
+          <span>Git &amp; GitHub</span>
         </div>
       </div>
 
-      <div class="home3-stage" data-home-stage data-reveal="right" aria-label="Visual progression from early to later challenge projects">
-        <span class="home3-stage__label">WORK / IN THE BROWSER</span>
+      <div class="home-clean-portrait-wrap" data-reveal="right">
+        <figure class="home-clean-portrait">
+          <img src="assets/images/profile/prathamesh.jpeg" alt="Prathamesh Dhumal" width="900" height="1200" fetchpriority="high"/>
+          <figcaption>
+            <span>FRONTEND / UI / WEB</span>
+            <span>PORTFOLIO 2026</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
 
-        <a class="home3-stage__card home3-stage__card--one" href="https://patu-art.github.io/DAY01/" target="_blank" rel="noopener noreferrer" aria-label="Open Day 1 Gulf MCR website">
-          <img src="assets/images/repo-previews/DAY01.webp" alt="Gulf MCR website preview, Day 1" width="900" height="560" fetchpriority="high"/>
-          <span><strong>DAY 01 / GULF MCR</strong><i>START</i></span>
+  <section class="home-clean-section home-clean-section--paper" aria-labelledby="capabilities-title">
+    <div class="shell">
+      <div class="home-clean-heading">
+        <div data-reveal>
+          <p class="eyebrow">WHAT I CAN DO</p>
+          <h2 id="capabilities-title">Useful frontend work,<br><em>without pretending mastery.</em></h2>
+        </div>
+        <p data-reveal="right">
+          My strongest area right now is frontend implementation. I’m still building deeper programming, backend and software-engineering skills alongside it.
+        </p>
+      </div>
+
+      <div class="home-clean-capabilities" data-stagger>
+        <article class="home-clean-capability">
+          <span class="home-clean-capability__no">01</span>
+          <div>
+            <h3>Frontend implementation</h3>
+            <p>Turn layouts and ideas into semantic, working browser interfaces using HTML, CSS and JavaScript.</p>
+            <div class="home-clean-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>DOM</span></div>
+          </div>
+        </article>
+
+        <article class="home-clean-capability">
+          <span class="home-clean-capability__no">02</span>
+          <div>
+            <h3>Responsive UI</h3>
+            <p>Build layouts that adapt across phone, tablet and desktop instead of treating mobile as an afterthought.</p>
+            <div class="home-clean-tags"><span>Grid</span><span>Flexbox</span><span>Breakpoints</span><span>Touch UI</span></div>
+          </div>
+        </article>
+
+        <article class="home-clean-capability">
+          <span class="home-clean-capability__no">03</span>
+          <div>
+            <h3>UI/UX refinement</h3>
+            <p>Work on hierarchy, typography, navigation, content flow and interaction so the interface is easier to understand and use.</p>
+            <div class="home-clean-tags"><span>Hierarchy</span><span>Typography</span><span>Navigation</span><span>Interaction</span></div>
+          </div>
+        </article>
+
+        <article class="home-clean-capability">
+          <span class="home-clean-capability__no">04</span>
+          <div>
+            <h3>Ship and maintain</h3>
+            <p>Organize source, use Git/GitHub, deploy with GitHub Pages and iterate after testing the real browser result.</p>
+            <div class="home-clean-tags"><span>Git</span><span>GitHub</span><span>Pages</span><span>QA</span></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="home-clean-learning" data-reveal>
+        <span>CURRENTLY EXPANDING INTO</span>
+        <p>Python · APIs · SQL / databases · testing · stronger software-engineering fundamentals</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-clean-section home-clean-section--soft" aria-labelledby="explore-title">
+    <div class="shell">
+      <div class="home-clean-heading home-clean-heading--compact">
+        <div data-reveal>
+          <p class="eyebrow">EXPLORE THE PORTFOLIO</p>
+          <h2 id="explore-title">Each part has its <em>own page.</em></h2>
+        </div>
+        <p data-reveal="right">The homepage introduces me. The detailed work, challenge, process and story live where they belong.</p>
+      </div>
+
+      <nav class="home-clean-routes" aria-label="Portfolio sections" data-stagger>
+        <a href="projects.html">
+          <span>01 / WORK</span>
+          <strong>Projects</strong>
+          <p>Open the project archive, live builds and source code.</p>
+          <i aria-hidden="true">↗</i>
         </a>
-
-        <a class="home3-stage__card home3-stage__card--two" href="https://patu-art.github.io/Day-8/" target="_blank" rel="noopener noreferrer" aria-label="Open Day 8 Lane and Brew website">
-          <img src="assets/images/repo-previews/Day-8.webp" alt="Lane and Brew website preview, Day 8" width="900" height="560" fetchpriority="high"/>
-          <span><strong>DAY 08 / LANE &amp; BREW</strong><i>ITERATE</i></span>
+        <a href="challenge.html">
+          <span>02 / PROGRESS</span>
+          <strong>100 Days</strong>
+          <p>Follow the challenge, progression and lessons across the builds.</p>
+          <i aria-hidden="true">↗</i>
         </a>
-
-        <a class="home3-stage__card home3-stage__card--three" href="https://patu-art.github.io/Day-15/" target="_blank" rel="noopener noreferrer" aria-label="Open Day 15 Nomad Coffee website">
-          <img src="assets/images/repo-previews/Day-15.webp" alt="Nomad Coffee website preview, Day 15" width="900" height="560" fetchpriority="high"/>
-          <span><strong>DAY 15 / NOMAD COFFEE</strong><i>REFINE</i></span>
+        <a href="sitepro.html">
+          <span>03 / SYSTEM</span>
+          <strong>SITEPRO</strong>
+          <p>See the evolving research, design, build and QA workflow.</p>
+          <i aria-hidden="true">↗</i>
         </a>
-
-        <div class="home3-stage__progress" aria-label="18 of 100 challenge days represented by public challenge repositories">
-          <div class="home3-stage__progress-top"><span>CHALLENGE PROGRESS</span><span>18 / 100</span></div>
-          <div class="home3-stage__meter" aria-hidden="true"><span></span></div>
-        </div>
-      </div>
+        <a href="about.html">
+          <span>04 / PERSON</span>
+          <strong>About</strong>
+          <p>Read the longer story, education, direction and current goals.</p>
+          <i aria-hidden="true">↗</i>
+        </a>
+      </nav>
     </div>
   </section>
 
-  <section class="home3-section home3-section--paper" aria-labelledby="selected-work-title">
-    <div class="shell">
-      <div class="home3-section__head">
-        <div data-reveal>
-          <p class="eyebrow">SELECTED WORK / 03 BUILDS</p>
-          <h2 id="selected-work-title">A few projects worth <em>opening.</em></h2>
-        </div>
-        <p class="home3-section__intro" data-reveal="right">
-          These are independent frontend concepts, not commissioned client work. I picked them because they show different design decisions, constraints and stages of my learning.
-        </p>
+  <section class="home-clean-section home-clean-section--ink" aria-labelledby="contact-title">
+    <div class="shell home-clean-contact" data-reveal>
+      <div>
+        <p class="eyebrow">OPEN TO OPPORTUNITIES</p>
+        <h2 id="contact-title">Looking for a frontend intern<br>who is still <em>hungry to learn?</em></h2>
+        <p>I’m looking for practical frontend experience where I can contribute, receive real code/design feedback and grow beyond self-directed projects.</p>
       </div>
-
-      <div class="home3-work">
-        <article class="home3-work__item" data-reveal>
-          <a class="home3-work__media" href="https://patu-art.github.io/Day-3/" target="_blank" rel="noopener noreferrer" aria-label="Open Artista Perfetto live website">
-            <img src="assets/images/repo-previews/Day-3.webp" alt="Artista Perfetto website preview" width="900" height="560" loading="lazy" decoding="async"/>
-          </a>
-          <div class="home3-work__copy">
-            <div class="home3-work__index"><span>01 / DAY 03</span><span>MANCHESTER · COFFEE</span></div>
-            <h3>Artista Perfetto</h3>
-            <p>A specialty-coffee concept where the useful information, real business media and mobile experience mattered more than adding another decorative effect.</p>
-            <div class="home3-work__decision">
-              <small>WHAT I WAS LEARNING</small>
-              <p>Research discipline, content hierarchy, accessible interaction and how to stop a visual idea from overpowering the business.</p>
-            </div>
-            <div class="home3-work__links">
-              <a href="https://patu-art.github.io/Day-3/" target="_blank" rel="noopener noreferrer">Live ↗</a>
-              <a href="https://github.com/Patu-art/Day-3" target="_blank" rel="noopener noreferrer">Source ↗</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="home3-work__item" data-reveal>
-          <a class="home3-work__media" href="https://patu-art.github.io/Day-10/" target="_blank" rel="noopener noreferrer" aria-label="Open Kiku Hifi live website">
-            <img src="assets/images/repo-previews/Day-10.webp" alt="Kiku Hifi website preview" width="900" height="560" loading="lazy" decoding="async"/>
-          </a>
-          <div class="home3-work__copy">
-            <div class="home3-work__index"><span>02 / DAY 10</span><span>LIVERPOOL · COFFEE + VINYL</span></div>
-            <h3>Kiku Hifi</h3>
-            <p>A concept built around a dual daytime/nighttime identity, using the business idea itself to drive typography, atmosphere and information structure.</p>
-            <div class="home3-work__decision">
-              <small>WHAT I WAS LEARNING</small>
-              <p>How one brand can hold two moods without becoming visually confused, and how motion can support that transition instead of becoming the product.</p>
-            </div>
-            <div class="home3-work__links">
-              <a href="https://patu-art.github.io/Day-10/" target="_blank" rel="noopener noreferrer">Live ↗</a>
-              <a href="https://github.com/Patu-art/Day-10" target="_blank" rel="noopener noreferrer">Source ↗</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="home3-work__item" data-reveal>
-          <a class="home3-work__media" href="https://patu-art.github.io/Day-15/" target="_blank" rel="noopener noreferrer" aria-label="Open Nomad Coffee live website">
-            <img src="assets/images/repo-previews/Day-15.webp" alt="Nomad Coffee website preview" width="900" height="560" loading="lazy" decoding="async"/>
-          </a>
-          <div class="home3-work__copy">
-            <div class="home3-work__index"><span>03 / DAY 15</span><span>MANCHESTER · NEIGHBOURHOOD CAFE</span></div>
-            <h3>Nomad Coffee</h3>
-            <p>A quieter, more practical challenge build focused on visit information, food and drink, responsive composition and stronger restraint.</p>
-            <div class="home3-work__decision">
-              <small>WHAT I WAS LEARNING</small>
-              <p>That improvement is not always adding more. Sometimes the better frontend decision is clearer type, fewer competing ideas and a faster path to useful information.</p>
-            </div>
-            <div class="home3-work__links">
-              <a href="https://patu-art.github.io/Day-15/" target="_blank" rel="noopener noreferrer">Live ↗</a>
-              <a href="https://github.com/Patu-art/Day-15" target="_blank" rel="noopener noreferrer">Source ↗</a>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <a class="home3-inline-link" href="projects.html">Explore the complete project archive ↗</a>
-    </div>
-  </section>
-
-  <section class="home3-section home3-section--ink" aria-labelledby="challenge-title">
-    <div class="shell">
-      <div class="home3-section__head">
-        <div data-reveal>
-          <p class="eyebrow">THE 100-DAY CHALLENGE</p>
-          <h2 id="challenge-title">The portfolio is really a <em>progress log.</em></h2>
-        </div>
-        <p class="home3-section__intro" data-reveal="right">
-          One business at a time: research the context, make a frontend concept, deploy it, review what failed, then carry that lesson into the next build.
-        </p>
-      </div>
-
-      <div class="home3-challenge__summary">
-        <div class="home3-challenge__big" data-reveal="left">18<span>PUBLIC CHALLENGE REPOSITORIES / TARGET 100</span></div>
-        <div class="home3-challenge__copy" data-reveal="right">
-          <p>The early days were heavily visual. Later builds became more deliberate about hierarchy, mobile UX, brand context and what a customer actually needs from the page.</p>
-          <a class="button button--ghost magnetic" href="challenge.html">Open the full build log ↗</a>
-        </div>
-      </div>
-
-      <div class="home3-timeline" data-home-timeline>
-        <article class="home3-timeline__item">
-          <small>DAYS 01–05</small>
-          <h3>Experiment</h3>
-          <p>Learning layout, typography, motion and what happens when too many ideas compete.</p>
-        </article>
-        <article class="home3-timeline__item">
-          <small>DAYS 06–10</small>
-          <h3>Research</h3>
-          <p>Better business context, clearer content priorities and stronger responsive decisions.</p>
-        </article>
-        <article class="home3-timeline__item">
-          <small>DAYS 11–15</small>
-          <h3>Refine</h3>
-          <p>Less decoration for its own sake; more attention to usability, real media and information.</p>
-        </article>
-        <article class="home3-timeline__item is-current">
-          <small>DAYS 16–18 / CURRENT</small>
-          <h3>Change genre</h3>
-          <p>Moving beyond cafes into home services and landscaping so the same design habits do not repeat.</p>
-        </article>
-        <article class="home3-timeline__item">
-          <small>DAY 100 / TARGET</small>
-          <h3>Compound</h3>
-          <p>The goal is not 100 pretty screenshots. It is a much better decision-making process by the end.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="home3-section home3-section--paper" aria-labelledby="process-title">
-    <div class="shell">
-      <div class="home3-section__head">
-        <div data-reveal>
-          <p class="eyebrow">HOW I BUILD / CURRENT PROCESS</p>
-          <h2 id="process-title">From public context to a <em>working browser.</em></h2>
-        </div>
-        <p class="home3-section__intro" data-reveal="right">
-          The process is still evolving. Keeping it visible forces me to judge the work by decisions and browser behavior, not only screenshots.
-        </p>
-      </div>
-
-      <div class="home3-process" data-stagger>
-        <article><small>01 / FIND</small><h3>Choose a real context.</h3><p>Start with an actual business and a reason the digital experience could be clearer or more useful.</p></article>
-        <article><small>02 / RESEARCH</small><h3>Understand before styling.</h3><p>Review the business, public feedback, audience, region, competitors, content and practical customer paths.</p></article>
-        <article><small>03 / DIRECTION</small><h3>Make the visual call.</h3><p>Choose typography, layout, media behavior and motion because they fit the brief—not because they are fashionable.</p></article>
-        <article><small>04 / BUILD</small><h3>Make it real.</h3><p>Implement semantic HTML, responsive CSS and browser interactions instead of stopping at a mockup.</p></article>
-        <article><small>05 / QA</small><h3>Break the assumptions.</h3><p>Check small screens, navigation, overflow, readability, keyboard use, reduced motion and missing assets.</p></article>
-        <article><small>06 / SHIP + REVIEW</small><h3>Publish. Inspect. Improve.</h3><p>Deploy to GitHub Pages, compare the result with the brief, record what went wrong and take that lesson forward.</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="home3-section home3-section--soft" aria-labelledby="sitepro-home-title">
-    <div class="shell">
-      <article class="home3-system" data-reveal>
-        <div class="home3-system__grid">
-          <div class="home3-system__copy">
-            <p class="eyebrow">SITEPRO / EVOLVING SYSTEM</p>
-            <h2 id="sitepro-home-title">Patterns became a process.</h2>
-            <p>SITEPRO is my attempt to turn repeated lessons from these builds into a clearer research, design, implementation and QA workflow. It is an active concept—not a finished commercial product.</p>
-            <a class="button button--ghost magnetic" href="sitepro.html">Inspect SITEPRO ↗</a>
-          </div>
-          <div class="home3-system__flow" aria-label="SITEPRO workflow">
-            <div class="home3-system__step"><span>01</span><strong>Research the business</strong><span>CONTEXT</span></div>
-            <div class="home3-system__step"><span>02</span><strong>Choose direction deliberately</strong><span>DESIGN</span></div>
-            <div class="home3-system__step"><span>03</span><strong>Structure useful content</strong><span>UX</span></div>
-            <div class="home3-system__step"><span>04</span><strong>Build the real interface</strong><span>FRONTEND</span></div>
-            <div class="home3-system__step"><span>05</span><strong>Verify before calling it done</strong><span>QA</span></div>
-          </div>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section class="home3-section home3-section--paper" aria-labelledby="capability-title">
-    <div class="shell">
-      <div class="home3-section__head">
-        <div data-reveal>
-          <p class="eyebrow">CAPABILITIES / NO PERCENTAGE BARS</p>
-          <h2 id="capability-title">What I can use now.<br><em>What I’m still learning.</em></h2>
-        </div>
-        <p class="home3-section__intro" data-reveal="right">
-          I would rather show evidence and learning stage than claim arbitrary “90% JavaScript” skill levels.
-        </p>
-      </div>
-
-      <div class="home3-capabilities" data-stagger>
-        <article class="home3-capability">
-          <div class="home3-capability__top"><span>01 / FRONTEND</span><span>USED IN PUBLIC BUILDS</span></div>
-          <h3>HTML · CSS · JavaScript</h3>
-          <p>Semantic page structure, responsive layouts, typography systems, DOM interactions, navigation, galleries, carousels and practical UI behavior.</p>
-          <div class="home3-tags"><span>HTML5</span><span>CSS Grid</span><span>Flexbox</span><span>DOM</span><span>Responsive UI</span></div>
-        </article>
-
-        <article class="home3-capability">
-          <div class="home3-capability__top"><span>02 / INTERFACE</span><span>ITERATING DAILY</span></div>
-          <h3>Responsive UI / UX</h3>
-          <p>Content hierarchy, mobile composition, touch-friendly controls, visual direction, readable type systems and browser-based refinement.</p>
-          <div class="home3-tags"><span>Mobile-first</span><span>Accessibility</span><span>Typography</span><span>Interaction</span></div>
-        </article>
-
-        <article class="home3-capability">
-          <div class="home3-capability__top"><span>03 / SHIPPING</span><span>ACTIVE WORKFLOW</span></div>
-          <h3>Git &amp; GitHub</h3>
-          <p>Repository organization, commits, GitHub Pages deployment, basic Actions workflows, source review and maintaining a public project archive.</p>
-          <div class="home3-tags"><span>Git</span><span>GitHub</span><span>Pages</span><span>Actions</span><span>Version control</span></div>
-        </article>
-
-        <article class="home3-capability">
-          <div class="home3-capability__top"><span>04 / LEARNING</span><span>NOT CLAIMED AS MASTERY</span></div>
-          <h3>Programming + backend foundations</h3>
-          <p>Building fundamentals in Python and C while expanding into APIs, databases and testing so the next stage is broader than static frontend work.</p>
-          <div class="home3-tags"><span>Python</span><span>C</span><span>APIs</span><span>SQL</span><span>Testing</span></div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="home3-section home3-section--soft" aria-labelledby="about-home-title">
-    <div class="shell home3-about">
-      <figure class="home3-about__portrait" data-reveal="left">
-        <img src="assets/images/profile/prathamesh.jpeg" alt="Prathamesh Dhumal" width="900" height="1200" loading="lazy" decoding="async"/>
-        <figcaption><span>PRATHAMESH DHUMAL</span><span>KALYAN · 2026</span></figcaption>
-      </figure>
-
-      <div class="home3-about__copy" data-reveal="right">
-        <p class="eyebrow">BEHIND THE BROWSER</p>
-        <h2 id="about-home-title">Still early.<br><em>Still building.</em></h2>
-        <p>I’m a second-year CSE (AI/ML) student. I am not presenting myself as a senior engineer or pretending these challenge builds are paid client products. The useful part of this portfolio is the progression: making something, finding where it falls short, and improving the next decision.</p>
-        <p>My current goal is to become strong enough in frontend fundamentals, design judgment and software engineering basics to contribute meaningfully in an internship—and keep expanding from there.</p>
-
-        <div class="home3-about__facts">
-          <div><small>EDUCATION</small><strong>B.Tech CSE (AI/ML)</strong></div>
-          <div><small>LOCATION</small><strong>Kalyan, Maharashtra</strong></div>
-          <div><small>CURRENT FOCUS</small><strong>Frontend + stronger engineering foundations</strong></div>
-          <div><small>CAREER TARGET</small><strong>Frontend internship / entry-level experience</strong></div>
-        </div>
-
-        <a class="home3-inline-link" href="about.html">Read the longer journey ↗</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="home3-section home3-section--paper" aria-labelledby="now-title">
-    <div class="shell">
-      <div class="home3-section__head">
-        <div data-reveal>
-          <p class="eyebrow">NOW / SEPTEMBER 2026</p>
-          <h2 id="now-title">What is actually <em>in motion.</em></h2>
-        </div>
-        <p class="home3-section__intro" data-reveal="right">A portfolio should not read like a frozen certificate page. This is the work currently moving forward.</p>
-      </div>
-
-      <div class="home3-now" data-stagger>
-        <article><small>BUILDING</small><h3>Day 18</h3><p>Sanders Landscapes LTD concept. <a href="https://patu-art.github.io/Day-18/" target="_blank" rel="noopener noreferrer">Open build ↗</a></p></article>
-        <article><small>CHALLENGE</small><h3>New genre</h3><p>Home services and landscaping after the first 15 hospitality-focused builds.</p></article>
-        <article><small>LEARNING</small><h3>Beyond static frontend</h3><p>Python, APIs, databases, testing and stronger Git workflows.</p></article>
-        <article><small>LOOKING FOR</small><h3>Real experience</h3><p>Frontend internship opportunities where I can contribute, get reviewed and learn from production work.</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="home3-section home3-section--soft">
-    <div class="shell">
-      <div class="home3-cta" data-reveal>
-        <div>
-          <p class="eyebrow">NEXT / OPEN THE WORK</p>
-          <h2>Judge the progress by what is <em>in the browser.</em></h2>
-          <p>The best way to evaluate this portfolio is to open the projects, inspect the source, follow the challenge progression and see where the work improves—or still falls short.</p>
-        </div>
-        <div class="home3-cta__actions">
-          <a class="button button--paper magnetic" href="projects.html">Projects ↗</a>
-          <a class="button button--ghost magnetic" href="contact.html">Contact ↗</a>
-        </div>
+      <div class="home-clean-contact__actions">
+        <a class="button button--paper magnetic" href="contact.html">Contact ↗</a>
+        <a class="button button--ghost magnetic" href="projects.html">See work ↗</a>
       </div>
     </div>
   </section>
