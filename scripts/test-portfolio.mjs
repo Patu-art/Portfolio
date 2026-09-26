@@ -335,86 +335,94 @@ try {
   const newest = data.repositories.filter(repo => /^day-?0*\d+$/i.test(repo.name) && repo.live && repo.image)
     .sort((a, b) => Number(/^day-?0*(\d+)$/i.exec(b.name)[1]) - Number(/^day-?0*(\d+)$/i.exec(a.name)[1]))[0];
   assert(newest, 'The latest published project must exist');
-  for (const width of [320, 390, 1280]) {
+  for (const width of [320, 390, 768, 1280]) {
     const home = await browser.newPage({ viewport: { width, height: 800 } });
     const errors = [];
     home.on('pageerror', error => errors.push(error.message));
-    await home.goto('http://127.0.0.1:' + port + '/index.html', { waitUntil: 'domcontentloaded' });
-    await home.locator('.v2-proof strong').first().waitFor({ state: 'attached', timeout: 10000 });
-    await home.waitForFunction(({lastDay, count}) =>
-      document.querySelector('.v2-day-list li:last-child .day')?.textContent === lastDay &&
-      document.querySelector('.v2-proof strong')?.textContent?.trim() === count,
-      { lastDay: buildDayLabels.at(-1), count: expectedChallengeCount }, { timeout: 12000 });
-    assert.equal((await home.locator('.v2-proof strong').first().textContent()).trim(), expectedChallengeCount,
-      width + 'px: shipped build counter did not match verified repository index');
-    assert.deepEqual(await home.locator('.v2-day-list .day').allTextContents(), buildDayLabels,
-      width + 'px: latest challenge days missing or out of order');
 
-    const proof = home.locator('.v2-proof > div').first();
-    await proof.scrollIntoViewIfNeeded();
-    await home.waitForFunction(() => {
-      const el = document.querySelector('.v2-proof > div');
-      return el && Number(getComputedStyle(el).opacity) > .98;
-    }, { timeout: 3500 });
-    const portrait = home.locator('.v2-portrait img');
-    await portrait.evaluate(img => img.decode());
-    assert(await portrait.evaluate(img => img.naturalWidth > 100), width + 'px: real portrait not loaded');
-    const visible = await proof.evaluate(el => {
+    await home.goto('http://127.0.0.1:' + port + '/index.html', { waitUntil: 'domcontentloaded' });
+    await home.locator('.home-signature-hero h1').waitFor({ state: 'visible', timeout: 10000 });
+
+    const pageBox = await home.evaluate(() => ({
+      innerWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      bodyScrollWidth: document.body.scrollWidth
+    }));
+    assert(pageBox.scrollWidth <= width + 1 && pageBox.bodyScrollWidth <= width + 1,
+      width + 'px: homepage has horizontal page overflow: ' + JSON.stringify(pageBox));
+
+    const heroTitle = await home.locator('.home-signature-hero h1').evaluate(el => {
       const r = el.getBoundingClientRect();
-      return r.width > 50 && r.left >= -3 && r.right <= innerWidth + 3;
+      return {left:r.left,right:r.right,width:r.width,height:r.height};
     });
-    assert(visible, width + 'px: homepage proof counter overflows or collapses');
-    // New homepage proof sections must show actual screenshots and usable links.
-    const siteproVisual = home.locator('.v2-sitepro-proof');
-    await siteproVisual.scrollIntoViewIfNeeded();
-    assert.equal(await siteproVisual.locator('img').count(), 3,
-      width + 'px: SITEPRO proof needs three real project previews');
-    for (const img of await siteproVisual.locator('img').all()) {
-      await img.evaluate(image => image.decode());
-      assert(await img.evaluate(image => image.naturalWidth > 100),
-        width + 'px: SITEPRO proof screenshot did not load');
+    assert(heroTitle.width > 220 && heroTitle.height > 80,
+      width + 'px: homepage hero title collapsed: ' + JSON.stringify(heroTitle));
+    assert(heroTitle.left >= -3 && heroTitle.right <= width + 3,
+      width + 'px: homepage hero title overflows viewport: ' + JSON.stringify(heroTitle));
+
+    const specimen = home.locator('.home-specimen');
+    await specimen.scrollIntoViewIfNeeded();
+    const specimenRect = await specimen.evaluate(el => {
+      const r = el.getBoundingClientRect();
+      return {left:r.left,right:r.right,width:r.width};
+    });
+    assert(specimenRect.width > 250 && specimenRect.left >= -3 && specimenRect.right <= width + 3,
+      width + 'px: homepage signature specimen is clipped or overflowing: ' + JSON.stringify(specimenRect));
+
+    const portrait = specimen.locator('img');
+    await portrait.evaluate(img => img.decode());
+    assert(await portrait.evaluate(img => img.naturalWidth > 100),
+      width + 'px: homepage portrait failed to load');
+
+    const actionRects = await home.locator('.home-signature-actions a').evaluateAll(nodes =>
+      nodes.map(el => {
+        const r = el.getBoundingClientRect();
+        return {text:el.textContent.trim(),left:r.left,right:r.right,width:r.width,height:r.height};
+      })
+    );
+    assert(actionRects.length >= 3, width + 'px: homepage primary actions are missing');
+    assert(actionRects.every(r => r.width > 44 && r.height >= 36 && r.left >= -3 && r.right <= innerWidth + 3),
+      width + 'px: homepage action is clipped: ' + JSON.stringify(actionRects));
+
+    const capabilityRows = home.locator('.home-layer');
+    assert.equal(await capabilityRows.count(), 3,
+      width + 'px: homepage must keep exactly three core frontend capability layers');
+
+    const routes = home.locator('.home-index a');
+    assert.equal(await routes.count(), 4,
+      width + 'px: homepage portfolio index should link to four dedicated pages');
+    const routeRects = await routes.evaluateAll(nodes => nodes.map(el => {
+      const r = el.getBoundingClientRect();
+      return {left:r.left,right:r.right,width:r.width,height:r.height};
+    }));
+    assert(routeRects.every(r => r.width > 250 && r.left >= -3 && r.right <= innerWidth + 3),
+      width + 'px: portfolio index row is clipped or overflows: ' + JSON.stringify(routeRects));
+
+    if (width <= 640) {
+      const specimenColumns = await specimen.locator('.home-specimen__body').evaluate(el => getComputedStyle(el).gridTemplateColumns);
+      assert(!specimenColumns.includes(' '),
+        width + 'px: mobile signature specimen should be one column, got ' + specimenColumns);
     }
-    const latest = home.locator('.v2-latest-build');
-    assert.equal(await latest.count(), 1,
-      width + 'px: live-build spotlight missing');
-    await latest.scrollIntoViewIfNeeded();
-    const latestImage = latest.locator('img');
-    await latestImage.evaluate(image => image.decode());
-    assert(await latestImage.evaluate(image => image.naturalWidth > 100),
-      width + 'px: latest-build screenshot did not load');
-    assert.equal(await latest.locator('a[data-latest-live]').count(), 2,
-      width + 'px: published demo links missing');
-    assert.equal(await latest.locator('a[data-latest-live]').first().getAttribute('href'), newest.live,
-      width + 'px: latest feature points to a stale challenge day');
-    assert.equal(await latest.locator('[data-latest-source]').getAttribute('href'), newest.url,
-      width + 'px: latest feature has a stale source URL');
-    assert.equal((await latest.locator('[data-latest-title]').textContent()).replace(/[.!]+$/, ''), newest.title,
-      width + 'px: latest feature still uses an older project title');
-    assert.equal(await home.locator('.sitepro-showcase').count(), 0,
-      width + 'px: an obsolete injected SITEPRO section duplicated the homepage');
-    assert.equal(await home.locator('.v2-truth').count(), 0,
-      width + 'px: repeated generic status-card section still present');
-    const latestRect = await latest.evaluate(el => {
-      const box = el.getBoundingClientRect();
-      return { width:box.width, left:box.left, right:box.right };
-    });
-    assert(latestRect.width > 250 && latestRect.left >= -3 && latestRect.right <= width + 3,
-      width + 'px: latest-build card is clipped or overflows the viewport');
+
+    assert.equal(await home.locator('.home3-work, .v2-latest-build, .home3-timeline').count(), 0,
+      width + 'px: detailed project/challenge sections leaked back onto the focused homepage');
     assert.equal(errors.length, 0, width + 'px: homepage browser exception(s): ' + errors.join(', '));
-    console.log(width + 'px: homepage, dynamic '+ expectedChallengeCount +' shipped days, stagger visibility and portrait: PASS');
+
+    console.log(width + 'px: homepage signature, actions, routes and horizontal overflow: PASS');
     await home.close();
   }
 
   const withoutJS = await browser.newPage({ viewport: { width: 390, height: 800 }, javaScriptEnabled: false });
   await withoutJS.goto('http://127.0.0.1:' + port + '/index.html', { waitUntil: 'domcontentloaded' });
-  const fallback = await withoutJS.locator('.v2-proof > div').first().evaluate(el => ({
-    opacity: Number(getComputedStyle(el).opacity),
-    label: el.innerText
-  }));
-  assert(fallback.opacity > .98 && /\d+/.test(fallback.label),
-    'No-JavaScript homepage fallback is invisible or its shipped count is stale');
+  const fallback = await withoutJS.locator('.home-signature-hero h1').evaluate(el => {
+    const style = getComputedStyle(el);
+    const r = el.getBoundingClientRect();
+    return {opacity:Number(style.opacity), visibility:style.visibility, width:r.width, text:el.innerText};
+  });
+  assert(fallback.opacity > .98 && fallback.visibility === 'visible' && fallback.width > 220 && /interfaces/i.test(fallback.text),
+    'No-JavaScript homepage identity is hidden or collapsed: ' + JSON.stringify(fallback));
   await withoutJS.close();
-  console.log('Homepage no-JavaScript content visibility: PASS');
+  console.log('Homepage no-JavaScript identity visibility: PASS');
 
 } finally {
   await browser.close();
