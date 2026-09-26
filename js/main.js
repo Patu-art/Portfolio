@@ -59,7 +59,7 @@ ensureStylesheet('css/portfolio-refresh.css');
       : isHome
         ? [
           './navbar.js?v=20260919a', './smooth-scroll.js', './animations.js',
-          './project-carousel.js?v=20260919a', './home-challenge.js?v=20260919-latest'
+          './home-v3.js?v=20260926'
         ]
         : [
           './navbar.js?v=20260919a', './smooth-scroll.js', './animations.js', './comparison.js',
