@@ -381,7 +381,7 @@ try {
       })
     );
     assert(actionRects.length >= 3, width + 'px: homepage primary actions are missing');
-    assert(actionRects.every(r => r.width > 44 && r.height >= 36 && r.left >= -3 && r.right <= innerWidth + 3),
+    assert(actionRects.every(r => r.width > 44 && r.height >= 36 && r.left >= -3 && r.right <= width + 3),
       width + 'px: homepage action is clipped: ' + JSON.stringify(actionRects));
 
     const capabilityRows = home.locator('.home-layer');
@@ -395,7 +395,7 @@ try {
       const r = el.getBoundingClientRect();
       return {left:r.left,right:r.right,width:r.width,height:r.height};
     }));
-    assert(routeRects.every(r => r.width > 250 && r.left >= -3 && r.right <= innerWidth + 3),
+    assert(routeRects.every(r => r.width > 250 && r.left >= -3 && r.right <= width + 3),
       width + 'px: portfolio index row is clipped or overflows: ' + JSON.stringify(routeRects));
 
     if (width <= 640) {
