@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://mtgsteiypoxudztltzpn.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"/>
   <meta name="referrer" content="strict-origin-when-cross-origin"/>
-  <meta name="theme-color" content="#F3F5F9"/>
+  <meta name="theme-color" content="#0D1318"/>
   <meta name="description" content="Prathamesh Dhumal — frontend developer and B.Tech CSE (AI/ML) student focused on responsive interfaces, UI/UX and practical frontend development."/>
   <meta property="og:title" content="Prathamesh Dhumal — Frontend Developer"/>
   <meta property="og:description" content="Frontend developer portfolio focused on responsive interfaces, UI/UX and practical browser experiences."/>
@@ -20,8 +20,8 @@
   <link href="css/animations.css" rel="stylesheet"/>
   <link href="css/responsive.css" rel="stylesheet"/>
   <link href="css/portfolio-v2.css" rel="stylesheet"/>
-  <link href="css/home-v3.css?v=20260927-signature" rel="stylesheet"/>
-  <script defer src="js/main.js?v=20260927-signature"></script>
+  <link href="css/home-v3.css?v=20260927-cover" rel="stylesheet"/>
+  <script defer src="js/main.js?v=20260927-cover"></script>
   <title>Prathamesh Dhumal — Frontend Developer</title>
 </head>
 <body data-page="home">
@@ -31,145 +31,126 @@
 <div data-component="header"></div>
 
 <main id="main">
-  <section class="home-signature-hero" aria-labelledby="home-title">
-    <div class="shell home-signature-hero__grid">
-      <div class="home-signature-hero__copy">
-        <div class="home-signature-kicker" data-reveal>
-          <span>PRATHAMESH DHUMAL</span>
-          <span>FRONTEND / UI</span>
-          <span class="home-signature-open">OPEN TO INTERNSHIPS</span>
-        </div>
-
-        <h1 id="home-title" data-reveal="clip">I turn ideas into<br><em>clear interfaces.</em></h1>
-
-        <p class="home-signature-hero__lead" data-reveal>
-          I’m a <strong>frontend developer and B.Tech CSE (AI/ML) student</strong> focused on responsive layouts, thoughtful interaction, visual hierarchy and browser experiences that feel deliberate rather than generic.
-        </p>
-
-        <div class="home-signature-actions" data-reveal>
-          <a class="button button--brass magnetic" href="projects.html">View projects ↗</a>
-          <a class="button button--ghost magnetic" href="assets/documents/Prathamesh_Dhumal_Resume.pdf" target="_blank" rel="noopener noreferrer">Resume ↗</a>
-          <a class="home-signature-link" href="contact.html">Contact ↗</a>
-        </div>
-
-        <div class="home-signature-strip" data-stagger aria-label="Core frontend strengths">
-          <span>HTML</span>
-          <span>CSS</span>
-          <span>JavaScript</span>
-          <span>Responsive UI</span>
-          <span>Git / GitHub</span>
-        </div>
+  <section class="home-cover" aria-labelledby="home-title">
+    <div class="shell home-cover__shell">
+      <div class="home-cover__meta" data-reveal>
+        <span>PRATHAMESH DHUMAL</span>
+        <span>FRONTEND DEVELOPER</span>
+        <span>KALYAN · INDIA</span>
+        <span class="home-cover__open">OPEN TO INTERNSHIPS</span>
       </div>
 
-      <aside class="home-specimen" data-reveal="right" aria-label="Prathamesh frontend interface specimen">
-        <div class="home-specimen__top">
-          <span>INTERFACE SPECIMEN / 01</span>
-          <span class="home-specimen__signal"><i></i> LIVE</span>
+      <div class="home-cover__grid">
+        <div class="home-cover__copy">
+          <p class="home-cover__index" data-reveal>PORTFOLIO / 2026 / 01</p>
+          <h1 id="home-title" data-reveal="clip">I build interfaces<br>that feel <em>intentional.</em></h1>
+          <p class="home-cover__lead" data-reveal>
+            Frontend developer and B.Tech CSE (AI/ML) student focused on <strong>responsive layout, visual hierarchy and practical interaction</strong>—the parts that turn a design into something people can actually use.
+          </p>
+
+          <div class="home-cover__actions" data-reveal>
+            <a class="button button--paper magnetic" href="projects.html">View projects ↗</a>
+            <a class="button button--ghost magnetic" href="assets/documents/Prathamesh_Dhumal_Resume.pdf" target="_blank" rel="noopener noreferrer">Resume ↗</a>
+            <a class="home-cover__textlink" href="contact.html">Contact ↗</a>
+          </div>
         </div>
 
-        <div class="home-specimen__body">
-          <figure class="home-specimen__portrait">
+        <figure class="home-cover__portrait" data-reveal>
+          <div class="home-cover__portrait-frame">
             <img src="assets/images/profile/prathamesh.jpeg" alt="Prathamesh Dhumal" width="900" height="1200" fetchpriority="high"/>
-            <figcaption>PRATHAMESH / 2026</figcaption>
-          </figure>
-
-          <div class="home-specimen__panel">
-            <div class="home-specimen__monogram" aria-hidden="true">PD</div>
-            <p class="home-specimen__role">FRONTEND<br/>DEVELOPER</p>
-
-            <div class="home-specimen__principles" aria-label="Design principles">
-              <div><span>01</span><strong>CLEAR</strong></div>
-              <div><span>02</span><strong>RESPONSIVE</strong></div>
-              <div><span>03</span><strong>INTENTIONAL</strong></div>
-            </div>
+            <div class="home-cover__portrait-mark" aria-hidden="true">PD</div>
           </div>
-        </div>
+          <figcaption>
+            <span>FRONTEND / UI / WEB</span>
+            <span>STUDENT + BUILDER</span>
+          </figcaption>
+        </figure>
+      </div>
 
-        <div class="home-specimen__foot">
-          <span>STRUCTURE</span><i>→</i><span>STYLE</span><i>→</i><span>INTERACTION</span><i>→</i><span>BROWSER</span>
-        </div>
-      </aside>
+      <div class="home-cover__rail" data-stagger aria-label="Core frontend strengths">
+        <span><i>01</i> HTML</span>
+        <span><i>02</i> CSS</span>
+        <span><i>03</i> JAVASCRIPT</span>
+        <span><i>04</i> RESPONSIVE UI</span>
+        <span><i>05</i> GIT / GITHUB</span>
+      </div>
     </div>
   </section>
 
-  <section class="home-signature-section home-signature-section--paper" aria-labelledby="capabilities-title">
+  <section class="home-front" aria-labelledby="capabilities-title">
     <div class="shell">
-      <div class="home-signature-heading">
+      <header class="home-front__head">
         <div data-reveal>
-          <p class="eyebrow">WHAT I CAN DO</p>
-          <h2 id="capabilities-title">Three layers of<br><em>frontend work.</em></h2>
+          <p class="eyebrow">WHAT I CAN DO / TODAY</p>
+          <h2 id="capabilities-title">Frontend in<br><em>three layers.</em></h2>
         </div>
-        <p data-reveal="right">My strongest area today is frontend implementation. I’m still expanding into deeper programming, APIs, databases and testing.</p>
-      </div>
+        <p data-reveal>
+          I’m strongest at frontend implementation right now. I’m also expanding into Python, APIs, databases, testing and stronger software-engineering fundamentals.
+        </p>
+      </header>
 
-      <div class="home-layer-list" data-stagger>
-        <article class="home-layer">
-          <div class="home-layer__index">01 / STRUCTURE</div>
-          <div class="home-layer__title">Structure</div>
-          <div class="home-layer__copy">
-            <p>Semantic HTML, readable content hierarchy, forms, navigation and page structure that make sense before styling starts.</p>
-            <div class="home-layer__tags"><span>HTML5</span><span>Semantics</span><span>Content hierarchy</span></div>
-          </div>
+      <div class="home-front__layers" data-stagger>
+        <article class="home-front__layer">
+          <span class="home-front__layer-no">01</span>
+          <h3>Structure</h3>
+          <p>Semantic HTML, content hierarchy, forms and navigation that make sense before styling begins.</p>
+          <div class="home-front__tags"><span>HTML5</span><span>Semantics</span><span>Accessibility</span></div>
         </article>
 
-        <article class="home-layer">
-          <div class="home-layer__index">02 / STYLE</div>
-          <div class="home-layer__title">Style</div>
-          <div class="home-layer__copy">
-            <p>Responsive CSS, Grid, Flexbox, typography, spacing and visual systems that adapt cleanly across screen sizes.</p>
-            <div class="home-layer__tags"><span>CSS3</span><span>Grid</span><span>Flexbox</span><span>Responsive UI</span></div>
-          </div>
+        <article class="home-front__layer">
+          <span class="home-front__layer-no">02</span>
+          <h3>Style</h3>
+          <p>Responsive CSS, Grid, Flexbox, typography and spacing systems that survive different screen sizes.</p>
+          <div class="home-front__tags"><span>CSS3</span><span>Grid</span><span>Flexbox</span><span>Responsive UI</span></div>
         </article>
 
-        <article class="home-layer">
-          <div class="home-layer__index">03 / INTERACTION</div>
-          <div class="home-layer__title">Interact</div>
-          <div class="home-layer__copy">
-            <p>Practical JavaScript for menus, DOM behavior, carousels, galleries and interface feedback without turning every page into an effect demo.</p>
-            <div class="home-layer__tags"><span>JavaScript</span><span>DOM</span><span>UI behavior</span></div>
-          </div>
+        <article class="home-front__layer">
+          <span class="home-front__layer-no">03</span>
+          <h3>Interact</h3>
+          <p>Practical JavaScript for menus, DOM behavior, carousels, galleries and interface feedback.</p>
+          <div class="home-front__tags"><span>JavaScript</span><span>DOM</span><span>UI behavior</span></div>
         </article>
       </div>
 
-      <div class="home-ship-line" data-reveal>
+      <div class="home-front__ship" data-reveal>
         <span>SHIP / MAINTAIN</span>
-        <p>Git · GitHub · GitHub Pages · browser QA · iteration</p>
-        <span class="home-ship-line__learning">LEARNING NEXT → Python · APIs · SQL · testing</span>
+        <strong>Git · GitHub · Pages · browser QA · iteration</strong>
+        <span>LEARNING NEXT → Python · APIs · SQL · testing</span>
       </div>
     </div>
   </section>
 
-  <section class="home-signature-section home-signature-section--soft" aria-labelledby="explore-title">
+  <section class="home-directory" aria-labelledby="directory-title">
     <div class="shell">
-      <div class="home-signature-heading home-signature-heading--compact">
+      <header class="home-directory__head">
         <div data-reveal>
           <p class="eyebrow">PORTFOLIO INDEX</p>
-          <h2 id="explore-title">Go deeper where<br><em>you actually care.</em></h2>
+          <h2 id="directory-title">Choose where to<br><em>go deeper.</em></h2>
         </div>
-        <p data-reveal="right">The homepage stays focused. Projects, the 100-Day Challenge, SITEPRO and my longer story each have their own space.</p>
-      </div>
+        <p data-reveal>The homepage introduces me. Everything detailed has its own page instead of being repeated here.</p>
+      </header>
 
-      <nav class="home-index" aria-label="Portfolio sections" data-stagger>
+      <nav class="home-directory__list" aria-label="Portfolio sections" data-stagger>
         <a href="projects.html">
-          <span class="home-index__no">01</span>
+          <span>01</span>
           <strong>Projects</strong>
           <p>Live builds, source code and the complete project archive.</p>
           <i aria-hidden="true">↗</i>
         </a>
         <a href="challenge.html">
-          <span class="home-index__no">02</span>
+          <span>02</span>
           <strong>100 Days</strong>
           <p>The challenge, progression and lessons across the builds.</p>
           <i aria-hidden="true">↗</i>
         </a>
         <a href="sitepro.html">
-          <span class="home-index__no">03</span>
+          <span>03</span>
           <strong>SITEPRO</strong>
           <p>The evolving research, design, build and QA system.</p>
           <i aria-hidden="true">↗</i>
         </a>
         <a href="about.html">
-          <span class="home-index__no">04</span>
+          <span>04</span>
           <strong>About</strong>
           <p>Education, direction, learning journey and current goals.</p>
           <i aria-hidden="true">↗</i>
@@ -178,15 +159,14 @@
     </div>
   </section>
 
-  <section class="home-signature-section home-signature-section--ink" aria-labelledby="contact-title">
-    <div class="shell home-signature-contact" data-reveal>
+  <section class="home-end" aria-labelledby="contact-title">
+    <div class="shell home-end__grid" data-reveal>
       <div>
         <p class="eyebrow">OPEN TO FRONTEND OPPORTUNITIES</p>
-        <h2 id="contact-title">I’m early in the journey.<br><em>That’s why I’m building.</em></h2>
-        <p>I’m looking for practical frontend experience where I can contribute, receive real feedback and grow beyond self-directed work.</p>
+        <h2 id="contact-title">Early career.<br><em>Serious about improving.</em></h2>
+        <p>I’m looking for practical frontend experience where I can contribute, get real feedback and grow beyond self-directed work.</p>
       </div>
-
-      <div class="home-signature-contact__actions">
+      <div class="home-end__actions">
         <a class="button button--paper magnetic" href="contact.html">Contact ↗</a>
         <a class="button button--ghost magnetic" href="projects.html">See work ↗</a>
       </div>
