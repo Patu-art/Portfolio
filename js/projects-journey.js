@@ -16,33 +16,40 @@ if(journeyRoot){
    return {name:raw.name,title:String(raw.title||titleCase(raw.name)).slice(0,100),
     description:String(raw.description||'Open the repository to explore this build.').slice(0,260),
     language:String(raw.language||'PROJECT').slice(0,35),url:safeURL(raw.url),live:safeURL(raw.live),
-    created_at:String(raw.created_at||''),day:dayNumber(raw.name)};
+    created_at:String(raw.created_at||''),day:dayNumber(raw.name),image:String(raw.image||raw.thumbnail||'').replace(/^\/+/, '')};
  };
  const order=list=>[...list].sort((a,b)=>{
    const at=Date.parse(a.created_at)||0,bt=Date.parse(b.created_at)||0;
    return at-bt||String(a.name).localeCompare(String(b.name));
  });
  function node(repo,index){
-   const row=document.createElement('article');
-   const challenge=repo.day!==null;
-   row.className='journey-item '+(challenge?'journey-item--challenge':'journey-item--side');
-   row.dataset.kind=challenge?'challenge':'side';
+   const row=document.createElement('article'),challenge=repo.day!==null;
+   row.className='journey-item '+(challenge?'journey-item--challenge':'journey-item--side');row.dataset.kind=challenge?'challenge':'side';
    const axis=document.createElement('div');axis.className='journey-item__axis';axis.setAttribute('aria-hidden','true');
-   const body=document.createElement('div');body.className='journey-node';
-   const button=document.createElement('button');button.type='button';button.className='journey-node__button';button.setAttribute('aria-expanded','false');
-   const number=document.createElement('span');number.className='journey-node__number';
-   number.textContent=challenge?'DAY '+String(repo.day).padStart(2,'0'):'PROJECT '+String(index+1).padStart(2,'0');
-   const heading=document.createElement('h3');heading.textContent=repo.title;
-   button.append(number,heading);
-   const summary=document.createElement('p');summary.className='journey-node__summary';summary.textContent=repo.description;
-   const meta=document.createElement('div');meta.className='journey-node__meta';
-   const type=document.createElement('span');type.textContent=challenge?'100 DAYS':'INDEPENDENT';
-   const lang=document.createElement('span');lang.textContent=repo.language.toUpperCase();meta.append(type,lang);
-   const links=document.createElement('div');links.className='journey-node__links';
-   if(repo.live){const live=document.createElement('a');live.href=repo.live;live.target='_blank';live.rel='noopener noreferrer';live.textContent='Open live ↗';links.append(live)}
-   if(repo.url){const source=document.createElement('a');source.href=repo.url;source.target='_blank';source.rel='noopener noreferrer';source.textContent='GitHub ↗';links.append(source)}
-   button.addEventListener('click',()=>{const open=row.classList.toggle('is-open');button.setAttribute('aria-expanded',String(open))});
-   body.append(button,summary,meta,links);row.append(axis,body);return row;
+   const button=document.createElement('button');button.type='button';button.className='journey-level';button.setAttribute('aria-haspopup','dialog');
+   button.setAttribute('aria-label',(challenge?'Day '+repo.day:repo.title)+': open project details');
+   const badge=document.createElement('span');badge.className='journey-level__badge';badge.textContent=challenge?'Day '+repo.day:'★';
+   button.append(badge);button.addEventListener('click',()=>openProject(repo,challenge));
+   row.append(axis,button);return row;
+ }
+ function openProject(repo,challenge){
+   let dialog=document.querySelector('[data-project-dialog]');
+   if(!dialog){
+     dialog=document.createElement('dialog');dialog.className='journey-dialog';dialog.dataset.projectDialog='';
+     dialog.innerHTML='<button class="journey-dialog__close" type="button" aria-label="Close project">×</button><div class="journey-dialog__media"></div><div class="journey-dialog__copy"><p class="journey-dialog__eyebrow"></p><h3></h3><p class="journey-dialog__description"></p><div class="journey-dialog__links"></div></div>';
+     document.body.append(dialog);dialog.querySelector('.journey-dialog__close').addEventListener('click',()=>dialog.close());
+     dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
+   }
+   const media=dialog.querySelector('.journey-dialog__media');media.replaceChildren();
+   if(repo.image&&/^(assets\/)[a-z0-9_./-]+\.(png|webp|jpe?g)$/i.test(repo.image)){
+     const img=document.createElement('img');img.src=repo.image;img.alt='Preview of '+repo.title;img.loading='lazy';media.append(img);
+   }else{const missing=document.createElement('div');missing.className='journey-dialog__missing';missing.textContent='PREVIEW PENDING';media.append(missing)}
+   dialog.querySelector('.journey-dialog__eyebrow').textContent=challenge?'100 DAYS · DAY '+String(repo.day).padStart(2,'0'):'SIDE PROJECT';
+   dialog.querySelector('h3').textContent=repo.title;dialog.querySelector('.journey-dialog__description').textContent=repo.description;
+   const links=dialog.querySelector('.journey-dialog__links');links.replaceChildren();
+   if(repo.live){const a=document.createElement('a');a.href=repo.live;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Live demo ↗';links.append(a)}
+   if(repo.url){const a=document.createElement('a');a.href=repo.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Code ↗';links.append(a)}
+   dialog.showModal();
  }
  function render(list){
    const clean=order(list.map(normalize).filter(Boolean));
