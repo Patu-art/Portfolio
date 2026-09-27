@@ -58,7 +58,7 @@ body[data-page="home"] .hp-hero__name{
   display:grid;
   margin:34px 0 30px;
   color:var(--hp-ink);
-  font:650 clamp(46px,13.1vw,164px)/.76 var(--display);
+  font:650 clamp(46px,13.1vw,164px)/.86 var(--display);
   letter-spacing:-.07em;
   text-transform:uppercase;
 }
