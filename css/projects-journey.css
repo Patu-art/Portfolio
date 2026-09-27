@@ -201,3 +201,21 @@ body[data-page="projects"] .journey-hero{padding:calc(var(--header-h,78px) + cla
 }
 @media(max-width:390px){.journey-scene{width:104px;padding:8px}.journey-scene strong{font-size:6px}.journey-scene span{font-size:20px}}
 @media(prefers-reduced-motion:reduce){.journey-scene span,.journey-item--upcoming .journey-level::before{animation:none!important}}
+
+/* v9 — chapter world-building. Preserves the v8 route and content. */
+.journey-item:nth-child(-n+6){background:linear-gradient(90deg,transparent,rgba(119,139,145,.025),transparent)}
+.journey-item:nth-child(n+7):nth-child(-n+12){background:radial-gradient(circle at 50% 50%,rgba(100,127,137,.045),transparent 52%)}
+.journey-item:nth-child(n+13):nth-child(-n+19){background:linear-gradient(120deg,transparent 20%,rgba(215,180,106,.035) 50%,transparent 78%)}
+.journey-progress-tag{position:absolute;z-index:4;left:var(--level-x);top:calc(50% - 64px);transform:translateX(-50%);padding:5px 8px;border-radius:999px;background:#263d46;color:#fff;font:700 7px/1 "JetBrains Mono",monospace;letter-spacing:.1em;white-space:nowrap}
+.journey-item--current .journey-level{background:#fff;box-shadow:0 0 0 4px #263d46,0 0 0 13px rgba(82,111,121,.14),0 16px 30px rgba(23,36,42,.2)}
+.journey-collectible{position:absolute;z-index:3;top:18%;left:calc(var(--level-x) + 72px);display:flex;align-items:center;gap:7px;color:#526f79;pointer-events:none}
+.journey-collectible b{display:grid;place-items:center;width:28px;height:28px;border:1px dashed currentColor;border-radius:50%;font:500 15px/1 serif}
+.journey-collectible small{font:700 7px/1 "JetBrains Mono",monospace;letter-spacing:.1em;white-space:nowrap}
+.journey-traveller{position:absolute;z-index:5;left:50%;top:0;color:#d7b46a;font-size:13px;filter:drop-shadow(0 2px 3px rgba(23,36,42,.3));pointer-events:none;opacity:0}
+.journey-item--upcoming::after{content:"THE ROAD CONTINUES…";position:absolute;z-index:1;left:var(--level-x);top:calc(50% + 66px);transform:translateX(-50%);color:rgba(82,111,121,.62);font:700 7px/1 "JetBrains Mono",monospace;letter-spacing:.12em;white-space:nowrap}
+@media(prefers-reduced-motion:no-preference){
+ .journey-item--current .journey-level{animation:currentLevel 2.5s ease-in-out infinite}
+ @keyframes currentLevel{50%{box-shadow:0 0 0 4px #263d46,0 0 0 18px rgba(82,111,121,.05),0 18px 34px rgba(23,36,42,.22)}}
+}
+@media(max-width:760px){.journey-collectible{left:calc(var(--level-x) + 46px)}.journey-collectible small{display:none}.journey-progress-tag{top:calc(50% - 53px)}}
+@media(max-width:390px){.journey-collectible{left:calc(var(--level-x) + 38px)}}
