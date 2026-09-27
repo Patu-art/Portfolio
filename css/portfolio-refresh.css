@@ -122,3 +122,29 @@ body[data-page="projects"] .v2-section__head { margin-bottom:clamp(20px,3vw,35px
 .project-media-placeholder strong {color:#0d0d0d; font:600 clamp(26px,3vw,44px)/1.1 'Fraunces',Georgia,serif;}
 .project-media-placeholder span,.project-media-placeholder small {font:600 10px/1.4 'JetBrains Mono',monospace; letter-spacing:.08em;}
 .project-media-placeholder--detail {min-height:380px; border:1px solid var(--refresh-line); border-radius:16px; margin:20px 0;}
+
+
+/* Navigation breakpoint: normal laptop widths keep the full top navigation.
+   Burger navigation is reserved for narrower tablet/mobile layouts. */
+@media (min-width:960px) and (max-width:1100px) {
+  .site-header__inner {
+    grid-template-columns:1fr auto 1fr !important;
+    gap:14px !important;
+  }
+  .desktop-nav {
+    display:flex !important;
+    gap:20px !important;
+  }
+  .availability-pill {
+    display:flex !important;
+  }
+  .nav-toggle {
+    display:none !important;
+  }
+  .mobile-menu {
+    display:none !important;
+  }
+  .brand__copy small {
+    display:none !important;
+  }
+}
