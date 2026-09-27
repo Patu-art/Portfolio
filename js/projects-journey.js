@@ -19,6 +19,7 @@ if(journeyRoot){
     created_at:String(raw.created_at||''),day:dayNumber(raw.name),image:String(raw.image||raw.thumbnail||'').replace(/^\/+/, '')};
  };
  const order=list=>[...list].sort((a,b)=>{
+   if(a.day!==null&&b.day!==null)return a.day-b.day;
    const at=Date.parse(a.created_at)||0,bt=Date.parse(b.created_at)||0;
    return at-bt||String(a.name).localeCompare(String(b.name));
  });
