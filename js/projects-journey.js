@@ -1,0 +1,73 @@
+/* Build Journey: cache-first, live-refresh repository map.
+   The checked-in index paints immediately; GitHub refreshes it in the background. */
+const journeyRoot=document.querySelector('[data-journey-route]');
+if(journeyRoot){
+ const OWNER='Patu-art';
+ const count=document.querySelector('[data-repository-count]');
+ const status=document.querySelector('[data-journey-status]');
+ const filterRoot=document.querySelector('[data-journey-filter]');
+ let items=[],activeFilter='all';
+
+ const titleCase=name=>String(name||'').replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim();
+ const dayNumber=name=>{const m=String(name||'').match(/^day-?0*(\d+)$/i);return m?Number(m[1]):null};
+ const safeURL=value=>{try{const u=new URL(value);return u.protocol==='https:'?u.href:''}catch{return''}};
+ const normalize=raw=>{
+   if(!raw||raw.private||raw.is_fork||raw.fork||raw.archived||!/^[a-z0-9_.-]{1,100}$/i.test(raw.name||''))return null;
+   return {name:raw.name,title:String(raw.title||titleCase(raw.name)).slice(0,100),
+    description:String(raw.description||'Open the repository to explore this build.').slice(0,260),
+    language:String(raw.language||'PROJECT').slice(0,35),url:safeURL(raw.url),live:safeURL(raw.live),
+    created_at:String(raw.created_at||''),day:dayNumber(raw.name)};
+ };
+ const order=list=>[...list].sort((a,b)=>{
+   const at=Date.parse(a.created_at)||0,bt=Date.parse(b.created_at)||0;
+   return at-bt||String(a.name).localeCompare(String(b.name));
+ });
+ function node(repo,index){
+   const row=document.createElement('article');
+   const challenge=repo.day!==null;
+   row.className='journey-item '+(challenge?'journey-item--challenge':'journey-item--side');
+   row.dataset.kind=challenge?'challenge':'side';
+   const axis=document.createElement('div');axis.className='journey-item__axis';axis.setAttribute('aria-hidden','true');
+   const body=document.createElement('div');body.className='journey-node';
+   const button=document.createElement('button');button.type='button';button.className='journey-node__button';button.setAttribute('aria-expanded','false');
+   const number=document.createElement('span');number.className='journey-node__number';
+   number.textContent=challenge?'DAY '+String(repo.day).padStart(2,'0'):'PROJECT '+String(index+1).padStart(2,'0');
+   const heading=document.createElement('h3');heading.textContent=repo.title;
+   button.append(number,heading);
+   const summary=document.createElement('p');summary.className='journey-node__summary';summary.textContent=repo.description;
+   const meta=document.createElement('div');meta.className='journey-node__meta';
+   const type=document.createElement('span');type.textContent=challenge?'100 DAYS':'INDEPENDENT';
+   const lang=document.createElement('span');lang.textContent=repo.language.toUpperCase();meta.append(type,lang);
+   const links=document.createElement('div');links.className='journey-node__links';
+   if(repo.live){const live=document.createElement('a');live.href=repo.live;live.target='_blank';live.rel='noopener noreferrer';live.textContent='Open live ↗';links.append(live)}
+   if(repo.url){const source=document.createElement('a');source.href=repo.url;source.target='_blank';source.rel='noopener noreferrer';source.textContent='GitHub ↗';links.append(source)}
+   button.addEventListener('click',()=>{const open=row.classList.toggle('is-open');button.setAttribute('aria-expanded',String(open))});
+   body.append(button,summary,meta,links);row.append(axis,body);return row;
+ }
+ function render(list){
+   const clean=order(list.map(normalize).filter(Boolean));
+   const seen=new Set();items=clean.filter(r=>{const k=r.name.toLowerCase();if(seen.has(k))return false;seen.add(k);return true});
+   const visible=items.filter(r=>activeFilter==='all'||(activeFilter==='challenge')===(r.day!==null));
+   if(!visible.length){journeyRoot.replaceChildren(Object.assign(document.createElement('p'),{className:'journey-loading',textContent:'No projects in this view yet.'}));return}
+   journeyRoot.replaceChildren(...visible.map(node));
+   if(count)count.textContent=items.length+' PUBLIC REPOSITORIES';
+ }
+ async function stored(){
+   const response=await fetch('data/repos.json',{cache:'no-store'});if(!response.ok)throw new Error('Saved index HTTP '+response.status);
+   const data=await response.json();return Array.isArray(data.repositories)?data.repositories:[];
+ }
+ async function live(cached){
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6500);
+   try{
+    const response=await fetch('https://api.github.com/users/'+OWNER+'/repos?type=owner&per_page=100&sort=created',{headers:{Accept:'application/vnd.github+json'},signal:controller.signal});
+    if(!response.ok)throw new Error('GitHub HTTP '+response.status);
+    const raw=await response.json(),index=new Map(cached.map(r=>[String(r.name).toLowerCase(),r]));
+    return raw.filter(r=>r&&!r.private&&!r.fork&&!r.archived).map(r=>{const old=index.get(String(r.name).toLowerCase());
+      return {...old,name:r.name,title:old?.title||titleCase(r.name),description:r.description?.trim()||old?.description||'Open the repository to explore this build.',language:r.language||old?.language||'PROJECT',url:r.html_url,live:r.homepage?.startsWith('https://')?r.homepage:(r.has_pages?'https://patu-art.github.io/'+encodeURIComponent(r.name)+'/':''),created_at:r.created_at||old?.created_at||''}
+    });
+   }finally{clearTimeout(timer)}
+ }
+ filterRoot?.addEventListener('click',e=>{const button=e.target.closest('button[data-filter]');if(!button)return;activeFilter=button.dataset.filter;filterRoot.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));render(items)});
+ stored().then(cached=>{render(cached);return live(cached).then(fresh=>render(fresh)).catch(error=>console.warn('Live repository refresh unavailable; using saved index.',error))})
+ .catch(()=>live([]).then(render).catch(()=>{journeyRoot.innerHTML='<p class="journey-loading">Repository information is temporarily unavailable. Use the GitHub link below to browse the work.</p>';if(status){status.hidden=false;status.textContent='Projects could not be refreshed.'}}));
+}
