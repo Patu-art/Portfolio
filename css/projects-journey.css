@@ -71,3 +71,23 @@ body[data-page="projects"] .journey-hero{padding:calc(var(--header-h,78px) + cla
 }
 @media(prefers-reduced-motion:no-preference){.journey-node{transition:transform .22s ease,box-shadow .22s ease}.journey-node:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(38,65,75,.1)}}
 @media(prefers-reduced-motion:reduce){.journey-node{transition:none!important}}
+
+/* v3: real continuous SVG game path. Previous per-row geometric rails are disabled. */
+.journey-route{isolation:isolate}
+.journey-item__axis::before{display:none!important}
+.journey-snake{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
+.journey-snake__shadow,.journey-snake__path{fill:none;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.journey-snake__shadow{stroke:#d7e0e3;stroke-width:13}
+.journey-snake__path{stroke:#7f969e;stroke-width:3;stroke-dasharray:2 11}
+.journey-item{z-index:1}
+.journey-item:nth-child(odd){justify-content:flex-start;padding-left:3%}
+.journey-item:nth-child(even){justify-content:flex-end;padding-right:3%}
+.journey-item__axis::after{left:12%!important}
+.journey-item:nth-child(even) .journey-item__axis::after{left:88%!important}
+.journey-item--side:nth-child(odd){padding-left:10%}.journey-item--side:nth-child(even){padding-right:10%}
+.journey-item--side:nth-child(odd) .journey-item__axis::after{left:12%!important}.journey-item--side:nth-child(even) .journey-item__axis::after{left:88%!important}
+@media(max-width:760px){
+ .journey-item:nth-child(odd){padding-left:0}.journey-item:nth-child(even){padding-right:0}
+ .journey-item__axis::after{left:12%!important}.journey-item:nth-child(even) .journey-item__axis::after{left:88%!important}
+ .journey-node,.journey-item--side .journey-node{width:38%;max-width:210px}
+}
