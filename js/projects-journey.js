@@ -50,8 +50,27 @@ if(journeyRoot){
    const visible=items.filter(r=>activeFilter==='all'||(activeFilter==='challenge')===(r.day!==null));
    if(!visible.length){journeyRoot.replaceChildren(Object.assign(document.createElement('p'),{className:'journey-loading',textContent:'No projects in this view yet.'}));return}
    journeyRoot.replaceChildren(...visible.map(node));
+   requestAnimationFrame(drawSnake);
    if(count)count.textContent=items.length+' PUBLIC REPOSITORIES';
  }
+ function drawSnake(){
+   journeyRoot.querySelector('.journey-snake')?.remove();
+   const rows=[...journeyRoot.querySelectorAll('.journey-item:not([hidden])')];
+   if(!rows.length)return;
+   const box=journeyRoot.getBoundingClientRect();
+   const ns='http://www.w3.org/2000/svg';
+   const svg=document.createElementNS(ns,'svg');
+   svg.classList.add('journey-snake');svg.setAttribute('aria-hidden','true');
+   svg.setAttribute('viewBox','0 0 '+Math.max(1,box.width)+' '+Math.max(1,box.height));
+   svg.setAttribute('preserveAspectRatio','none');
+   const pts=rows.map(row=>{const r=row.getBoundingClientRect();const odd=(rows.indexOf(row)%2===0);return {x:odd?Math.max(30,box.width*.12):Math.min(box.width-30,box.width*.88),y:r.top-box.top+r.height/2}});
+   let d='M '+pts[0].x+' '+pts[0].y;
+   for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],dy=b.y-a.y,turn=Math.min(86,Math.max(34,dy*.42));d+=' C '+a.x+' '+(a.y+turn)+', '+b.x+' '+(b.y-turn)+', '+b.x+' '+b.y}
+   const shadow=document.createElementNS(ns,'path');shadow.setAttribute('d',d);shadow.setAttribute('class','journey-snake__shadow');
+   const path=document.createElementNS(ns,'path');path.setAttribute('d',d);path.setAttribute('class','journey-snake__path');
+   svg.append(shadow,path);journeyRoot.prepend(svg);
+ }
+ let resizeTimer;addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(drawSnake,120)},{passive:true});
  async function stored(){
    const response=await fetch('data/repos.json',{cache:'no-store'});if(!response.ok)throw new Error('Saved index HTTP '+response.status);
    const data=await response.json();return Array.isArray(data.repositories)?data.repositories:[];
