@@ -67,12 +67,41 @@ if(journeyRoot){
    const box=journeyRoot.getBoundingClientRect(),ns='http://www.w3.org/2000/svg';
    const svg=document.createElementNS(ns,'svg');svg.classList.add('journey-snake');svg.setAttribute('aria-hidden','true');
    svg.setAttribute('viewBox','0 0 '+Math.max(1,box.width)+' '+Math.max(1,box.height));svg.setAttribute('preserveAspectRatio','none');
-   const pattern=[.16,.76,.34,.88,.57,.12,.68,.27];
-   const pts=rows.map((row,i)=>{const r=row.getBoundingClientRect(),x=box.width*pattern[i%pattern.length];row.style.setProperty('--level-x',(pattern[i%pattern.length]*100)+'%');return{x,y:r.top-box.top+r.height/2}});
+
+   /* One authored six-level chapter, then mirror it. This deliberately avoids
+      an algorithmic S-wave: left climb -> center hook -> far-right sweep ->
+      tight return -> low-left bend -> center exit. */
+   const chapter=[.18,.24,.57,.86,.70,.31];
+   const pts=rows.map((row,i)=>{
+     const chapterIndex=Math.floor(i/chapter.length),step=i%chapter.length;
+     const mirrored=chapterIndex%2===1;
+     const ratio=mirrored?1-chapter[step]:chapter[step];
+     const r=row.getBoundingClientRect();
+     row.style.setProperty('--level-x',(ratio*100)+'%');
+     return{x:box.width*ratio,y:r.top-box.top+r.height/2,step,mirrored};
+   });
    let d='M '+pts[0].x+' '+pts[0].y;
-   for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],dy=b.y-a.y,wide=Math.abs(b.x-a.x),bend=Math.min(dy*.72,Math.max(48,wide*.38));const sign=i%3===0?-1:1;const c1x=a.x+Math.min(box.width*.12,wide*.22)*sign,c2x=b.x-Math.min(box.width*.12,wide*.22)*sign;d+=' C '+c1x+' '+(a.y+bend)+', '+c2x+' '+(b.y-bend)+', '+b.x+' '+b.y}
+   for(let i=1;i<pts.length;i++){
+     const a=pts[i-1],p=pts[i],dy=p.y-a.y,w=box.width;
+     const chapterBreak=p.step===0;
+     if(chapterBreak){
+       const side=a.x>w/2?w*.94:w*.06;
+       d+=' C '+side+' '+(a.y+dy*.25)+', '+side+' '+(p.y-dy*.28)+', '+p.x+' '+p.y;
+       continue;
+     }
+     /* Every segment has its own turn language; these six form the story. */
+     switch(p.step){
+       case 1: d+=' C '+(a.x-w*.03)+' '+(a.y+dy*.38)+', '+(p.x-w*.07)+' '+(p.y-dy*.30)+', '+p.x+' '+p.y;break;
+       case 2: d+=' C '+(a.x+w*.20)+' '+(a.y+dy*.18)+', '+(p.x-w*.12)+' '+(p.y-dy*.18)+', '+p.x+' '+p.y;break;
+       case 3: d+=' C '+(a.x+w*.05)+' '+(a.y+dy*.62)+', '+(p.x+w*.09)+' '+(p.y-dy*.50)+', '+p.x+' '+p.y;break;
+       case 4: d+=' C '+(a.x-w*.02)+' '+(a.y+dy*.22)+', '+(p.x+w*.14)+' '+(p.y-dy*.18)+', '+p.x+' '+p.y;break;
+       case 5: d+=' C '+(a.x-w*.28)+' '+(a.y+dy*.36)+', '+(p.x+w*.08)+' '+(p.y-dy*.34)+', '+p.x+' '+p.y;break;
+       default:d+=' C '+a.x+' '+(a.y+dy*.4)+', '+p.x+' '+(p.y-dy*.4)+', '+p.x+' '+p.y;
+     }
+   }
    const shadow=document.createElementNS(ns,'path');shadow.setAttribute('d',d);shadow.setAttribute('class','journey-snake__shadow');
-   const path=document.createElementNS(ns,'path');path.setAttribute('d',d);path.setAttribute('class','journey-snake__path');svg.append(shadow,path);journeyRoot.prepend(svg);
+   const path=document.createElementNS(ns,'path');path.setAttribute('d',d);path.setAttribute('class','journey-snake__path');
+   svg.append(shadow,path);journeyRoot.prepend(svg);
  } let resizeTimer;addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(drawSnake,120)},{passive:true});
  async function stored(){
    const response=await fetch('data/repos.json',{cache:'no-store'});if(!response.ok)throw new Error('Saved index HTTP '+response.status);
