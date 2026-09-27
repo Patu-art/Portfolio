@@ -344,6 +344,34 @@ try {
     await home.locator('.hp-hero h1').waitFor({ state: 'visible', timeout: 10000 });
     await home.waitForTimeout(650);
 
+    const navState = await home.evaluate(() => {
+      const desktop = document.querySelector('.desktop-nav');
+      const toggle = document.querySelector('.nav-toggle');
+      return {
+        desktop: desktop ? getComputedStyle(desktop).display : 'missing',
+        toggle: toggle ? getComputedStyle(toggle).display : 'missing'
+      };
+    });
+    if (width >= 960) {
+      assert.notEqual(navState.desktop, 'none', width + 'px: full desktop navbar should be visible');
+      assert.equal(navState.toggle, 'none', width + 'px: burger toggle should be hidden on laptop/desktop widths');
+    } else {
+      assert.equal(navState.desktop, 'none', width + 'px: desktop navbar should collapse on narrow layouts');
+      assert.notEqual(navState.toggle, 'none', width + 'px: burger toggle should be visible on narrow layouts');
+    }
+
+    const heroTail = await home.evaluate(() => {
+      const hero = document.querySelector('.hp-hero');
+      const ticker = document.querySelector('.hp-hero__ticker');
+      const content = document.querySelector('.hp-hero__content');
+      const last = ticker && getComputedStyle(ticker).display !== 'none' ? ticker : content;
+      const hr = hero.getBoundingClientRect();
+      const lr = last.getBoundingClientRect();
+      return { heroBottom:hr.bottom, lastBottom:lr.bottom, tail:hr.bottom-lr.bottom };
+    });
+    assert(heroTail.tail <= 80,
+      width + 'px: homepage hero leaves an excessive empty tail: ' + JSON.stringify(heroTail));
+
     const pageBox = await home.evaluate(() => ({
       innerWidth,
       doc: document.documentElement.scrollWidth,
