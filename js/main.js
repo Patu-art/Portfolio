@@ -9,8 +9,13 @@ function ensureStylesheet(href) {
   document.head.append(link);
 }
 
-ensureStylesheet('css/upgrade.css');
-ensureStylesheet('css/portfolio-v2.css');
+const homePage = document.body?.dataset.page === 'home';
+
+if (!homePage) {
+  ensureStylesheet('css/upgrade.css');
+  ensureStylesheet('css/portfolio-v2.css');
+}
+
 ensureStylesheet('css/soft-blue-theme.css');
 ensureStylesheet('css/mobile-nav-v2.css');
 ensureStylesheet('css/portfolio-refresh.css');
