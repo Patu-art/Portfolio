@@ -35,7 +35,6 @@ body[data-page="home"] .hp-label{
 
 /* ---------- Hero ---------- */
 body[data-page="home"] .hp-hero{
-  min-height:calc(100svh - 1px);
   padding:calc(var(--header-h,78px) + 26px) 0 42px;
   border-bottom:1px solid var(--hp-line);
   background:
@@ -349,7 +348,6 @@ body[data-page="home"] .hp-button--light{
 /* ---------- Desktop ---------- */
 @media(min-width:900px){
   body[data-page="home"] .hp-hero{
-    min-height:min(900px,100svh);
     padding-top:calc(var(--header-h,78px) + 42px);
     padding-bottom:48px;
   }
