@@ -3,12 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://api.github.com https://mtgsteiypoxudztltzpn.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.github.com https://mtgsteiypoxudztltzpn.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="theme-color" content="#F3F5F9">
-<meta name="description" content="Explore the public GitHub repositories of Prathamesh Dhumal, including the 100 Days website challenge, live frontend builds, source code and automatically captured website previews.">
-<meta property="og:title" content="GitHub work archive — Prathamesh Dhumal">
-<meta property="og:description" content="A scrollable journey through real public repositories, their published websites and source code.">
-<meta property="og:type" content="website">
+<meta name="description" content="Follow Prathamesh Dhumal's build journey across public GitHub repositories, experiments and the 100-Day Local Business Website Challenge.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -19,16 +16,9 @@
 <link href="css/animations.css" rel="stylesheet">
 <link href="css/responsive.css" rel="stylesheet">
 <link href="css/portfolio-v2.css" rel="stylesheet">
-<link href="css/repo-carousel.css?v=20260919-horizontal-book-v4" rel="stylesheet">
-<link href="css/coverflow-v5.css?v=20260919-editorial-v5" rel="stylesheet">
-<link href="css/projects-final.css?v=20260919-final-v1" rel="stylesheet">
-<link href="css/projects-hero-fix.css?v=20260919-hero-repair-1" rel="stylesheet">
-<link href="css/projects-book-polish.css?v=20260919-book-v1" rel="stylesheet">
-<link href="css/projects-glass-reel.css?v=20260920-glass-v1" rel="stylesheet">
-<link href="css/projects-front-depth.css?v=20260921-front-v1" rel="stylesheet">
-<link href="css/projects-orbit.css?v=20260921-orbit-v1" rel="stylesheet">
-<script defer src="js/main.js?v=20260921-orbit-v1"></script>
-<title>Repository journey — Prathamesh Dhumal</title>
+<link href="css/projects-journey.css?v=20260928-journey-v1" rel="stylesheet">
+<script defer src="js/main.js?v=20260928-journey-v1"></script>
+<title>Build journey — Prathamesh Dhumal</title>
 </head>
 <body data-page="projects">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -36,56 +26,47 @@
 <div aria-hidden="true" class="scroll-progress"><span></span></div>
 <div data-component="header"></div>
 <main id="main">
-<section class="page-hero projects-hero" aria-labelledby="projects-heading">
-<div class="shell projects-hero__grid">
-  <div class="projects-hero__copy">
-    <p class="eyebrow projects-hero__eyebrow">THE PROJECT ARCHIVE <span aria-hidden="true">/ 2026</span></p>
-    <h1 id="projects-heading" class="projects-hero__title">Built to be<br><em>explored.</em></h1>
-    <p class="projects-hero__lead">Independent website concepts for real businesses. Explore the live builds, inspect the source, and follow the process behind each project.</p>
-    <div class="projects-hero__foot">
-      <a class="projects-hero__jump" href="#archive">Explore the work <span aria-hidden="true">↘</span></a>
-      <span class="projects-hero__count"><strong data-repository-count>PUBLIC REPOSITORIES</strong> · Automatically updated</span>
-    </div>
-  </div>
-  <a class="projects-hero__visual" href="#archive" aria-label="Explore my projects, starting with Gulf MCR">
-    <img src="assets/images/repo-previews/DAY01.webp" width="900" height="560" alt="Gulf MCR — screenshot of a completed café website" fetchpriority="high" decoding="async">
-    <span class="projects-hero__visual-caption"><span>01 / 100-DAY CHALLENGE</span><strong>Gulf MCR <span aria-hidden="true">↗</span></strong></span>
-    <span class="projects-hero__visual-stamp" aria-hidden="true">WORK<br>IN THE<br>BROWSER.</span>
-  </a>
-</div>
-</section>
-<section class="v2-section v2-section--paper" id="archive">
-<div class="shell">
-
-<div class="repo-carousel reel-carousel orbit-carousel" data-repo-carousel>
-<div class="repo-carousel__toolbar"><span class="repo-carousel__label">PROJECT JOURNEY <span class="repo-carousel__desktop-hint">· 3D ORBIT · SWIPE OR USE ARROWS</span></span><div class="repo-carousel__actions"><button type="button" data-repo-prev aria-label="Previous repository" disabled>←</button><span class="repo-carousel__count" data-repo-progress aria-live="polite">01 / 13</span><button type="button" data-repo-next aria-label="Next repository">→</button></div></div>
-
-<div class="repo-carousel__viewport" data-repo-viewport role="region" aria-roledescription="carousel" tabindex="0" aria-label="Three floating projects. Swipe, scroll or use left and right arrows to move the center card between the side positions.">
-<div class="repo-carousel__track" data-repo-track><p class="repo-empty">Loading public repositories…</p></div>
-</div>
-<nav class="repo-rail" data-repo-rail aria-label="Choose a project chapter"></nav>
-<p class="repo-carousel__status" data-repo-status role="status" aria-live="polite" hidden></p>
-</div>
-</div>
-</section>
-<dialog class="repo-preview-dialog" data-preview-dialog aria-labelledby="preview-dialog-title">
-  <div class="repo-preview-dialog__header">
+<section class="journey-hero" aria-labelledby="projects-heading">
+  <div class="shell journey-hero__grid">
     <div>
-      <p class="repo-preview-dialog__eyebrow">PROJECT JOURNAL / FULL PREVIEW</p>
-      <h2 id="preview-dialog-title" data-preview-title>Website screenshot</h2>
+      <p class="journey-kicker">THE BUILD JOURNEY · 2026 →</p>
+      <h1 id="projects-heading">I started<br><em>building.</em></h1>
+      <p class="journey-lead">Not a gallery of perfect outcomes. A growing map of websites, experiments, side quests and the decisions that changed what came next.</p>
     </div>
-    <button type="button" class="repo-preview-dialog__close" data-preview-close aria-label="Close screenshot preview">Close <span aria-hidden="true">×</span></button>
+    <div class="journey-hero__meter" aria-label="Repository journey status">
+      <span>NOW</span><strong data-repository-count>PUBLIC REPOSITORIES</strong>
+      <div aria-hidden="true"><i></i></div>
+      <small>Every public build gets a place on the route.</small>
+    </div>
   </div>
-  <div class="repo-preview-dialog__image-wrap">
-    <img data-preview-image alt="" width="1365" height="768" decoding="async"/>
-    <p data-preview-failure hidden>The screenshot could not be loaded. Open the live website instead.</p>
+</section>
+
+<section class="journey" id="archive" aria-labelledby="journey-heading">
+  <div class="shell">
+    <div class="journey-intro">
+      <div><p class="journey-kicker">01 → WHATEVER COMES NEXT</p><h2 id="journey-heading">Follow the work,<br>not a carousel.</h2></div>
+      <p>Challenge builds stay on the main route. Everything else branches from the moment it entered the story. Open any stop for the actual site and source.</p>
+    </div>
+    <div class="journey-filter" data-journey-filter aria-label="Filter projects">
+      <button type="button" data-filter="all" aria-pressed="true">Everything</button>
+      <button type="button" data-filter="challenge" aria-pressed="false">100 Days</button>
+      <button type="button" data-filter="side" aria-pressed="false">Side quests</button>
+    </div>
+    <div class="journey-route" data-journey-route aria-live="polite">
+      <p class="journey-loading">Mapping the public work…</p>
+    </div>
+    <p class="journey-status" data-journey-status role="status" hidden></p>
   </div>
-  <div class="repo-preview-dialog__footer">
-    <p>Full website capture · Escape to close</p>
-    <a data-preview-live href="#" target="_blank" rel="noopener noreferrer">Open live website ↗</a>
+</section>
+
+<section class="journey-outro">
+  <div class="shell journey-outro__grid">
+    <p class="journey-kicker">THE ROUTE IS STILL OPEN</p>
+    <h2>Not the same builder<br>who started at 01.</h2>
+    <p>The map grows when the work does. No manually maintained hundred-card carousel.</p>
+    <div><a href="challenge.html">100 Days challenge ↗</a><a href="https://github.com/Patu-art?tab=repositories" target="_blank" rel="noopener noreferrer">All repositories ↗</a></div>
   </div>
-</dialog>
-<div class="shell projects-outro"><a href="challenge.html">100 Days challenge ↗</a><a href="https://github.com/Patu-art?tab=repositories" target="_blank" rel="noopener noreferrer">All repositories on GitHub ↗</a></div>
+</section>
 </main>
 <div data-component="footer"></div>
 </body>
