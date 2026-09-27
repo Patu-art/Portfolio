@@ -66,7 +66,7 @@ if(journeyRoot){
    journeyRoot.replaceChildren(...visible.map(node));
    decorateProgress(visible);
    addJourneyScenes();
-   requestAnimationFrame(drawSnake);
+   requestAnimationFrame(()=>{drawSnake();placeTraveller();});
    if(count)count.textContent=items.length+' PUBLIC REPOSITORIES';
  }
  function decorateProgress(visible){
@@ -132,7 +132,15 @@ if(journeyRoot){
    const shadow=document.createElementNS(ns,'path');shadow.setAttribute('d',d);shadow.setAttribute('class','journey-snake__shadow');
    const path=document.createElementNS(ns,'path');path.setAttribute('d',d);path.setAttribute('class','journey-snake__path');
    svg.append(shadow,path);journeyRoot.prepend(svg);
- } let resizeTimer;addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(drawSnake,120)},{passive:true});
+ } function placeTraveller(){
+   const traveller=journeyRoot.querySelector('.journey-traveller'),current=journeyRoot.querySelector('.journey-item--current .journey-level');
+   if(!traveller||!current)return;
+   const rootBox=journeyRoot.getBoundingClientRect(),levelBox=current.getBoundingClientRect();
+   traveller.style.left=(levelBox.left-rootBox.left+levelBox.width/2)+'px';
+   traveller.style.top=(levelBox.top-rootBox.top+levelBox.height/2)+'px';
+   traveller.classList.add('is-visible');
+ }
+ let resizeTimer;addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(drawSnake,120)},{passive:true});
  async function stored(){
    const response=await fetch('data/repos.json',{cache:'no-store'});if(!response.ok)throw new Error('Saved index HTTP '+response.status);
    const data=await response.json();return Array.isArray(data.repositories)?data.repositories:[];
