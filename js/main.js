@@ -53,15 +53,22 @@ ensureStylesheet('css/portfolio-refresh.css');
     // book. Do not download/execute contact, counters, gallery and unrelated
     // widgets on this performance-sensitive page.
     const hasRepositoryBook = Boolean(document.querySelector('[data-repo-carousel]'));
+    const hasBuildJourney = Boolean(document.querySelector('[data-journey-route]'));
     const isHome = document.body.dataset.page === 'home';
-    const modules = hasRepositoryBook
+    const modules = hasBuildJourney
       ? [
         './navbar.js?v=20260919a',
         './smooth-scroll.js',
-        './animations.js',
-        './repo-carousel.js?v=20260921-orbit-v1'
+        './projects-journey.js?v=20260928-journey-v1'
       ]
-      : isHome
+      : hasRepositoryBook
+        ? [
+          './navbar.js?v=20260919a',
+          './smooth-scroll.js',
+          './animations.js',
+          './repo-carousel.js?v=20260921-orbit-v1'
+        ]
+        : isHome
         ? [
           './navbar.js?v=20260919a', './smooth-scroll.js', './animations.js'
         ]
