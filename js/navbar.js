@@ -75,6 +75,6 @@ if (header && toggle && menu) {
   });
 
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 1100) close(false);
+    if (window.innerWidth >= 960) close(false);
   }, { passive: true });
 }
