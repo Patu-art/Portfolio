@@ -122,3 +122,19 @@ body[data-page="projects"] .journey-hero{padding:calc(var(--header-h,78px) + cla
  .journey-dialog[open]{display:block}.journey-dialog__media,.journey-dialog__media img,.journey-dialog__missing{min-height:0;height:auto;aspect-ratio:16/9}.journey-dialog__media img{object-fit:cover}.journey-dialog__copy{padding:24px 20px 28px}.journey-dialog h3{font-size:clamp(34px,10vw,48px)}
 }
 @media(max-width:390px){.journey-item{min-height:158px!important}.journey-level{width:60px;height:60px}.journey-level__badge{font-size:11px}}
+
+/* v5 — non-repeating Candy-Crush-like progression. JS assigns each stop a
+   different x-position from an eight-stop route pattern; the badge sits on path. */
+.journey-level{left:var(--level-x,50%)!important}
+.journey-item:nth-child(even) .journey-level{left:var(--level-x,50%)!important}
+.journey-item--challenge .journey-level{background:#f3f5f9;color:#17242a;border-color:#e9eef1;box-shadow:0 0 0 4px #647f89,0 12px 26px rgba(23,36,42,.2)}
+.journey-item--challenge .journey-level__badge{font-size:13px;font-weight:700}
+.journey-item--challenge:nth-child(3n+1) .journey-level{width:92px;height:92px}
+.journey-item--challenge:nth-child(3n+2) .journey-level{width:76px;height:76px}
+.journey-item--challenge:nth-child(5n) .journey-level{transform:translate(-50%,-50%) rotate(-5deg)}
+.journey-item--challenge:nth-child(7n) .journey-level{transform:translate(-50%,-50%) rotate(5deg)}
+@media(max-width:760px){
+ .journey-level,.journey-item:nth-child(even) .journey-level{left:var(--level-x,50%)!important}
+ .journey-item--challenge:nth-child(3n+1) .journey-level{width:72px;height:72px}
+ .journey-item--challenge:nth-child(3n+2) .journey-level{width:62px;height:62px}
+}
