@@ -64,9 +64,21 @@ if(journeyRoot){
    }
    if(!visible.length){journeyRoot.replaceChildren(Object.assign(document.createElement('p'),{className:'journey-loading',textContent:'No projects in this view yet.'}));return}
    journeyRoot.replaceChildren(...visible.map(node));
+   decorateProgress(visible);
    addJourneyScenes();
    requestAnimationFrame(drawSnake);
    if(count)count.textContent=items.length+' PUBLIC REPOSITORIES';
+ }
+ function decorateProgress(visible){
+   const challengeRows=[...journeyRoot.querySelectorAll('.journey-item--challenge')];
+   const real=visible.filter(r=>r.day!==null&&!r.upcoming),current=real.reduce((best,r)=>!best||r.day>best.day?r:best,null);
+   challengeRows.forEach(row=>{
+     const label=row.querySelector('.journey-level__badge')?.textContent||'',day=Number(label.replace(/\D/g,''));
+     if(current&&day===current.day){row.classList.add('journey-item--current');const tag=document.createElement('span');tag.className='journey-progress-tag';tag.textContent='YOU ARE HERE';row.append(tag)}
+   });
+   const marks=[{at:5,icon:'⌘',text:'BUILD RHYTHM'},{at:10,icon:'↻',text:'ITERATE'},{at:15,icon:'⌖',text:'BUSINESS FIRST'}];
+   marks.forEach(mark=>{const row=challengeRows.find(r=>Number((r.querySelector('.journey-level__badge')?.textContent||'').replace(/\D/g,''))===mark.at);if(!row)return;const m=document.createElement('span');m.className='journey-collectible';m.innerHTML='<b>'+mark.icon+'</b><small>'+mark.text+'</small>';row.append(m)});
+   const traveller=document.createElement('span');traveller.className='journey-traveller';traveller.setAttribute('aria-hidden','true');traveller.textContent='●';journeyRoot.append(traveller);
  }
  function addJourneyScenes(){
    journeyRoot.querySelectorAll('.journey-scene').forEach(el=>el.remove());
