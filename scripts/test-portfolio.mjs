@@ -335,94 +335,90 @@ try {
   const newest = data.repositories.filter(repo => /^day-?0*\d+$/i.test(repo.name) && repo.live && repo.image)
     .sort((a, b) => Number(/^day-?0*(\d+)$/i.exec(b.name)[1]) - Number(/^day-?0*(\d+)$/i.exec(a.name)[1]))[0];
   assert(newest, 'The latest published project must exist');
-  for (const width of [320, 390, 768, 1280]) {
-    const home = await browser.newPage({ viewport: { width, height: 800 } });
+  for (const width of [320, 360, 390, 768, 1024, 1280]) {
+    const home = await browser.newPage({ viewport: { width, height: 900 } });
     const errors = [];
     home.on('pageerror', error => errors.push(error.message));
 
     await home.goto('http://127.0.0.1:' + port + '/index.html', { waitUntil: 'domcontentloaded' });
-    await home.locator('.home-cover h1').waitFor({ state: 'visible', timeout: 10000 });
+    await home.locator('.hp-hero h1').waitFor({ state: 'visible', timeout: 10000 });
     await home.waitForTimeout(650);
 
     const pageBox = await home.evaluate(() => ({
       innerWidth,
-      scrollWidth: document.documentElement.scrollWidth,
-      bodyScrollWidth: document.body.scrollWidth
+      doc: document.documentElement.scrollWidth,
+      body: document.body.scrollWidth
     }));
-    assert(pageBox.scrollWidth <= width + 1 && pageBox.bodyScrollWidth <= width + 1,
-      width + 'px: homepage has horizontal page overflow: ' + JSON.stringify(pageBox));
+    assert(pageBox.doc <= width + 1 && pageBox.body <= width + 1,
+      width + 'px: homepage horizontal overflow: ' + JSON.stringify(pageBox));
 
-    const heroTitle = await home.locator('.home-cover h1').evaluate(el => {
-      const r = el.getBoundingClientRect();
-      return {left:r.left,right:r.right,width:r.width,height:r.height};
-    });
-    assert(heroTitle.width > 220 && heroTitle.height > 80,
-      width + 'px: homepage hero title collapsed: ' + JSON.stringify(heroTitle));
-    assert(heroTitle.left >= -3 && heroTitle.right <= width + 3,
-      width + 'px: homepage hero title overflows viewport: ' + JSON.stringify(heroTitle));
-
-    const portrait = home.locator('.home-cover__portrait');
-    await portrait.scrollIntoViewIfNeeded();
-    const portraitRect = await portrait.evaluate(el => {
-      const r = el.getBoundingClientRect();
-      return {left:r.left,right:r.right,width:r.width,height:r.height};
-    });
-    assert(portraitRect.width > 240 && portraitRect.left >= -3 && portraitRect.right <= width + 3,
-      width + 'px: homepage portrait is clipped or overflowing: ' + JSON.stringify(portraitRect));
-    const portraitImg = portrait.locator('img');
-    await portraitImg.evaluate(img => img.decode());
-    assert(await portraitImg.evaluate(img => img.naturalWidth > 100),
-      width + 'px: homepage portrait failed to load');
-
-    const actionRects = await home.locator('.home-cover__actions a').evaluateAll(nodes =>
-      nodes.map(el => {
+    for (const selector of ['.hp-hero', '.hp-capabilities', '.hp-explore']) {
+      const rect = await home.locator(selector).evaluate(el => {
         const r = el.getBoundingClientRect();
-        return {text:el.textContent.trim(),left:r.left,right:r.right,width:r.width,height:r.height};
-      })
-    );
-    assert(actionRects.length >= 3, width + 'px: homepage primary actions are missing');
-    assert(actionRects.every(r => r.width > 44 && r.height >= 36 && r.left >= -3 && r.right <= width + 3),
-      width + 'px: homepage action is clipped: ' + JSON.stringify(actionRects));
+        return {left:r.left,right:r.right,width:r.width};
+      });
+      assert(rect.left >= -3 && rect.right <= width + 3,
+        width + 'px: section overflow ' + selector + ': ' + JSON.stringify(rect));
+    }
 
-    const capabilityRows = home.locator('.home-front__layer');
+    const title = await home.locator('.hp-hero h1').evaluate(el => {
+      const r = el.getBoundingClientRect();
+      const s = getComputedStyle(el);
+      return {left:r.left,right:r.right,width:r.width,height:r.height,fontSize:s.fontSize,lineHeight:s.lineHeight};
+    });
+    assert(title.width > 220 && title.height > 60,
+      width + 'px: homepage title collapsed: ' + JSON.stringify(title));
+    assert(title.left >= -3 && title.right <= width + 3,
+      width + 'px: homepage title clipped: ' + JSON.stringify(title));
+
+    const name = await home.locator('.hp-hero__name').evaluate(el => {
+      const r = el.getBoundingClientRect();
+      return {left:r.left,right:r.right,width:r.width,height:r.height};
+    });
+    assert(name.left >= -3 && name.right <= width + 3 && name.height > 70,
+      width + 'px: signature name overflows or collapses: ' + JSON.stringify(name));
+
+    const actions = await home.locator('.hp-actions a').evaluateAll(nodes => nodes.map(el => {
+      const r = el.getBoundingClientRect();
+      return {text:el.textContent.trim(),left:r.left,right:r.right,width:r.width,height:r.height};
+    }));
+    assert.equal(actions.length, 3, width + 'px: homepage must expose Projects, Resume and Contact');
+    assert(actions.every(r => r.width >= 44 && r.height >= 36 && r.left >= -3 && r.right <= width + 3),
+      width + 'px: homepage action clipped: ' + JSON.stringify(actions));
+
+    const capabilityRows = home.locator('.hp-capability-list article');
     assert.equal(await capabilityRows.count(), 3,
-      width + 'px: homepage must keep exactly three core frontend capability layers');
+      width + 'px: homepage should have exactly three capability rows');
 
-    const routes = home.locator('.home-directory__list a');
+    const routes = home.locator('.hp-explore__links a');
     assert.equal(await routes.count(), 4,
-      width + 'px: homepage portfolio index should link to four dedicated pages');
+      width + 'px: homepage should route to exactly four detailed sections');
     const routeRects = await routes.evaluateAll(nodes => nodes.map(el => {
       const r = el.getBoundingClientRect();
       return {left:r.left,right:r.right,width:r.width,height:r.height};
     }));
     assert(routeRects.every(r => r.width > 250 && r.left >= -3 && r.right <= width + 3),
-      width + 'px: portfolio index row is clipped or overflows: ' + JSON.stringify(routeRects));
+      width + 'px: explore link clipped: ' + JSON.stringify(routeRects));
 
-    const rail = home.locator('.home-cover__rail');
-    const railRect = await rail.evaluate(el => {
-      const r = el.getBoundingClientRect();
-      return {left:r.left,right:r.right,width:r.width};
-    });
-    assert(railRect.left >= -3 && railRect.right <= width + 3,
-      width + 'px: capability rail overflows viewport: ' + JSON.stringify(railRect));
-
-    assert.equal(await home.locator('.home3-work, .v2-latest-build, .home3-timeline, .home-specimen').count(), 0,
-      width + 'px: obsolete or detailed homepage sections leaked back in');
+    assert.equal(await home.locator('main img').count(), 0,
+      width + 'px: homepage should stay typography-led with no homepage imagery');
+    assert.equal(await home.locator('.home-cover, .home-specimen, .home3-work, .v2-latest-build').count(), 0,
+      width + 'px: obsolete homepage design leaked back in');
     assert.equal(errors.length, 0, width + 'px: homepage browser exception(s): ' + errors.join(', '));
 
-    console.log(width + 'px: homepage cover, portrait, actions, directory and overflow: PASS');
+    console.log(width + 'px: homepage typography, actions, sections and overflow: PASS');
     await home.close();
   }
 
-  const withoutJS = await browser.newPage({ viewport: { width: 390, height: 800 }, javaScriptEnabled: false });
+  const withoutJS = await browser.newPage({ viewport: { width: 390, height: 900 }, javaScriptEnabled: false });
   await withoutJS.goto('http://127.0.0.1:' + port + '/index.html', { waitUntil: 'domcontentloaded' });
-  const fallback = await withoutJS.locator('.home-cover h1').evaluate(el => {
+  const fallback = await withoutJS.locator('.hp-hero h1').evaluate(el => {
     const style = getComputedStyle(el);
     const r = el.getBoundingClientRect();
     return {opacity:Number(style.opacity), visibility:style.visibility, width:r.width, text:el.innerText};
   });
-  assert(fallback.opacity > .98 && fallback.visibility === 'visible' && fallback.width > 220 && /interfaces/i.test(fallback.text),
-    'No-JavaScript homepage identity is hidden or collapsed: ' + JSON.stringify(fallback));
+  assert(fallback.opacity > .98 && fallback.visibility === 'visible' && fallback.width > 220 && /responsive web interfaces/i.test(fallback.text),
+    'No-JavaScript homepage identity hidden or collapsed: ' + JSON.stringify(fallback));
   await withoutJS.close();
   console.log('Homepage no-JavaScript identity visibility: PASS');
 
