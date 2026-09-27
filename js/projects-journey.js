@@ -25,12 +25,14 @@ if(journeyRoot){
  });
  function node(repo,index){
    const row=document.createElement('article'),challenge=repo.day!==null;
-   row.className='journey-item '+(challenge?'journey-item--challenge':'journey-item--side');row.dataset.kind=challenge?'challenge':'side';row.dataset.route=String(index%8);
+   row.className='journey-item '+(challenge?'journey-item--challenge':'journey-item--side')+(repo.upcoming?' journey-item--upcoming':'');row.dataset.kind=challenge?'challenge':'side';row.dataset.route=String(index%8);
    const axis=document.createElement('div');axis.className='journey-item__axis';axis.setAttribute('aria-hidden','true');
    const button=document.createElement('button');button.type='button';button.className='journey-level';button.setAttribute('aria-haspopup','dialog');
-   button.setAttribute('aria-label',(challenge?'Day '+repo.day:repo.title)+': open project details');
+   button.setAttribute('aria-label',(challenge?'Day '+repo.day:repo.title)+(repo.upcoming?' is coming next':': open project details'));
    const badge=document.createElement('span');badge.className='journey-level__badge';badge.textContent=challenge?'Day '+repo.day:'★';
-   button.append(badge);button.addEventListener('click',()=>openProject(repo,challenge));
+   button.append(badge);
+   if(repo.upcoming){button.disabled=true;const state=document.createElement('small');state.className='journey-level__state';state.textContent='COMING NEXT';button.append(state)}
+   else button.addEventListener('click',()=>openProject(repo,challenge));
    row.append(axis,button);return row;
  }
  function openProject(repo,challenge){
@@ -55,11 +57,27 @@ if(journeyRoot){
  function render(list){
    const clean=order(list.map(normalize).filter(Boolean));
    const seen=new Set();items=clean.filter(r=>{const k=r.name.toLowerCase();if(seen.has(k))return false;seen.add(k);return true});
-   const visible=items.filter(r=>activeFilter==='all'||(activeFilter==='challenge')===(r.day!==null));
+   let visible=items.filter(r=>activeFilter==='all'||(activeFilter==='challenge')===(r.day!==null));
+   if(activeFilter!=='side'){
+     const days=visible.filter(r=>r.day!==null),maxDay=days.reduce((m,r)=>Math.max(m,r.day),0);
+     if(maxDay>0&&!days.some(r=>r.day===maxDay+1))visible=[...visible,{name:'upcoming-day-'+(maxDay+1),title:'The next build has not started yet.',description:'This checkpoint opens when the next challenge project is built.',language:'NEXT',url:'',live:'',created_at:'9999-12-31',day:maxDay+1,image:'',upcoming:true}];
+   }
    if(!visible.length){journeyRoot.replaceChildren(Object.assign(document.createElement('p'),{className:'journey-loading',textContent:'No projects in this view yet.'}));return}
    journeyRoot.replaceChildren(...visible.map(node));
+   addJourneyScenes();
    requestAnimationFrame(drawSnake);
    if(count)count.textContent=items.length+' PUBLIC REPOSITORIES';
+ }
+ function addJourneyScenes(){
+   journeyRoot.querySelectorAll('.journey-scene').forEach(el=>el.remove());
+   const labels=[
+    ['STARTED SMALL','One page. One repo. Keep moving.','✦'],
+    ['FINDING A STYLE','Different businesses. Different visual languages.','◌'],
+    ['LESS PRETTY. MORE USEFUL.','The challenge starts asking better questions.','↗'],
+    ['REAL PROBLEMS AHEAD','The route keeps growing with the work.','◎']
+   ];
+   const rows=[...journeyRoot.querySelectorAll('.journey-item')];
+   [0,6,12,18].forEach((at,i)=>{const row=rows[at];if(!row)return;const scene=document.createElement('aside');scene.className='journey-scene journey-scene--'+i;scene.setAttribute('aria-hidden','true');scene.innerHTML='<span>'+labels[i][2]+'</span><strong>'+labels[i][0]+'</strong><small>'+labels[i][1]+'</small>';row.append(scene)});
  }
  function drawSnake(){
    journeyRoot.querySelector('.journey-snake')?.remove();
