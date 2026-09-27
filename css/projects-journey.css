@@ -138,3 +138,39 @@ body[data-page="projects"] .journey-hero{padding:calc(var(--header-h,78px) + cla
  .journey-item--challenge:nth-child(3n+1) .journey-level{width:72px;height:72px}
  .journey-item--challenge:nth-child(3n+2) .journey-level{width:62px;height:62px}
 }
+
+/* v7 — lightweight atmosphere around the authored route. No images, canvas,
+   WebGL or animation loops: only CSS paint + compositor-friendly motion. */
+.journey{position:relative;isolation:isolate;background:
+ radial-gradient(circle at 12% 9%,rgba(82,111,121,.12) 0 1px,transparent 2px) 0 0/28px 28px,
+ radial-gradient(circle at 86% 31%,rgba(23,36,42,.07) 0 1px,transparent 2px) 0 0/46px 46px,
+ linear-gradient(180deg,#e9eef1 0%,#f2f4ef 46%,#e7edef 100%)}
+.journey::before,.journey::after{content:"";position:absolute;z-index:-1;border:1px solid rgba(82,111,121,.13);border-radius:50%;pointer-events:none}
+.journey::before{width:min(72vw,850px);aspect-ratio:1;left:-38vw;top:16%;box-shadow:0 0 0 70px rgba(82,111,121,.025),0 0 0 150px rgba(82,111,121,.018)}
+.journey::after{width:min(62vw,720px);aspect-ratio:1;right:-34vw;bottom:8%;box-shadow:0 0 0 90px rgba(23,36,42,.022)}
+.journey-route::after{content:"BUILD • TEST • BREAK • REBUILD •";position:absolute;right:-4%;top:8%;z-index:-1;color:rgba(23,36,42,.035);font:700 clamp(48px,9vw,128px)/.82 "Inter",sans-serif;letter-spacing:-.07em;writing-mode:vertical-rl;pointer-events:none}
+.journey-item:nth-child(6n+1)::before,.journey-item:nth-child(6n+4)::before{position:absolute;z-index:0;color:rgba(67,91,100,.32);font:600 9px/1.4 "JetBrains Mono",monospace;letter-spacing:.14em;pointer-events:none}
+.journey-item:nth-child(6n+1)::before{content:"KEEP GOING →";left:48%;top:17%}
+.journey-item:nth-child(6n+4)::before{content:"↙ CHANGE DIRECTION";right:47%;bottom:12%}
+.journey-level{overflow:visible;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.journey-level::before{content:"";position:absolute;inset:-13px;border:1px solid rgba(100,127,137,.35);border-radius:50%;transform:scale(.82);opacity:0}
+.journey-level:hover,.journey-level:focus-visible{background:#fff;box-shadow:0 0 0 4px #647f89,0 17px 34px rgba(23,36,42,.22)}
+.journey-level:hover::before,.journey-level:focus-visible::before{opacity:1;transform:scale(1)}
+.journey-item--challenge:nth-child(6n+1) .journey-level{box-shadow:0 0 0 4px #647f89,0 0 0 11px rgba(100,127,137,.11),0 14px 28px rgba(23,36,42,.2)}
+.journey-item--challenge:nth-child(6n+1) .journey-level::after{content:"START";position:absolute;top:-27px;left:50%;width:auto;height:auto;inset-block-end:auto;border:0;color:#526f79;font:700 8px/1 "JetBrains Mono",monospace;letter-spacing:.12em;transform:translateX(-50%)}
+.journey-snake__shadow{filter:drop-shadow(0 9px 7px rgba(23,36,42,.08))}
+@media(prefers-reduced-motion:no-preference){
+ .journey-item--challenge:nth-child(6n+1) .journey-level::before{animation:levelPulse 2.8s ease-out infinite}
+ .journey-level::before{transition:opacity .18s ease,transform .18s ease}
+ @keyframes levelPulse{0%,35%{opacity:0;transform:scale(.82)}55%{opacity:.65}100%{opacity:0;transform:scale(1.3)}}
+}
+@media(max-width:760px){
+ .journey-route::after{right:-9%;font-size:72px;opacity:.7}
+ .journey-item:nth-child(6n+1)::before,.journey-item:nth-child(6n+4)::before{font-size:7px;letter-spacing:.08em}
+ .journey::before{left:-58vw}.journey::after{right:-52vw}
+}
+@media(max-width:390px){
+ .journey-route::after{display:none}
+ .journey-item:nth-child(6n+1)::before,.journey-item:nth-child(6n+4)::before{opacity:.7}
+}
+@media(prefers-reduced-motion:reduce){.journey-item--challenge .journey-level::before{animation:none!important}}
