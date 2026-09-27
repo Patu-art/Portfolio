@@ -59,7 +59,7 @@ ensureStylesheet('css/portfolio-refresh.css');
       ? [
         './navbar.js?v=20260919a',
         './smooth-scroll.js',
-        './projects-journey.js?v=20260928-journey-v1'
+        './projects-journey.js?v=20260928-snake-v3'
       ]
       : hasRepositoryBook
         ? [
