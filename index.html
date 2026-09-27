@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://mtgsteiypoxudztltzpn.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"/>
   <meta name="referrer" content="strict-origin-when-cross-origin"/>
-  <meta name="theme-color" content="#0D1318"/>
+  <meta name="theme-color" content="#F3F5F9"/>
   <meta name="description" content="Prathamesh Dhumal — frontend developer and B.Tech CSE (AI/ML) student focused on responsive interfaces, UI/UX and practical frontend development."/>
   <meta property="og:title" content="Prathamesh Dhumal — Frontend Developer"/>
   <meta property="og:description" content="Frontend developer portfolio focused on responsive interfaces, UI/UX and practical browser experiences."/>
@@ -19,9 +19,8 @@
   <link href="css/components.css" rel="stylesheet"/>
   <link href="css/animations.css" rel="stylesheet"/>
   <link href="css/responsive.css" rel="stylesheet"/>
-  <link href="css/portfolio-v2.css" rel="stylesheet"/>
-  <link href="css/home-v3.css?v=20260927-cover" rel="stylesheet"/>
-  <script defer src="js/main.js?v=20260927-cover"></script>
+  <link href="css/home-v3.css?v=20260927-v4" rel="stylesheet"/>
+  <script defer src="js/main.js?v=20260927-v4"></script>
   <title>Prathamesh Dhumal — Frontend Developer</title>
 </head>
 <body data-page="home">
@@ -31,144 +30,102 @@
 <div data-component="header"></div>
 
 <main id="main">
-  <section class="home-cover" aria-labelledby="home-title">
-    <div class="shell home-cover__shell">
-      <div class="home-cover__meta" data-reveal>
+  <section class="hp-hero" aria-labelledby="home-title">
+    <div class="shell hp-hero__inner">
+      <div class="hp-hero__meta" data-reveal>
         <span>PRATHAMESH DHUMAL</span>
         <span>FRONTEND DEVELOPER</span>
         <span>KALYAN · INDIA</span>
-        <span class="home-cover__open">OPEN TO INTERNSHIPS</span>
       </div>
 
-      <div class="home-cover__grid">
-        <div class="home-cover__copy">
-          <p class="home-cover__index" data-reveal>PORTFOLIO / 2026 / 01</p>
-          <h1 id="home-title" data-reveal="clip">I build interfaces<br>that feel <em>intentional.</em></h1>
-          <p class="home-cover__lead" data-reveal>
-            Frontend developer and B.Tech CSE (AI/ML) student focused on <strong>responsive layout, visual hierarchy and practical interaction</strong>—the parts that turn a design into something people can actually use.
-          </p>
+      <div class="hp-hero__name" aria-hidden="true">
+        <span>PRATHAMESH</span>
+        <span>DHUMAL</span>
+      </div>
 
-          <div class="home-cover__actions" data-reveal>
-            <a class="button button--paper magnetic" href="projects.html">View projects ↗</a>
-            <a class="button button--ghost magnetic" href="assets/documents/Prathamesh_Dhumal_Resume.pdf" target="_blank" rel="noopener noreferrer">Resume ↗</a>
-            <a class="home-cover__textlink" href="contact.html">Contact ↗</a>
-          </div>
+      <div class="hp-hero__content">
+        <div>
+          <p class="hp-label" data-reveal>PORTFOLIO / 2026</p>
+          <h1 id="home-title" data-reveal="clip">I build responsive web interfaces that are <em>clear, usable and deliberate.</em></h1>
         </div>
 
-        <figure class="home-cover__portrait" data-reveal>
-          <div class="home-cover__portrait-frame">
-            <img src="assets/images/profile/prathamesh.jpeg" alt="Prathamesh Dhumal" width="900" height="1200" fetchpriority="high"/>
-            <div class="home-cover__portrait-mark" aria-hidden="true">PD</div>
+        <div class="hp-hero__side" data-reveal>
+          <p>I’m a B.Tech CSE (AI/ML) student focused on frontend development — turning ideas into working browser experiences with strong layout, hierarchy and interaction.</p>
+
+          <div class="hp-actions">
+            <a class="hp-button hp-button--primary" href="projects.html">View projects <span>↗</span></a>
+            <a class="hp-button" href="assets/documents/Prathamesh_Dhumal_Resume.pdf" target="_blank" rel="noopener noreferrer">Resume <span>↗</span></a>
+            <a class="hp-text-link" href="contact.html">Contact me ↗</a>
           </div>
-          <figcaption>
-            <span>FRONTEND / UI / WEB</span>
-            <span>STUDENT + BUILDER</span>
-          </figcaption>
-        </figure>
+
+          <p class="hp-availability"><i></i> Open to frontend internships</p>
+        </div>
       </div>
 
-      <div class="home-cover__rail" data-stagger aria-label="Core frontend strengths">
-        <span><i>01</i> HTML</span>
-        <span><i>02</i> CSS</span>
-        <span><i>03</i> JAVASCRIPT</span>
-        <span><i>04</i> RESPONSIVE UI</span>
-        <span><i>05</i> GIT / GITHUB</span>
+      <div class="hp-hero__ticker" aria-label="Frontend focus areas" data-stagger>
+        <span>HTML</span>
+        <span>CSS</span>
+        <span>JAVASCRIPT</span>
+        <span>RESPONSIVE UI</span>
+        <span>GIT / GITHUB</span>
       </div>
     </div>
   </section>
 
-  <section class="home-front" aria-labelledby="capabilities-title">
+  <section class="hp-capabilities" aria-labelledby="capabilities-title">
     <div class="shell">
-      <header class="home-front__head">
-        <div data-reveal>
-          <p class="eyebrow">WHAT I CAN DO / TODAY</p>
-          <h2 id="capabilities-title">Frontend in<br><em>three layers.</em></h2>
-        </div>
-        <p data-reveal>
-          I’m strongest at frontend implementation right now. I’m also expanding into Python, APIs, databases, testing and stronger software-engineering fundamentals.
-        </p>
-      </header>
-
-      <div class="home-front__layers" data-stagger>
-        <article class="home-front__layer">
-          <span class="home-front__layer-no">01</span>
-          <h3>Structure</h3>
-          <p>Semantic HTML, content hierarchy, forms and navigation that make sense before styling begins.</p>
-          <div class="home-front__tags"><span>HTML5</span><span>Semantics</span><span>Accessibility</span></div>
-        </article>
-
-        <article class="home-front__layer">
-          <span class="home-front__layer-no">02</span>
-          <h3>Style</h3>
-          <p>Responsive CSS, Grid, Flexbox, typography and spacing systems that survive different screen sizes.</p>
-          <div class="home-front__tags"><span>CSS3</span><span>Grid</span><span>Flexbox</span><span>Responsive UI</span></div>
-        </article>
-
-        <article class="home-front__layer">
-          <span class="home-front__layer-no">03</span>
-          <h3>Interact</h3>
-          <p>Practical JavaScript for menus, DOM behavior, carousels, galleries and interface feedback.</p>
-          <div class="home-front__tags"><span>JavaScript</span><span>DOM</span><span>UI behavior</span></div>
-        </article>
+      <div class="hp-section-head">
+        <p class="hp-label" data-reveal>WHAT I CAN DO</p>
+        <h2 id="capabilities-title" data-reveal="clip">Frontend, from structure<br>to interaction.</h2>
       </div>
 
-      <div class="home-front__ship" data-reveal>
-        <span>SHIP / MAINTAIN</span>
-        <strong>Git · GitHub · Pages · browser QA · iteration</strong>
-        <span>LEARNING NEXT → Python · APIs · SQL · testing</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="home-directory" aria-labelledby="directory-title">
-    <div class="shell">
-      <header class="home-directory__head">
-        <div data-reveal>
-          <p class="eyebrow">PORTFOLIO INDEX</p>
-          <h2 id="directory-title">Choose where to<br><em>go deeper.</em></h2>
-        </div>
-        <p data-reveal>The homepage introduces me. Everything detailed has its own page instead of being repeated here.</p>
-      </header>
-
-      <nav class="home-directory__list" aria-label="Portfolio sections" data-stagger>
-        <a href="projects.html">
+      <div class="hp-capability-list" data-stagger>
+        <article>
           <span>01</span>
-          <strong>Projects</strong>
-          <p>Live builds, source code and the complete project archive.</p>
-          <i aria-hidden="true">↗</i>
-        </a>
-        <a href="challenge.html">
+          <h3>Build</h3>
+          <p>Semantic HTML, responsive CSS and JavaScript that turn a design into a real interface.</p>
+          <small>HTML · CSS · JavaScript</small>
+        </article>
+
+        <article>
           <span>02</span>
-          <strong>100 Days</strong>
-          <p>The challenge, progression and lessons across the builds.</p>
-          <i aria-hidden="true">↗</i>
-        </a>
-        <a href="sitepro.html">
+          <h3>Refine</h3>
+          <p>Typography, spacing, hierarchy, navigation and responsive behavior that make a page easier to use.</p>
+          <small>UI/UX · Responsive layout</small>
+        </article>
+
+        <article>
           <span>03</span>
-          <strong>SITEPRO</strong>
-          <p>The evolving research, design, build and QA system.</p>
-          <i aria-hidden="true">↗</i>
-        </a>
-        <a href="about.html">
-          <span>04</span>
-          <strong>About</strong>
-          <p>Education, direction, learning journey and current goals.</p>
-          <i aria-hidden="true">↗</i>
-        </a>
-      </nav>
+          <h3>Ship</h3>
+          <p>Git/GitHub workflow, GitHub Pages deployment, browser checks and iteration after the first release.</p>
+          <small>Git · GitHub · QA</small>
+        </article>
+      </div>
+
+      <div class="hp-learning" data-reveal>
+        <span>LEARNING NEXT</span>
+        <p>Python · APIs · SQL / databases · testing · stronger software-engineering fundamentals</p>
+      </div>
     </div>
   </section>
 
-  <section class="home-end" aria-labelledby="contact-title">
-    <div class="shell home-end__grid" data-reveal>
-      <div>
-        <p class="eyebrow">OPEN TO FRONTEND OPPORTUNITIES</p>
-        <h2 id="contact-title">Early career.<br><em>Serious about improving.</em></h2>
-        <p>I’m looking for practical frontend experience where I can contribute, get real feedback and grow beyond self-directed work.</p>
+  <section class="hp-explore" aria-labelledby="explore-title">
+    <div class="shell">
+      <div class="hp-section-head hp-section-head--light">
+        <p class="hp-label" data-reveal>EXPLORE</p>
+        <h2 id="explore-title" data-reveal="clip">The detailed work lives<br>on its own pages.</h2>
       </div>
-      <div class="home-end__actions">
-        <a class="button button--paper magnetic" href="contact.html">Contact ↗</a>
-        <a class="button button--ghost magnetic" href="projects.html">See work ↗</a>
+
+      <nav class="hp-explore__links" aria-label="Portfolio sections" data-stagger>
+        <a href="projects.html"><span>01</span><strong>Projects</strong><i>↗</i></a>
+        <a href="challenge.html"><span>02</span><strong>100 Days</strong><i>↗</i></a>
+        <a href="sitepro.html"><span>03</span><strong>SITEPRO</strong><i>↗</i></a>
+        <a href="about.html"><span>04</span><strong>About</strong><i>↗</i></a>
+      </nav>
+
+      <div class="hp-explore__foot" data-reveal>
+        <p>Looking for practical frontend experience where I can contribute, get reviewed and grow.</p>
+        <a class="hp-button hp-button--light" href="contact.html">Contact ↗</a>
       </div>
     </div>
   </section>
