@@ -419,3 +419,24 @@ body[data-page="home"] .hp-button--light{
   body[data-page="home"] .hp-button,
   body[data-page="home"] .hp-explore__links a{transition:none}
 }
+
+
+/* Small-screen de-clutter: the header and hero should feel like a portfolio,
+   not a dashboard full of labels. */
+@media(max-width:559px){
+  body[data-page="home"] .hp-hero__meta span:first-child{display:none}
+  body[data-page="home"] .hp-hero__ticker{display:none}
+
+  body[data-page="home"] .site-header__inner{gap:8px}
+  body[data-page="home"] .brand__copy{display:none!important}
+  body[data-page="home"] .nav-toggle{
+    width:48px!important;
+    min-width:48px!important;
+  }
+  body[data-page="home"] .nav-toggle::before{display:none!important}
+  body[data-page="home"] .nav-toggle span{right:14px}
+}
+
+@media(min-width:560px) and (max-width:899px){
+  body[data-page="home"] .hp-hero__ticker{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
