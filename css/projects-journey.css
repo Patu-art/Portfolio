@@ -174,3 +174,30 @@ body[data-page="projects"] .journey-hero{padding:calc(var(--header-h,78px) + cla
  .journey-item:nth-child(6n+1)::before,.journey-item:nth-child(6n+4)::before{opacity:.7}
 }
 @media(prefers-reduced-motion:reduce){.journey-item--challenge .journey-level::before{animation:none!important}}
+
+/* v8 — the route now carries a story, not just decoration. */
+.journey-scene{position:absolute;z-index:1;width:min(260px,27vw);padding:16px 18px;border:1px solid rgba(82,111,121,.18);border-radius:26px;background:rgba(243,245,249,.72);backdrop-filter:blur(4px);pointer-events:none}
+.journey-scene span{display:block;margin-bottom:8px;color:#526f79;font:500 34px/1 "Fraunces",serif}
+.journey-scene strong{display:block;color:#263d46;font:700 10px/1.25 "JetBrains Mono",monospace;letter-spacing:.08em}
+.journey-scene small{display:block;margin-top:7px;color:#657b83;font:500 10px/1.5 "Inter",sans-serif}
+.journey-scene--0{right:4%;top:-8%}.journey-scene--1{left:5%;top:-5%}.journey-scene--2{right:3%;top:-3%}.journey-scene--3{left:4%;top:-2%}
+.journey-scene::after{content:"";position:absolute;width:44px;height:44px;border:1px dashed rgba(82,111,121,.22);border-radius:50%;right:-17px;bottom:-18px}
+.journey-item--upcoming{opacity:.78}
+.journey-item--upcoming .journey-level{border-style:dashed;background:rgba(243,245,249,.62);color:#70858d;box-shadow:0 0 0 3px #9eb0b6,0 0 0 11px rgba(100,127,137,.07)}
+.journey-item--upcoming .journey-level::before{opacity:1;transform:scale(1.08);border-style:dashed}
+.journey-level__state{position:absolute;left:50%;top:calc(100% + 18px);width:max-content;color:#60767e;font:700 8px/1 "JetBrains Mono",monospace;letter-spacing:.12em;transform:translateX(-50%)}
+.journey-item--upcoming .journey-level:disabled{cursor:default}
+@media(prefers-reduced-motion:no-preference){
+ .journey-scene span{animation:sceneFloat 4.8s ease-in-out infinite}
+ .journey-scene--1 span{animation-delay:-1.2s}.journey-scene--2 span{animation-delay:-2.4s}.journey-scene--3 span{animation-delay:-3.4s}
+ .journey-item--upcoming .journey-level::before{animation:nextPulse 2.6s ease-in-out infinite}
+ @keyframes sceneFloat{50%{transform:translateY(-5px) rotate(3deg)}}
+ @keyframes nextPulse{50%{opacity:.35;transform:scale(1.2)}}
+}
+@media(max-width:760px){
+ .journey-scene{width:128px;padding:10px 11px;border-radius:18px;backdrop-filter:none}
+ .journey-scene span{font-size:23px}.journey-scene strong{font-size:7px}.journey-scene small{display:none}
+ .journey-scene--0,.journey-scene--2{right:1%}.journey-scene--1,.journey-scene--3{left:1%}
+}
+@media(max-width:390px){.journey-scene{width:104px;padding:8px}.journey-scene strong{font-size:6px}.journey-scene span{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.journey-scene span,.journey-item--upcoming .journey-level::before{animation:none!important}}
